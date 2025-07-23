@@ -1,0 +1,12 @@
+<svg width="600" height="240" viewBox="0 0 600 240" xmlns="http://www.w3.org/2000/svg">
+
+    <rect x="30" y="30" width="150" height="150" rx="18" ry="18" fill="none" stroke="#007396" stroke-width="6"/>
+
+    <line x1="60" y1="70" x2="135" y2="70" stroke="#ED8B00" stroke-width="6" />
+    <line x1="84" y1="100" x2="135" y2="100" stroke="#ED8B00" stroke-width="6" />
+    <line x1="108" y1="130" x2="135" y2="130" stroke="#ED8B00" stroke-width="6" />
+
+    <text x="200" y="140" font-family="Courier New, monospace" font-size="64" fill="#ED8B00">
+        SmallYAML
+    </text>
+</svg>
