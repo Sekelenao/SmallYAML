@@ -1,2 +1,13 @@
+### JAVA ###
 target/
+*.class
+*.jar
+*.war
+### MAVEN ###
 .mvn/
+### INTELLIJ IDEA ###
+.idea/
+!.idea/icon.svg
+*.iml
+### PERSONAL ###
+*.private
