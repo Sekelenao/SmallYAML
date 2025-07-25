@@ -1,0 +1,75 @@
+                                      # Main  configuration
+app:
+  name: MyJavaApp
+  version: 1.2.0
+  environment: production
+  debug: false
+  base-url: https://api.myjavaapp.com
+
+# HTTP server config
+server:
+  port: 8080
+  host: 0.0.0.0
+  context-path: /api
+  ssl:
+    enabled: true
+    key-store: config/keystore.p12
+    key-store-password: changeit
+
+# Security parameter
+security:
+  # Cors config
+  cors:
+    allowed-origins:
+      - https://frontend.myjavaapp.com
+      - http://localhost:3000
+    allowed-methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+  jwt:
+    secret: "super-secret-key"
+    expiration-minutes: 60
+
+# Database config
+database:
+  driver: org.postgresql.Driver
+  url: jdbc:postgresql://localhost:5432/mydb
+  username: myuser
+  password: mypassword
+  pool:
+    max-connections: 20
+    min-idle: 5
+    max-idle: 10
+    timeout: 30000
+
+# Logs configuration
+logging:
+  level: INFO
+  file: logs/app.log
+  max-size: 10MB
+  max-files: 5
+
+# External integrations
+integrations:
+  stripe:
+    api-key: sk_test_abc123
+    enabled: true
+  sendgrid:
+    api-key: SG.xxxxx
+    enabled: false
+
+# List of features
+features:
+  - login
+  - registration
+  - metrics
+  - email-verification
+  - hello
+
+# Personalized parameters
+custom:
+  maintenance-mode: false
+  welcome-message: "Welcome to MyJavaApp!"
+  retry-count: 3
