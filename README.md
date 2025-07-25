@@ -1,8 +1,8 @@
-<p align="center">
-  <img src="SmallYAML.svg" width="300" alt="logo">
-</p>
+<div style="text-align: center;">
+  <img src=".idea/icon.svg" width="300" alt="logo">
+</div>
 
-<h2 align="center">
+<h2 style="text-align: center;">
 Simplified YAML library with limited syntax support and built-in config validation
 </h2>
 
