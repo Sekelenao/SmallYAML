@@ -88,4 +88,20 @@ numbers:
   - 5
 ```
 
+#### 4. No Inline Comments on Key Lines
+
+Comments are not allowed on the same line as keys to maintain clean and readable configuration files.
+
+```yaml
+log:
+  level: "INFO" # Change the log level here ❌
+```
+**✅ Supported:**
+```yaml
+log:
+  # Change the log level here
+  level: "INFO"
+```
+
+
 
