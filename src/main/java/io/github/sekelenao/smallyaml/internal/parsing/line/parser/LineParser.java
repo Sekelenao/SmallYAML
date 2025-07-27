@@ -10,18 +10,20 @@ import java.util.regex.Pattern;
 
 public final class LineParser {
 
-    private static final Pattern COMMENT_LINE_PATTERN = Pattern.compile("^\\s*#.*$");
+    private final Pattern forbiddenCharactersPattern = Pattern.compile("[\"#:-]");
 
-    private static final Pattern VALUE_LINE_PATTERN = Pattern.compile("^-\\s+(.+)$");
+    private final Pattern commentLinePattern = Pattern.compile("^\\s*#.*$");
 
-    private static boolean isNotRelevant(String rawLine){
-        return Objects.requireNonNull(rawLine).isBlank() || COMMENT_LINE_PATTERN.matcher(rawLine).matches();
+    private final Pattern valueLinePattern = Pattern.compile("^-\\s+(.+)$");
+
+    private boolean isNotRelevant(String rawLine){
+        return Objects.requireNonNull(rawLine).isBlank() || commentLinePattern.matcher(rawLine).matches();
     }
 
     private static int leadingSpaces(String rawLine){
         int currentCharacterIndex = 0;
-        for (var character : rawLine.toCharArray()) {
-            if(!Character.isWhitespace(character)){
+        for(int i = 0; i < rawLine.length(); i++){
+            if(!Character.isWhitespace(rawLine.charAt(i))){
                 return currentCharacterIndex;
             }
             currentCharacterIndex++;
@@ -51,12 +53,12 @@ public final class LineParser {
         return builder.toString();
     }
 
-    private static String extractRealValue(String rawValue){
+    private String extractRealValue(String rawValue){
         var value = rawValue.trim();
         if(value.startsWith("\"")){
             return extractQuotedValue(value);
         }
-        if(rawValue.contains("\"")){
+        if(forbiddenCharactersPattern.matcher(rawValue).find()){
             throw new ParsingException("Invalid YAML value: " + rawValue);
         }
         return rawValue;
@@ -68,8 +70,8 @@ public final class LineParser {
             return EmptyLine.SINGLE_INSTANCE;
         }
         var leadingSpaces = leadingSpaces(rawLine);
-        var line = rawLine.substring(leadingSpaces);
-        var valueLineMatcher = VALUE_LINE_PATTERN.matcher(line);
+        var line = rawLine.substring(leadingSpaces).stripTrailing();
+        var valueLineMatcher = valueLinePattern.matcher(line);
         if(valueLineMatcher.matches()){
             var value = extractRealValue(valueLineMatcher.group(1));
             return new ValueLine(leadingSpaces, value);
