@@ -10,11 +10,11 @@ import java.util.regex.Pattern;
 
 public final class LineParser {
 
-    private final Pattern forbiddenCharactersPattern = Pattern.compile("[\"#:-]");
-
     private final Pattern commentLinePattern = Pattern.compile("^\\s*#.*$");
 
-    private final Pattern valueLinePattern = Pattern.compile("^-\\s+(.+)$");
+    private final Pattern valueLinePattern = Pattern.compile("^-(.*)$");
+
+    private final ValueParser valueParser = new ValueParser();
 
     private boolean isNotRelevant(String rawLine){
         return Objects.requireNonNull(rawLine).isBlank() || commentLinePattern.matcher(rawLine).matches();
@@ -31,53 +31,22 @@ public final class LineParser {
         return currentCharacterIndex;
     }
 
-    private static String extractQuotedValue(String value) {
-        if (value.length() < 2 || !value.startsWith("\"") || !value.endsWith("\"")) {
-            throw new ParsingException("Invalid YAML value: " + value);
-        }
-        var content = value.substring(1, value.length() - 1);
-        var builder = new StringBuilder(content.length());
-        int index = 0;
-        while (index < content.length()) {
-            char currentCharacter = content.charAt(index);
-            if (currentCharacter == '\\' && index + 1 < content.length() && content.charAt(index + 1) == '"') {
-                builder.append('"');
-                index += 2;
-            } else if (currentCharacter == '"') {
-                throw new ParsingException("Invalid YAML value: unescaped quote in " + value);
-            } else {
-                builder.append(currentCharacter);
-                index++;
-            }
-        }
-        return builder.toString();
-    }
-
-    private String extractRealValue(String rawValue){
-        var value = rawValue.trim();
-        if(value.startsWith("\"")){
-            return extractQuotedValue(value);
-        }
-        if(forbiddenCharactersPattern.matcher(rawValue).find()){
-            throw new ParsingException("Invalid YAML value: " + rawValue);
-        }
-        return rawValue;
-    }
-
     public Line parse(String rawLine){
         Objects.requireNonNull(rawLine);
         if(isNotRelevant(rawLine)){
             return EmptyLine.SINGLE_INSTANCE;
         }
         var leadingSpaces = leadingSpaces(rawLine);
-        var line = rawLine.substring(leadingSpaces).stripTrailing();
-        var valueLineMatcher = valueLinePattern.matcher(line);
-        if(valueLineMatcher.matches()){
-            var value = extractRealValue(valueLineMatcher.group(1));
-            return new ValueLine(leadingSpaces, value);
+        var line = rawLine.substring(leadingSpaces);
+        if(line.startsWith("-")){
+            if(!line.substring(1, 2).isBlank()){
+                throw new ParsingException("Invalid YAML value: empty value in " + rawLine);
+            }
+            var valueGroup = line.substring(1);
+            return new ValueLine(leadingSpaces, valueParser.parse(valueGroup));
         }
         // TODO: Continue
-        return null;
+        return EmptyLine.SINGLE_INSTANCE;
     }
 
 }
