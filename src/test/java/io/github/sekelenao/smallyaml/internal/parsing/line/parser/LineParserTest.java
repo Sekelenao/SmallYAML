@@ -3,7 +3,7 @@ package io.github.sekelenao.smallyaml.internal.parsing.line.parser;
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
 import io.github.sekelenao.smallyaml.internal.parsing.line.ValueLine;
 import io.github.sekelenao.smallyaml.test.util.TestRandomizer;
-import io.github.sekelenao.smallyaml.test.util.TestingTag;
+import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -13,22 +13,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Tag(TestingTag.PARSING)
 final class LineParserTest {
 
     private final LineParser parser = new LineParser();
-
-    private void checkForWrongValue(String rawLine, String expectedMessage) {
-        var exception = assertThrows(ParsingException.class, () -> parser.parse(rawLine));
-        assertTrue(exception.getMessage().contains(expectedMessage));
-    }
 
     @Nested
     @DisplayName("List value parsing")
@@ -55,10 +45,11 @@ final class LineParserTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"-test", "-", "- ", "-  \t"})
+        @ValueSource(strings = {"-", "- ", "-  \t"})
         @DisplayName("Wrong list value")
         void wrongListValue(String listValue) {
-            checkForWrongValue(listValue, "empty value");
+            var exception = assertThrows(ParsingException.class, () -> parser.parse(listValue));
+            assertTrue(exception.getMessage().contains("empty value"));
         }
 
     }

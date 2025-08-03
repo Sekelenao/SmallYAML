@@ -1,4 +1,4 @@
-package io.github.sekelenao.smallyaml.test.util;
+package io.github.sekelenao.smallyaml.test.util.constant;
 
 public final class TestingTag {
 

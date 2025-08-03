@@ -1,6 +1,5 @@
 package io.github.sekelenao.smallyaml.internal.parsing.line.parser;
 
-import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
 import io.github.sekelenao.smallyaml.internal.parsing.line.EmptyLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.Line;
 import io.github.sekelenao.smallyaml.internal.parsing.line.ValueLine;
@@ -12,7 +11,9 @@ public final class LineParser {
 
     private final Pattern commentLinePattern = Pattern.compile("^\\s*#.*$");
 
-    private final Pattern valueLinePattern = Pattern.compile("^-(.*)$");
+    private final Pattern keyLinePattern = Pattern.compile("^(.*):\\s*$");
+
+    private final KeyParser keyParser = new KeyParser();
 
     private final ValueParser valueParser = new ValueParser();
 
@@ -39,9 +40,6 @@ public final class LineParser {
         var leadingSpaces = leadingSpaces(rawLine);
         var line = rawLine.substring(leadingSpaces);
         if(line.startsWith("-")){
-            if(!line.substring(1, 2).isBlank()){
-                throw new ParsingException("Invalid YAML value: empty value in " + rawLine);
-            }
             var valueGroup = line.substring(1);
             return new ValueLine(leadingSpaces, valueParser.parse(valueGroup));
         }
