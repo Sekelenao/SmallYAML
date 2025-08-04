@@ -1,7 +1,7 @@
-package io.github.sekelenao.smallyaml.internal.parsing.line.provider;
+package io.github.sekelenao.smallyaml.internal.parsing.provider;
 
 import io.github.sekelenao.smallyaml.internal.parsing.line.Line;
-import io.github.sekelenao.smallyaml.internal.parsing.line.parser.LineParser;
+import io.github.sekelenao.smallyaml.internal.parsing.parser.LineParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;

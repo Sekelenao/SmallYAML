@@ -1,4 +1,4 @@
-package io.github.sekelenao.smallyaml.internal.parsing.line.parser;
+package io.github.sekelenao.smallyaml.internal.parsing.parser;
 
 
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;

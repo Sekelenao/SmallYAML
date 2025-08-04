@@ -1,8 +1,7 @@
-package io.github.sekelenao.smallyaml.internal.parsing.line.parser;
+package io.github.sekelenao.smallyaml.internal.parsing.parser;
 
-import io.github.sekelenao.smallyaml.internal.parsing.line.EmptyLine;
-import io.github.sekelenao.smallyaml.internal.parsing.line.Line;
-import io.github.sekelenao.smallyaml.internal.parsing.line.ValueLine;
+import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
+import io.github.sekelenao.smallyaml.internal.parsing.line.*;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -10,8 +9,6 @@ import java.util.regex.Pattern;
 public final class LineParser {
 
     private final Pattern commentLinePattern = Pattern.compile("^\\s*#.*$");
-
-    private final Pattern keyLinePattern = Pattern.compile("^(.*):\\s*$");
 
     private final KeyParser keyParser = new KeyParser();
 
@@ -41,10 +38,19 @@ public final class LineParser {
         var line = rawLine.substring(leadingSpaces);
         if(line.startsWith("-")){
             var valueGroup = line.substring(1);
-            return new ValueLine(leadingSpaces, valueParser.parse(valueGroup));
+            return new ListValueLine(leadingSpaces, valueParser.parse(valueGroup));
         }
-        // TODO: Continue
-        return EmptyLine.SINGLE_INSTANCE;
+        var valueSplit = line.split(": ", 2);
+        var keyPart = valueSplit[0].stripTrailing();
+        if(!keyPart.endsWith(":")){
+            throw ParsingException.wrongKey("missing colon", keyPart);
+        }
+        var key = keyParser.parse(keyPart);
+        if(valueSplit.length > 1){
+            var value = valueParser.parse(valueSplit[1]);
+            return new KeyValueLine(leadingSpaces, key, value);
+        }
+        return new KeyLine(leadingSpaces, key);
     }
 
 }

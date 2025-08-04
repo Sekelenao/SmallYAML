@@ -1,4 +1,4 @@
-package io.github.sekelenao.smallyaml.internal.parsing.line.provider;
+package io.github.sekelenao.smallyaml.internal.parsing.provider;
 
 import io.github.sekelenao.smallyaml.internal.parsing.line.Line;
 

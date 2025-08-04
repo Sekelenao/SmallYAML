@@ -1,4 +1,4 @@
-package io.github.sekelenao.smallyaml.internal.parsing.line.parser;
+package io.github.sekelenao.smallyaml.internal.parsing.parser;
 
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
 
@@ -16,6 +16,9 @@ public final class KeyParser implements StringParser {
             throw ParsingException.wrongKey("missing colon", rawKey);
         }
         var keyValue = trimmedKey.substring(0, trimmedKey.length() - 1);
+        if(trimmedKey.isBlank()){
+            throw ParsingException.wrongKey("empty key", rawKey);
+        }
         if(!keyPattern.matcher(keyValue).matches()){
             throw ParsingException.wrongKey("wrong format", rawKey);
         }

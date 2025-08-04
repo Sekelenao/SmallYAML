@@ -1,7 +1,8 @@
 package io.github.sekelenao.smallyaml.internal.parsing.line.parser;
 
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
-import io.github.sekelenao.smallyaml.internal.parsing.line.ValueLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.ListValueLine;
+import io.github.sekelenao.smallyaml.internal.parsing.parser.LineParser;
 import io.github.sekelenao.smallyaml.test.util.TestRandomizer;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +35,7 @@ final class LineParserTest {
         void blankString(int lengthOfBlankString) {
             var listValue = TestRandomizer.blankString(lengthOfBlankString) + "-  test";
             var line = parser.parse(listValue);
-            if (line instanceof ValueLine(int depth, String value)) {
+            if (line instanceof ListValueLine(int depth, String value)) {
                 assertAll(
                     () -> assertEquals(lengthOfBlankString, depth),
                     () -> assertEquals("test", value)
