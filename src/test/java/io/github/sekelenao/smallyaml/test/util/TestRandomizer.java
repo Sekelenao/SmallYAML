@@ -18,7 +18,7 @@ public final class TestRandomizer {
         return builder.toString();
     }
 
-    public static int nextInt(){
+    public static int randomInt(){
         return RANDOM.nextInt(MAX);
     }
 

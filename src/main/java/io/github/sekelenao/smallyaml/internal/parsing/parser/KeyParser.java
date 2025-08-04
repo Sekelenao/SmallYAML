@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public final class KeyParser implements StringParser {
 
-    private final Pattern keyPattern = Pattern.compile("^([a-zA-Z0-9](?:[a-zA-Z0-9_.-]*[a-zA-Z0-9])?)$");
+    private final Pattern keyPattern = Pattern.compile("^([a-zA-Z0-9](?:[a-zA-Z0-9_-]*(?:\\.[a-zA-Z0-9_-]+)*[a-zA-Z0-9])?)$");
 
     public String parse(String rawKey){
         Objects.requireNonNull(rawKey);

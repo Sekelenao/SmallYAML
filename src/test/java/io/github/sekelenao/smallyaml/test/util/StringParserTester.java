@@ -7,11 +7,11 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public final class StringParsingTester {
+public final class StringParserTester {
 
     private final StringParser parser;
 
-    public StringParsingTester(StringParser parser){
+    public StringParserTester(StringParser parser){
         this.parser = Objects.requireNonNull(parser);
     }
 

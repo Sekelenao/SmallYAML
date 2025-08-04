@@ -1,7 +1,6 @@
-package io.github.sekelenao.smallyaml.internal.parsing.line.parser;
+package io.github.sekelenao.smallyaml.internal.parsing.parser;
 
-import io.github.sekelenao.smallyaml.internal.parsing.parser.KeyParser;
-import io.github.sekelenao.smallyaml.test.util.StringParsingTester;
+import io.github.sekelenao.smallyaml.test.util.StringParserTester;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -16,7 +15,7 @@ final class KeyParserTest {
 
     private final KeyParser parser = new KeyParser();
 
-    private final StringParsingTester parsingTester = new StringParsingTester(parser);
+    private final StringParserTester parsingTester = new StringParserTester(parser);
 
     @ParameterizedTest
     @ValueSource(strings = {"key:", "    key:   ", "key: \t  ", "  \t   key:  \t  "})
@@ -31,7 +30,8 @@ final class KeyParserTest {
         assertAll(
                 () -> parsingTester.checkValid("  \tone.two.three:    \t ", "one.two.three"),
                 () -> parsingTester.checkValid("under_score:", "under_score"),
-                () -> parsingTester.checkValid(" da-sh: ", "da-sh")
+                () -> parsingTester.checkValid(" da-sh: ", "da-sh"),
+                () -> parsingTester.checkValid(" 1__2: ", "1__2")
         );
     }
 
@@ -45,7 +45,8 @@ final class KeyParserTest {
     @ValueSource(strings = {
             "space :", "first:second:", "-DashStart:",
             "_UnderscoreStart:", ".DotStart:", "DashEnd-:",
-            "UnderscoreEnd_:", "DotEnd.:"
+            "UnderscoreEnd_:", "DotEnd.:", "double..dot:",
+            "double.dot..after:", "double..dot.before: "
     })
     @DisplayName("Key parsing for invalid values")
     void keyParsingForInvalidValues(String rawKey) {
