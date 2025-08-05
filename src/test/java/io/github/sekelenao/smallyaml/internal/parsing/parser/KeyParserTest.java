@@ -13,9 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @Tag(TestingTag.PARSING)
 final class KeyParserTest {
 
-    private final KeyParser parser = new KeyParser();
-
-    private final StringParserTester parsingTester = new StringParserTester(parser);
+    private final StringParserTester parsingTester = new StringParserTester(new KeyParser());
 
     @ParameterizedTest
     @ValueSource(strings = {"key:", "    key:   ", "key: \t  ", "  \t   key:  \t  "})
@@ -26,31 +24,88 @@ final class KeyParserTest {
 
     @Test
     @DisplayName("Key parsing for valid complex values")
-    void keyParsingForValidComplexValues(){
+    void keyParsingForValidComplexValues() {
         assertAll(
-                () -> parsingTester.checkValid("  \tone.two.three:    \t ", "one.two.three"),
+                () -> parsingTester.checkValid("  \tone.Two.three:    \t ", "one.Two.three"),
                 () -> parsingTester.checkValid("under_score:", "under_score"),
                 () -> parsingTester.checkValid(" da-sh: ", "da-sh"),
                 () -> parsingTester.checkValid(" 1__2: ", "1__2")
         );
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = {"NoColon", "Colon:In:Middle"})
     @DisplayName("Key parsing for missing colon")
-    void keyParsingForMissingColon(){
-        parsingTester.checkException("NoColon", "missing colon");
+    void keyParsingForMissingColon(String rawKey) {
+        parsingTester.checkException(rawKey, "missing colon");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"space :", "first:second:", "@yes:"})
+    @DisplayName("Key parsing for not permitted characters")
+    void keyParsingForNotPermittedCharacters(String rawKey) {
+        parsingTester.checkException(rawKey, "not permitted character");
+    }
+
+    @Test
+    @DisplayName("Key parser can parse multiple values")
+    void keyParserCanParseMultipleValues() {
+        var localParsingTester = new StringParserTester(new KeyParser());
+        assertAll(
+                () -> localParsingTester.checkException("-dash:", "key start with special character"),
+                () -> localParsingTester.checkValid("yes: ", "yes"),
+                () -> localParsingTester.checkException("_underscore:", "key start with special character"),
+                () -> localParsingTester.checkValid("ok:", "ok")
+        );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"-DashStart:", "_UnderscoreStart:"})
+    @DisplayName("Key parsing for special char at start")
+    void keyParsingForSpecialCharAtStart(String rawKey) {
+        parsingTester.checkException(rawKey, "key start with special character");
     }
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "space :", "first:second:", "-DashStart:",
-            "_UnderscoreStart:", ".DotStart:", "DashEnd-:",
-            "UnderscoreEnd_:", "DotEnd.:", "double..dot:",
-            "double.dot..after:", "double..dot.before: "
+            "DashEnd-:", "UnderscoreEnd_:",
+            "forbidden.after_:", "before.dot-:"
     })
-    @DisplayName("Key parsing for invalid values")
-    void keyParsingForInvalidValues(String rawKey) {
-        parsingTester.checkException(rawKey, "wrong format");
+    @DisplayName("Key parsing for special char at end")
+    void keyParsingForSpecialCharAtEnd(String rawKey) {
+        parsingTester.checkException(rawKey, "key ends with special character");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            ".DotStart:", "DotEnd.:", "double..dot:",
+            "double.dot..after:", "double..dot.before: ",
+            "ending.with.dot.:", "..:"
+    })
+    @DisplayName("Key parsing for empty key part")
+    void keyParsingForEmptyKeyPart(String rawKey) {
+        parsingTester.checkException(rawKey, "empty key part");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"forbidden.-start.dot:", "start._dot:"})
+    @DisplayName("Key parsing for key part starting with special char")
+    void keyParsingForKeyPartStartingWithSpecialChar(String rawKey) {
+        parsingTester.checkException(rawKey, "key part start with special character");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"forbidden-.before.dot:", "before_.dot:", "end.end-.yes:"})
+    @DisplayName("Key parsing for key part ending with special char")
+    void keyParsingForKeyPartEndingWithSpecialChar(String rawKey) {
+        parsingTester.checkException(rawKey, "key part ends with special character");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"   :  ", ":"})
+    @DisplayName("Key parsing with empty key")
+    void keyParsingWithEmptyKey(String rawKey) {
+        parsingTester.checkException(rawKey, "empty key");
     }
 
 }

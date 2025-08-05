@@ -13,13 +13,13 @@ public class ParsingException extends SmallYAMLException {
     public static ParsingException wrongValue(String details, String value){
         Objects.requireNonNull(details);
         Objects.requireNonNull(value);
-        return new ParsingException("Invalid value: " + details + " for: " + value);
+        return new ParsingException("Invalid value: " + details + " for: '" + value + "'");
     }
 
     public static ParsingException wrongKey(String details, String key){
         Objects.requireNonNull(details);
         Objects.requireNonNull(key);
-        return new ParsingException("Invalid key: " + details + " for: " + key);
+        return new ParsingException("Invalid key: " + details + " for: '" + key + "'");
     }
 
 }
