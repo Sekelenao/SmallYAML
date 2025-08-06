@@ -40,17 +40,19 @@ public final class LineParser {
             var valueGroup = line.substring(1);
             return new ListValueLine(leadingSpaces, valueParser.parse(valueGroup));
         }
-        var valueSplit = line.split(": ", 2);
-        var keyPart = valueSplit[0].stripTrailing();
-        if(!keyPart.endsWith(":")){
-            throw ParsingException.wrongKey("missing colon", keyPart);
+        var indexOfColon = line.indexOf(':');
+        if(indexOfColon == -1){
+            throw ParsingException.wrongKey("missing colon", line);
         }
+        line = line.stripTrailing();
+        var keyPart = line.substring(0, indexOfColon + 1);
         var key = keyParser.parse(keyPart);
-        if(valueSplit.length > 1){
-            var value = valueParser.parse(valueSplit[1]);
-            return new KeyValueLine(leadingSpaces, key, value);
+        if(indexOfColon == line.length() - 1){
+            return new KeyLine(leadingSpaces, key);
         }
-        return new KeyLine(leadingSpaces, key);
+        var valuePart = line.substring(indexOfColon + 1);
+        var value = valueParser.parse(valuePart);
+        return new KeyValueLine(leadingSpaces, key, value);
     }
 
 }

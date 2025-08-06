@@ -1,6 +1,7 @@
 package io.github.sekelenao.smallyaml.internal.parsing.parser;
 
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
+import io.github.sekelenao.smallyaml.internal.parsing.line.KeyLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.Line;
 import io.github.sekelenao.smallyaml.internal.parsing.line.ListValueLine;
 import io.github.sekelenao.smallyaml.test.util.TestRandomizer;
@@ -26,13 +27,13 @@ final class LineParserTest {
         fail("Expected " + expectedType.getSimpleName() + " but was " + line.getClass().getSimpleName());
     }
 
+    private static Stream<Integer> intProvider() {
+        return Stream.generate(TestRandomizer::randomInt).limit(50);
+    }
+
     @Nested
     @DisplayName("List value parsing")
     final class ListValueParsing {
-
-        private static Stream<Integer> intProvider() {
-            return Stream.generate(TestRandomizer::randomInt).limit(50);
-        }
 
         private void checkValidListValueParsing(String listValue, int expectedDepth, String expectedValue) {
             var line = parser.parse(listValue);
@@ -47,7 +48,7 @@ final class LineParserTest {
         }
 
         @ParameterizedTest(name = "{displayName} ({0})")
-        @MethodSource("intProvider")
+        @MethodSource("io.github.sekelenao.smallyaml.internal.parsing.parser.LineParserTest#intProvider")
         @DisplayName("Leading spaces")
         void blankString(int lengthOfBlankString) {
             var listValue = TestRandomizer.blankString(lengthOfBlankString) + "-  \"test\"";
@@ -74,6 +75,32 @@ final class LineParserTest {
         void wrongListValue(String listValue) {
             var exception = assertThrows(ParsingException.class, () -> parser.parse(listValue));
             assertTrue(exception.getMessage().contains("empty value"));
+        }
+
+    }
+
+    @Nested
+    @DisplayName("Key parsing")
+    final class KeyParsing {
+
+        private void checkValidKeyParsing(String rawKey, int expectedDepth, String expectedKey) {
+            var line = parser.parse(rawKey);
+            if (line instanceof KeyLine(int depth, String key)) {
+                assertAll(
+                        () -> assertEquals(expectedDepth, depth),
+                        () -> assertEquals(expectedKey, key)
+                );
+            } else {
+                failBecauseOfWrongLineType(line, KeyLine.class);
+            }
+        }
+
+        @ParameterizedTest(name = "{displayName} ({0})")
+        @MethodSource("io.github.sekelenao.smallyaml.internal.parsing.parser.LineParserTest#intProvider")
+        @DisplayName("Leading spaces")
+        void blankString(int lengthOfBlankString) {
+            var key = TestRandomizer.blankString(lengthOfBlankString) + "key: ";
+            checkValidKeyParsing(key, lengthOfBlankString, "key");
         }
 
     }
