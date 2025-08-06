@@ -42,9 +42,9 @@ final class KeyParserTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"space :", "first:second:", "@yes:"})
-    @DisplayName("Key parsing for not permitted characters")
+    @DisplayName("Key parsing for forbidden characters")
     void keyParsingForNotPermittedCharacters(String rawKey) {
-        parsingTester.checkException(rawKey, "not permitted character");
+        parsingTester.checkException(rawKey, "forbidden character");
     }
 
     @Test

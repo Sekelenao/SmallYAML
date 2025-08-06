@@ -17,7 +17,7 @@ final class ValueParserTest {
     private final StringParserTester parsingTester = new StringParserTester(new ValueParser());
 
     private static Stream<String> containingWrongCharValues() {
-        return Stream.of("test\"", "test:", "#test", "te-st");
+        return Stream.of("test\"", "test:", "#test", "te-st", "te.st");
     }
 
     @ParameterizedTest

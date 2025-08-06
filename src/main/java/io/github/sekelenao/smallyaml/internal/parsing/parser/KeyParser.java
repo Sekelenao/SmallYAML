@@ -49,7 +49,7 @@ public final class KeyParser implements StringParser {
             switch (currentCharacter){
                 case '.' -> treatDotCharacter(rawKey);
                 case '-', '_' -> treatSpecialCharacter(rawKey);
-                default -> throw ParsingException.wrongKey("not permitted character", rawKey);
+                default -> throw ParsingException.wrongKey("forbidden character", rawKey);
             }
         }
         state = State.START;

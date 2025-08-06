@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 public final class ValueParser implements StringParser {
 
-    private final Pattern forbiddenCharactersPattern = Pattern.compile("[\"#:-]");
+    private final Pattern forbiddenCharactersPattern = Pattern.compile("[\"#:.-]");
 
     private static String extractQuotedValue(String value) {
         if (value.length() < 2 || !value.endsWith("\"")) {

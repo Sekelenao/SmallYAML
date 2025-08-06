@@ -50,6 +50,9 @@ public final class LineParser {
         if(indexOfColon == line.length() - 1){
             return new KeyLine(leadingSpaces, key);
         }
+        if(line.charAt(indexOfColon + 1) != ' ' && line.charAt(indexOfColon + 1) != '\t'){
+            throw ParsingException.wrongKey("forbidden character", line);
+        }
         var valuePart = line.substring(indexOfColon + 1);
         var value = valueParser.parse(valuePart);
         return new KeyValueLine(leadingSpaces, key, value);
