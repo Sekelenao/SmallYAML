@@ -9,11 +9,20 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag(TestingTag.PARSING)
 final class KeyParserTest {
 
-    private final StringParserTester parsingTester = new StringParserTester(new KeyParser());
+    private final KeyParser parser = new KeyParser();
+
+    private final StringParserTester parsingTester = new StringParserTester(parser);
+
+    @Test
+    @DisplayName("Assertions")
+    void assertions() {
+        assertThrows(NullPointerException.class, () -> parser.parse(null));
+    }
 
     @ParameterizedTest
     @ValueSource(strings = {"key:", "    key:   ", "key: \t  ", "  \t   key:  \t  "})

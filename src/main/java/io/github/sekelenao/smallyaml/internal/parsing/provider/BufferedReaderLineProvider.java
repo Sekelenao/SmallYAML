@@ -20,11 +20,16 @@ public final class BufferedReaderLineProvider implements LineProvider {
 
     @Override
     public Optional<Line> nextLine() throws IOException {
-        return Optional.empty(); // TODO
+        var rawLine = reader.readLine();
+        if(rawLine == null){
+            return Optional.empty();
+        }
+        return Optional.of(parser.parse(rawLine));
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws IOException {
         reader.close();
     }
+
 }

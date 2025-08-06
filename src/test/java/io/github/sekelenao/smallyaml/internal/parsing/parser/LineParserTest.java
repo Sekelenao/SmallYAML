@@ -1,10 +1,7 @@
 package io.github.sekelenao.smallyaml.internal.parsing.parser;
 
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
-import io.github.sekelenao.smallyaml.internal.parsing.line.KeyLine;
-import io.github.sekelenao.smallyaml.internal.parsing.line.KeyValueLine;
-import io.github.sekelenao.smallyaml.internal.parsing.line.Line;
-import io.github.sekelenao.smallyaml.internal.parsing.line.ListValueLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.*;
 import io.github.sekelenao.smallyaml.test.util.TestRandomizer;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import org.junit.jupiter.api.DisplayName;
@@ -42,6 +39,12 @@ final class LineParserTest {
     @SuppressWarnings("unused")
     private static Stream<Integer> intProvider() {
         return Stream.generate(TestRandomizer::randomInt).limit(50);
+    }
+
+    @Test
+    @DisplayName("Assertions")
+    void assertions() {
+        assertThrows(NullPointerException.class, () -> parser.parse(null));
     }
 
     @Nested
@@ -203,6 +206,20 @@ final class LineParserTest {
         @DisplayName("No space after key")
         void missingEndingQuote(String rawKey) {
             checkException(rawKey, "forbidden character");
+        }
+
+    }
+
+    @Nested
+    @DisplayName("Empty line parsing")
+    final class EmptyLineParsing {
+
+        @ParameterizedTest
+        @ValueSource(strings = {" ", "    # Comment", "#Comment", "  \t    \t", "   \t##", "##"})
+        @DisplayName("Empty line")
+        void emptyLine(String rawLine) {
+            var line = parser.parse(rawLine);
+            assertInstanceOf(EmptyLine.class, line);
         }
 
     }

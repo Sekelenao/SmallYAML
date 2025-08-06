@@ -11,13 +11,23 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 @Tag(TestingTag.PARSING)
 final class ValueParserTest {
 
-    private final StringParserTester parsingTester = new StringParserTester(new ValueParser());
+    private final ValueParser parser = new ValueParser();
+
+    private final StringParserTester parsingTester = new StringParserTester(parser);
 
     private static Stream<String> containingWrongCharValues() {
         return Stream.of("test\"", "test:", "#test", "te-st", "te.st");
+    }
+
+    @Test
+    @DisplayName("Assertions")
+    void assertions() {
+        assertThrows(NullPointerException.class, () -> parser.parse(null));
     }
 
     @ParameterizedTest
