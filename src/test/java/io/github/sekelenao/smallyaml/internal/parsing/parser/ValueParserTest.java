@@ -14,9 +14,7 @@ import java.util.stream.Stream;
 @Tag(TestingTag.PARSING)
 final class ValueParserTest {
 
-    private final ValueParser parser = new ValueParser();
-
-    private final StringParserTester parsingTester = new StringParserTester(parser);
+    private final StringParserTester parsingTester = new StringParserTester(new ValueParser());
 
     private static Stream<String> containingWrongCharValues() {
         return Stream.of("test\"", "test:", "#test", "te-st");
