@@ -1,16 +1,21 @@
 package io.github.sekelenao.smallyaml.internal.collection;
 
-import java.util.*;
+import java.util.AbstractList;
+import java.util.Arrays;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 public final class ValueList implements Iterable<String> {
 
-    private String[] values;
+    private String[] values = new String[8];
 
     private int nextEmptyIndex = 0;
 
     public ValueList(String value){
         Objects.requireNonNull(value);
-        this.values = new String[8];
         values[nextEmptyIndex++] = value;
     }
 
@@ -56,6 +61,23 @@ public final class ValueList implements Iterable<String> {
                     throw new ConcurrentModificationException();
                 }
                 return values[currentIndex++];
+            }
+
+        };
+    }
+
+    public List<String> asListView(){
+        return new AbstractList<>() {
+
+            @Override
+            public String get(int index) {
+                Objects.checkIndex(index, nextEmptyIndex);
+                return values[index];
+            }
+
+            @Override
+            public int size() {
+                return nextEmptyIndex;
             }
 
         };

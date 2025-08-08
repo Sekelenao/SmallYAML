@@ -1,7 +1,11 @@
 package io.github.sekelenao.smallyaml.internal.parsing.parser;
 
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
-import io.github.sekelenao.smallyaml.internal.parsing.line.*;
+import io.github.sekelenao.smallyaml.internal.parsing.line.EmptyLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.KeyLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.KeyValueLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.Line;
+import io.github.sekelenao.smallyaml.internal.parsing.line.ListValueLine;
 
 import java.util.Objects;
 import java.util.regex.Pattern;

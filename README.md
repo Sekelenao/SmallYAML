@@ -13,11 +13,13 @@ Simplified YAML library with limited syntax support and built-in config validati
 - [ ] YAML parsing and loading
 - [ ] Safe loading (condition checking, default value...)
 - [ ] Deprecation warnings to keep configs simple
-
+- 
 ### Research & Exploration
 
 - Merging configs with override policies
 - Static config loader
+- Automatic casting at start for safe loading
+
 
 ### Overview
 
