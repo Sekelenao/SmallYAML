@@ -1,8 +1,9 @@
-package io.github.sekelenao.smallyaml.internal.parsing.parser;
+package io.github.sekelenao.smallyaml.test.internal.parsing.parser;
 
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
 import io.github.sekelenao.smallyaml.internal.parsing.line.*;
-import io.github.sekelenao.smallyaml.test.util.TestRandomizer;
+import io.github.sekelenao.smallyaml.internal.parsing.parser.LineParser;
+import io.github.sekelenao.smallyaml.test.util.Tests;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -13,7 +14,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Objects;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,11 +34,6 @@ final class LineParserTest {
                 exception.getMessage().contains(expectedExceptionDetails),
                 "Exception message should contain " + expectedExceptionDetails + " but is: " +exception.getMessage()
         );
-    }
-
-    @SuppressWarnings("unused")
-    private static Stream<Integer> intProvider() {
-        return Stream.generate(TestRandomizer::randomInt).limit(50);
     }
 
     @Test
@@ -64,10 +59,10 @@ final class LineParserTest {
         }
 
         @ParameterizedTest(name = "{displayName} ({0})")
-        @MethodSource("io.github.sekelenao.smallyaml.internal.parsing.parser.LineParserTest#intProvider")
+        @MethodSource("io.github.sekelenao.smallyaml.test.util.Tests#intProvider")
         @DisplayName("Leading spaces")
         void blankString(int lengthOfBlankString) {
-            var listValue = TestRandomizer.blankString(lengthOfBlankString) + "-  \"test\"";
+            var listValue = Tests.blankString(lengthOfBlankString) + "-  \"test\"";
             checkValidListValueParsing(listValue, lengthOfBlankString, "test");
         }
 
@@ -111,10 +106,10 @@ final class LineParserTest {
         }
 
         @ParameterizedTest(name = "{displayName} ({0})")
-        @MethodSource("io.github.sekelenao.smallyaml.internal.parsing.parser.LineParserTest#intProvider")
+        @MethodSource("io.github.sekelenao.smallyaml.test.util.Tests#intProvider")
         @DisplayName("Leading spaces")
         void blankString(int lengthOfBlankString) {
-            var key = TestRandomizer.blankString(lengthOfBlankString) + "key: ";
+            var key = Tests.blankString(lengthOfBlankString) + "key: ";
             checkValidKeyParsing(key, lengthOfBlankString, "key");
         }
 
@@ -173,10 +168,10 @@ final class LineParserTest {
         }
 
         @ParameterizedTest(name = "{displayName} ({0})")
-        @MethodSource("io.github.sekelenao.smallyaml.internal.parsing.parser.LineParserTest#intProvider")
+        @MethodSource("io.github.sekelenao.smallyaml.test.util.Tests#intProvider")
         @DisplayName("Leading spaces")
         void blankString(int lengthOfBlankString) {
-            var keyValue = TestRandomizer.blankString(lengthOfBlankString) + "key: \"test\" \t";
+            var keyValue = Tests.blankString(lengthOfBlankString) + "key: \"test\" \t";
             checkValidKeyValueParsing(keyValue, lengthOfBlankString, "key", "test");
         }
 

@@ -22,4 +22,10 @@ public class ParsingException extends SmallYAMLException {
         return new ParsingException("Invalid key: " + details + " for: '" + key + "'");
     }
 
+    public static ParsingException wrongIndentation(String details, String line){
+        Objects.requireNonNull(details);
+        Objects.requireNonNull(line);
+        return new ParsingException("Invalid indentation: " + details + " for: '" + line + "'");
+    }
+
 }

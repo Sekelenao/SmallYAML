@@ -1,5 +1,6 @@
-package io.github.sekelenao.smallyaml.internal.parsing.parser;
+package io.github.sekelenao.smallyaml.test.internal.parsing.parser;
 
+import io.github.sekelenao.smallyaml.internal.parsing.parser.ValueParser;
 import io.github.sekelenao.smallyaml.test.util.StringParserTester;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import org.junit.jupiter.api.DisplayName;

@@ -4,4 +4,6 @@ public final class TestingTag {
 
     public static final String PARSING = "PARSING";
 
+    public static final String COLLECTION = "COLLECTION";
+
 }
