@@ -40,7 +40,7 @@ final class ValueListTest {
     }
 
     @ParameterizedTest(name = "{displayName} ({0})")
-    @MethodSource("io.github.sekelenao.smallyaml.test.util.Tests#intProvider")
+    @MethodSource("io.github.sekelenao.smallyaml.test.util.TestUtilities#intProvider")
     @DisplayName("Adding a lot of value")
     void addingALotOfValue(int amount) {
         var valueList = new ValueList("first");
@@ -50,7 +50,7 @@ final class ValueListTest {
             assertEquals("value-" + i, valueList.get(i));
         }
         assertEquals("first", valueList.get(0));
-        assertEquals(amount, valueList.size());
+        assertEquals(amount == 0 ? 1 : amount, valueList.size());
         assertEquals("value-" + (amount - 1), valueList.get(valueList.size() - 1));
     }
 

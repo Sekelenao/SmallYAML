@@ -1,7 +1,7 @@
 package io.github.sekelenao.smallyaml.test.internal.parsing.parser;
 
 import io.github.sekelenao.smallyaml.internal.parsing.parser.ValueParser;
-import io.github.sekelenao.smallyaml.test.util.StringParserTester;
+import io.github.sekelenao.smallyaml.test.util.TestUtilities;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -19,7 +19,7 @@ final class ValueParserTest {
 
     private final ValueParser parser = new ValueParser();
 
-    private final StringParserTester parsingTester = new StringParserTester(parser);
+    private final TestUtilities.StringParserTester parsingTester = new TestUtilities.StringParserTester(parser);
 
     private static Stream<String> containingWrongCharValues() {
         return Stream.of("test\"", "test:", "#test", "te-st", "te.st");

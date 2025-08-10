@@ -5,7 +5,7 @@ import io.github.sekelenao.smallyaml.internal.parsing.line.EmptyLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.KeyLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.KeyValueLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.ListValueLine;
-import io.github.sekelenao.smallyaml.test.util.Tests;
+import io.github.sekelenao.smallyaml.test.util.TestUtilities;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -37,7 +37,7 @@ final class BufferedReaderLineProviderTest {
         int keyLineCount = 0;
         int listValueLineCount = 0;
         int keyValueLineCount = 0;
-        var bufferedReader = Files.newBufferedReader(Tests.findResource("fake-simple-config.yaml"));
+        var bufferedReader = Files.newBufferedReader(TestUtilities.findResource("fake-simple-config.yaml"));
         try (var provider = new BufferedReaderLineProvider(bufferedReader)){
             var line = provider.nextLine();
             while (line.isPresent()) {

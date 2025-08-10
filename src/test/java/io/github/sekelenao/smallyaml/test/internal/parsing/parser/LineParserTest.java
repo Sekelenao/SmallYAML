@@ -3,7 +3,7 @@ package io.github.sekelenao.smallyaml.test.internal.parsing.parser;
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
 import io.github.sekelenao.smallyaml.internal.parsing.line.*;
 import io.github.sekelenao.smallyaml.internal.parsing.parser.LineParser;
-import io.github.sekelenao.smallyaml.test.util.Tests;
+import io.github.sekelenao.smallyaml.test.util.TestUtilities;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -59,10 +59,10 @@ final class LineParserTest {
         }
 
         @ParameterizedTest(name = "{displayName} ({0})")
-        @MethodSource("io.github.sekelenao.smallyaml.test.util.Tests#intProvider")
+        @MethodSource("io.github.sekelenao.smallyaml.test.util.TestUtilities#intProvider")
         @DisplayName("Leading spaces")
         void blankString(int lengthOfBlankString) {
-            var listValue = Tests.blankString(lengthOfBlankString) + "-  \"test\"";
+            var listValue = TestUtilities.blankString(lengthOfBlankString) + "-  \"test\"";
             checkValidListValueParsing(listValue, lengthOfBlankString, "test");
         }
 
@@ -106,10 +106,10 @@ final class LineParserTest {
         }
 
         @ParameterizedTest(name = "{displayName} ({0})")
-        @MethodSource("io.github.sekelenao.smallyaml.test.util.Tests#intProvider")
+        @MethodSource("io.github.sekelenao.smallyaml.test.util.TestUtilities#intProvider")
         @DisplayName("Leading spaces")
         void blankString(int lengthOfBlankString) {
-            var key = Tests.blankString(lengthOfBlankString) + "key: ";
+            var key = TestUtilities.blankString(lengthOfBlankString) + "key: ";
             checkValidKeyParsing(key, lengthOfBlankString, "key");
         }
 
@@ -168,10 +168,10 @@ final class LineParserTest {
         }
 
         @ParameterizedTest(name = "{displayName} ({0})")
-        @MethodSource("io.github.sekelenao.smallyaml.test.util.Tests#intProvider")
+        @MethodSource("io.github.sekelenao.smallyaml.test.util.TestUtilities#intProvider")
         @DisplayName("Leading spaces")
         void blankString(int lengthOfBlankString) {
-            var keyValue = Tests.blankString(lengthOfBlankString) + "key: \"test\" \t";
+            var keyValue = TestUtilities.blankString(lengthOfBlankString) + "key: \"test\" \t";
             checkValidKeyValueParsing(keyValue, lengthOfBlankString, "key", "test");
         }
 
