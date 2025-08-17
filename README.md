@@ -19,6 +19,7 @@ Simplified YAML library with limited syntax support and built-in config validati
 - Merging configs with override policies
 - Static config loader
 - Automatic casting at start for safe loading
+- Automatic config template generation
 
 
 ### Overview

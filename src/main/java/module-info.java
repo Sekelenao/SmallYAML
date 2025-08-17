@@ -1,4 +1,5 @@
 module SmallYAML {
+    requires SmallYAML;
 
     // Exception
     exports io.github.sekelenao.smallyaml.api.exception;
@@ -15,4 +16,5 @@ module SmallYAML {
     exports io.github.sekelenao.smallyaml.internal.collection to SmallYAML.test;
     exports io.github.sekelenao.smallyaml.internal.parsing.line to SmallYAML.test;
     exports io.github.sekelenao.smallyaml.internal.parsing.parser to SmallYAML.test;
+    exports io.github.sekelenao.smallyaml.api.config.property;
 }

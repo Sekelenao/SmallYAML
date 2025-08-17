@@ -1,5 +1,8 @@
 package io.github.sekelenao.smallyaml.api.config;
 
+import io.github.sekelenao.smallyaml.api.config.property.MultipleValuesProperty;
+import io.github.sekelenao.smallyaml.api.config.property.SingleValueProperty;
+import io.github.sekelenao.smallyaml.api.config.property.Property;
 import io.github.sekelenao.smallyaml.api.exception.config.MissingPropertyException;
 import io.github.sekelenao.smallyaml.api.exception.config.WrongTypeException;
 import io.github.sekelenao.smallyaml.internal.collection.ValueList;
@@ -12,7 +15,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class SmallYAMLConfig implements Iterable<SmallYAMLProperty> {
+public final class PermissiveConfig implements Iterable<Property> {
 
     private final Map<String, Object> container = new HashMap<>();
 
@@ -109,7 +112,7 @@ public final class SmallYAMLConfig implements Iterable<SmallYAMLProperty> {
     }
 
     @Override
-    public Iterator<SmallYAMLProperty> iterator() {
+    public Iterator<Property> iterator() {
         return new Iterator<>() {
 
             private final Iterator<Map.Entry<String, Object>> iterator = container.entrySet().iterator();
@@ -120,14 +123,14 @@ public final class SmallYAMLConfig implements Iterable<SmallYAMLProperty> {
             }
 
             @Override
-            public SmallYAMLProperty next() {
+            public Property next() {
                 if (!hasNext()){
                     throw new NoSuchElementException();
                 }
                 var current = iterator.next();
                 return switch (current.getValue()){
-                    case String value -> new SmallYAMLValueProperty(current.getKey(), value);
-                    case ValueList valueList -> new SmallYAMLListProperty(current.getKey(), valueList);
+                    case String value -> new SingleValueProperty(current.getKey(), value);
+                    case ValueList valueList -> new MultipleValuesProperty(current.getKey(), valueList.asListView());
                     default -> throw new IllegalStateException("Unexpected value: " + current.getValue());
                 };
             }

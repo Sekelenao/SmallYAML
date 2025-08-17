@@ -1,6 +1,6 @@
 package io.github.sekelenao.smallyaml.api.parsing;
 
-import io.github.sekelenao.smallyaml.api.config.SmallYAMLConfig;
+import io.github.sekelenao.smallyaml.api.config.PermissiveConfig;
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
 import io.github.sekelenao.smallyaml.api.parsing.provider.LineProvider;
 import io.github.sekelenao.smallyaml.internal.parsing.line.EmptyLine;
@@ -21,7 +21,7 @@ public final class SmallYAMLParser {
 
     private Class<? extends Line> previousLineType;
 
-    private SmallYAMLConfig config;
+    private PermissiveConfig config;
 
     private String generateKey(String... lastPart){
         var keysStream = previousKeys.stream().map(KeyLine::key);
@@ -60,9 +60,9 @@ public final class SmallYAMLParser {
         previousLineType =  KeyValueLine.class;
     }
 
-    public SmallYAMLConfig parse(LineProvider lineProvider) throws IOException {
+    public PermissiveConfig parse(LineProvider lineProvider) throws IOException {
         Objects.requireNonNull(lineProvider);
-        config = new SmallYAMLConfig();
+        config = new PermissiveConfig();
         var nextLine = lineProvider.nextLine();
         while (nextLine.isPresent()){
             var line = nextLine.get();
