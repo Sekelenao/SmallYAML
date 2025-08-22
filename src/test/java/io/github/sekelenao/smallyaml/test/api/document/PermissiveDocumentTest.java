@@ -1,6 +1,7 @@
 package io.github.sekelenao.smallyaml.test.api.document;
 
 import io.github.sekelenao.smallyaml.api.document.PermissiveDocument;
+import io.github.sekelenao.smallyaml.api.exception.config.MissingPropertyException;
 import io.github.sekelenao.smallyaml.api.parsing.line.provider.BufferedReaderLineProvider;
 import io.github.sekelenao.smallyaml.test.util.TestUtilities;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,6 +29,7 @@ final class PermissiveDocumentTest {
     }
 
     @Test
+    @Tag(TestingTag.PARSING)
     @DisplayName("Parsing fake simple config is working")
     void parsingFakeSimpleConfig() throws URISyntaxException, IOException {
         var file = TestUtilities.findResource("fake-simple-config.yaml");
@@ -35,6 +38,11 @@ final class PermissiveDocumentTest {
             assertAll(
                 () -> assertEquals("three", document.getAsStringOrThrows("one.two.three")),
                 () -> assertEquals(List.of("five", "six", "seven"), document.getAsListOrThrows("one.four")),
+                () -> assertEquals("end", document.getAsStringOrThrows("eight.nine.ten")),
+                () -> assertEquals(Optional.empty(), document.getAsString("unknown")),
+                () -> assertEquals(Optional.of("three"), document.getAsString("one.two.three")),
+                () -> assertThrows(MissingPropertyException.class, () -> document.getAsStringOrThrows("unknown")),
+                () -> assertEquals("default", document.getAsStringOrDefault("unknown", "default")),
                 () -> TestUtilities.checkAmountOfEachPropertyType(document, 2, 1)
             );
         }
