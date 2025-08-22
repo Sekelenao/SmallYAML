@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,6 +34,7 @@ final class PermissiveDocumentTest {
             var document = PermissiveDocument.from(bufferedReaderLineProvider);
             assertAll(
                 () -> assertEquals("three", document.getAsStringOrThrows("one.two.three")),
+                () -> assertEquals(List.of("five", "six", "seven"), document.getAsListOrThrows("one.four")),
                 () -> TestUtilities.checkAmountOfEachPropertyType(document, 2, 1)
             );
         }
