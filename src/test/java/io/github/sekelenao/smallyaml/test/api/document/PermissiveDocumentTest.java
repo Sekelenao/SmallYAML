@@ -32,7 +32,8 @@ final class PermissiveDocumentTest {
         try(var bufferedReaderLineProvider = new BufferedReaderLineProvider(Files.newBufferedReader(file))) {
             var document = PermissiveDocument.from(bufferedReaderLineProvider);
             assertAll(
-                () -> assertEquals("three", document.getAsStringOrThrows("one.two.three"))
+                () -> assertEquals("three", document.getAsStringOrThrows("one.two.three")),
+                () -> TestUtilities.checkAmountOfEachPropertyType(document, 2, 1)
             );
         }
     }

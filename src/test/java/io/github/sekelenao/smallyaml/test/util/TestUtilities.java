@@ -1,5 +1,8 @@
 package io.github.sekelenao.smallyaml.test.util;
 
+import io.github.sekelenao.smallyaml.api.document.SmallYAMLDocument;
+import io.github.sekelenao.smallyaml.api.document.property.MultipleValuesProperty;
+import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
 import io.github.sekelenao.smallyaml.internal.parsing.parser.StringParser;
 
@@ -65,4 +68,21 @@ public final class TestUtilities {
         }
 
     }
+
+    public static void checkAmountOfEachPropertyType(SmallYAMLDocument document, int single, int multiple){
+        Objects.requireNonNull(document);
+        int amountOfSingleValueProperties = 0;
+        int amountOfMultipleValuesProperties = 0;
+        for (var iterator = document.iterator(); iterator.hasNext(); ) {
+            var property = iterator.next();
+            switch (property){
+                case SingleValueProperty ignored -> amountOfSingleValueProperties++;
+                case MultipleValuesProperty ignored -> amountOfMultipleValuesProperties++;
+                default -> throw new IllegalStateException("Unexpected value: " + property);
+            }
+        }
+        assertEquals(single, amountOfSingleValueProperties);
+        assertEquals(multiple, amountOfMultipleValuesProperties);
+    }
+
 }
