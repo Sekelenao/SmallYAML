@@ -1,8 +1,7 @@
-package io.github.sekelenao.smallyaml.api.parsing;
+package io.github.sekelenao.smallyaml.internal.parsing;
 
-import io.github.sekelenao.smallyaml.api.config.PermissiveConfig;
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
-import io.github.sekelenao.smallyaml.api.parsing.provider.LineProvider;
+import io.github.sekelenao.smallyaml.api.parsing.line.provider.LineProvider;
 import io.github.sekelenao.smallyaml.internal.parsing.line.EmptyLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.KeyLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.KeyValueLine;
@@ -21,8 +20,6 @@ public final class SmallYAMLParser {
 
     private Class<? extends Line> previousLineType;
 
-    private PermissiveConfig config;
-
     private String generateKey(String... lastPart){
         var keysStream = previousKeys.stream().map(KeyLine::key);
         if (lastPart.length > 0) {
@@ -40,40 +37,46 @@ public final class SmallYAMLParser {
         }
     }
 
-    private void treatKeyLine(KeyLine keyLine){
+    private void onKeyLine(KeyLine keyLine){
         checkDepthAndUpdateContext(keyLine.depth(), keyLine.key());
         previousKeys.addLast(keyLine);
-        previousLineType = KeyLine.class;
     }
 
-    private void treatListValueLine(ListValueLine listValueLine){
-        if(previousLineType != KeyLine.class){
-            throw ParsingException.wrongValue("key already have a non list value attached", generateKey() + "...");
+    private void onListValueLine(ListValueLine listValueLine, ParsingCollector collector){
+        if(previousLineType != KeyLine.class && previousLineType != ListValueLine.class){
+            throw ParsingException.wrongValue("no key to attach", "-" + listValueLine.value());
         }
-        config.addValueInList(generateKey(), listValueLine.value());
-        previousLineType = ListValueLine.class;
+        collector.collectListValue(generateKey(), listValueLine.value());
     }
 
-    private void treatKeyValueLine(KeyValueLine keyValueLine){
+    private void onKeyValueLine(KeyValueLine keyValueLine, ParsingCollector collector){
         checkDepthAndUpdateContext(keyValueLine.depth(), keyValueLine.key());
-        config.add(keyValueLine.key(), generateKey(keyValueLine.value()));
-        previousLineType =  KeyValueLine.class;
+        collector.collectSingleValue(generateKey(keyValueLine.key()), keyValueLine.value());
     }
 
-    public PermissiveConfig parse(LineProvider lineProvider) throws IOException {
+    public void parse(LineProvider lineProvider, ParsingCollector collector) throws IOException {
         Objects.requireNonNull(lineProvider);
-        config = new PermissiveConfig();
+        Objects.requireNonNull(collector);
         var nextLine = lineProvider.nextLine();
         while (nextLine.isPresent()){
             var line = nextLine.get();
             switch (line){
                 case EmptyLine ignored -> {/* do nothing */}
-                case KeyLine keyLine -> treatKeyLine(keyLine);
-                case ListValueLine listValueLine -> treatListValueLine(listValueLine);
-                case KeyValueLine keyValueLine -> treatKeyValueLine(keyValueLine);
+                case KeyLine keyLine -> {
+                    onKeyLine(keyLine);
+                    previousLineType = KeyLine.class;
+                }
+                case ListValueLine listValueLine -> {
+                    onListValueLine(listValueLine, collector);
+                    previousLineType = ListValueLine.class;
+                }
+                case KeyValueLine keyValueLine -> {
+                    onKeyValueLine(keyValueLine, collector);
+                    previousLineType =  KeyValueLine.class;
+                }
             }
+            nextLine = lineProvider.nextLine();
         }
-        return config;
     }
 
 

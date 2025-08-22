@@ -1,4 +1,4 @@
-package io.github.sekelenao.smallyaml.api.config.property;
+package io.github.sekelenao.smallyaml.api.document.property;
 
 import java.util.List;
 import java.util.Objects;

@@ -1,12 +1,17 @@
-package io.github.sekelenao.smallyaml.api.config;
+package io.github.sekelenao.smallyaml.api.document;
 
-import io.github.sekelenao.smallyaml.api.config.property.MultipleValuesProperty;
-import io.github.sekelenao.smallyaml.api.config.property.SingleValueProperty;
-import io.github.sekelenao.smallyaml.api.config.property.Property;
+import io.github.sekelenao.smallyaml.api.document.property.MultipleValuesProperty;
+import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
+import io.github.sekelenao.smallyaml.api.document.property.Property;
+import io.github.sekelenao.smallyaml.api.exception.config.DuplicatedPropertyException;
 import io.github.sekelenao.smallyaml.api.exception.config.MissingPropertyException;
 import io.github.sekelenao.smallyaml.api.exception.config.WrongTypeException;
+import io.github.sekelenao.smallyaml.internal.parsing.ParsingCollector;
+import io.github.sekelenao.smallyaml.internal.parsing.SmallYAMLParser;
+import io.github.sekelenao.smallyaml.api.parsing.line.provider.LineProvider;
 import io.github.sekelenao.smallyaml.internal.collection.ValueList;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -15,31 +20,54 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class PermissiveConfig implements Iterable<Property> {
+public final class PermissiveDocument implements Iterable<Property>, SmallYAMLDocument {
 
-    private final Map<String, Object> container = new HashMap<>();
+    private final Map<String, Object> properties;
 
-    public void add(String key, String value) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(value);
-        container.put(key, value);
+    private static final class PermissiveDocumentCollector implements ParsingCollector {
+
+        private final Map<String, Object> collectedProperties = new HashMap<>();
+
+        @Override
+        public void collectSingleValue(String key, String value) {
+            Objects.requireNonNull(key);
+            Objects.requireNonNull(value);
+            if(collectedProperties.containsKey(key)){
+                throw DuplicatedPropertyException.forFollowing(key);
+            }
+            collectedProperties.put(key, value);
+        }
+
+        @Override
+        public void collectListValue(String key, String value) {
+            Objects.requireNonNull(key);
+            Objects.requireNonNull(value);
+            collectedProperties.merge(key, new ValueList(value), (existing, newValue) -> {
+                if (existing instanceof ValueList existingList) {
+                    existingList.add(value);
+                    return existingList;
+                }
+                throw DuplicatedPropertyException.forFollowing(key);
+            });
+        }
+
     }
 
-    public void addValueInList(String key, String value) {
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(value);
-        container.merge(key, new ValueList(value), (existing, newValue) -> {
-            if (existing instanceof ValueList existingList) {
-                existingList.add(value);
-                return existingList;
-            }
-            throw WrongTypeException.withExpectedInsteadOf(existing.getClass(), List.class);
-        });
+    private PermissiveDocument(Map<String, Object> properties){
+        this.properties = Objects.requireNonNull(properties);
+    }
+
+    public static PermissiveDocument from(LineProvider lineProvider) throws IOException {
+        Objects.requireNonNull(lineProvider);
+        var parser = new SmallYAMLParser();
+        var collector = new PermissiveDocumentCollector();
+        parser.parse(lineProvider, collector);
+        return new PermissiveDocument(collector.collectedProperties);
     }
 
     public Optional<String> getAsString(String key){
         Objects.requireNonNull(key);
-        var value = container.get(key);
+        var value = properties.get(key);
         if(value == null){
             return Optional.empty();
         }
@@ -52,7 +80,7 @@ public final class PermissiveConfig implements Iterable<Property> {
     public String getAsStringOrDefault(String key, String defaultValue){
         Objects.requireNonNull(key);
         Objects.requireNonNull(defaultValue);
-        var value = container.get(key);
+        var value = properties.get(key);
         if(value == null){
             return defaultValue;
         }
@@ -64,7 +92,7 @@ public final class PermissiveConfig implements Iterable<Property> {
 
     public String getAsStringOrThrows(String key){
         Objects.requireNonNull(key);
-        var value = container.get(key);
+        var value = properties.get(key);
         if(value == null){
             throw MissingPropertyException.forFollowing(key);
         }
@@ -76,7 +104,7 @@ public final class PermissiveConfig implements Iterable<Property> {
 
     public Optional<List<String>> getAsListValue(String key){
         Objects.requireNonNull(key);
-        var value = container.get(key);
+        var value = properties.get(key);
         if(value == null){
             return Optional.empty();
         }
@@ -89,7 +117,7 @@ public final class PermissiveConfig implements Iterable<Property> {
     public List<String> getAsListOrDefault(String key, List<String> defaultValue){
         Objects.requireNonNull(key);
         Objects.requireNonNull(defaultValue);
-        var value = container.get(key);
+        var value = properties.get(key);
         if(value == null){
             return defaultValue;
         }
@@ -101,7 +129,7 @@ public final class PermissiveConfig implements Iterable<Property> {
 
     public List<String> getAsListOrThrows(String key){
         Objects.requireNonNull(key);
-        var value = container.get(key);
+        var value = properties.get(key);
         if(value == null){
             throw MissingPropertyException.forFollowing(key);
         }
@@ -115,7 +143,7 @@ public final class PermissiveConfig implements Iterable<Property> {
     public Iterator<Property> iterator() {
         return new Iterator<>() {
 
-            private final Iterator<Map.Entry<String, Object>> iterator = container.entrySet().iterator();
+            private final Iterator<Map.Entry<String, Object>> iterator = properties.entrySet().iterator();
 
             @Override
             public boolean hasNext() {

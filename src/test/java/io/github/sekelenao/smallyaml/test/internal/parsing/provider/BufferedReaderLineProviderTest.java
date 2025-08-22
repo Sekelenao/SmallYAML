@@ -1,6 +1,6 @@
 package io.github.sekelenao.smallyaml.test.internal.parsing.provider;
 
-import io.github.sekelenao.smallyaml.api.parsing.provider.BufferedReaderLineProvider;
+import io.github.sekelenao.smallyaml.api.parsing.line.provider.BufferedReaderLineProvider;
 import io.github.sekelenao.smallyaml.internal.parsing.line.EmptyLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.KeyLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.KeyValueLine;
