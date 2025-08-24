@@ -1,7 +1,11 @@
 package io.github.sekelenao.smallyaml.test.internal.parsing.parser;
 
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
-import io.github.sekelenao.smallyaml.internal.parsing.line.*;
+import io.github.sekelenao.smallyaml.internal.parsing.line.EmptyLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.KeyLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.KeyValueLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.Line;
+import io.github.sekelenao.smallyaml.internal.parsing.line.ListValueLine;
 import io.github.sekelenao.smallyaml.internal.parsing.parser.LineParser;
 import io.github.sekelenao.smallyaml.test.util.TestUtilities;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
@@ -15,7 +19,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @Tag(TestingTag.PARSING)
 final class LineParserTest {
@@ -62,7 +71,7 @@ final class LineParserTest {
         @MethodSource("io.github.sekelenao.smallyaml.test.util.TestUtilities#intProvider")
         @DisplayName("Leading spaces")
         void blankString(int lengthOfBlankString) {
-            var listValue = TestUtilities.blankString(lengthOfBlankString) + "-  \"test\"";
+            var listValue = TestUtilities.generateBlankString(lengthOfBlankString) + "-  \"test\"";
             checkValidListValueParsing(listValue, lengthOfBlankString, "test");
         }
 
@@ -109,7 +118,7 @@ final class LineParserTest {
         @MethodSource("io.github.sekelenao.smallyaml.test.util.TestUtilities#intProvider")
         @DisplayName("Leading spaces")
         void blankString(int lengthOfBlankString) {
-            var key = TestUtilities.blankString(lengthOfBlankString) + "key: ";
+            var key = TestUtilities.generateBlankString(lengthOfBlankString) + "key: ";
             checkValidKeyParsing(key, lengthOfBlankString, "key");
         }
 
@@ -171,7 +180,7 @@ final class LineParserTest {
         @MethodSource("io.github.sekelenao.smallyaml.test.util.TestUtilities#intProvider")
         @DisplayName("Leading spaces")
         void blankString(int lengthOfBlankString) {
-            var keyValue = TestUtilities.blankString(lengthOfBlankString) + "key: \"test\" \t";
+            var keyValue = TestUtilities.generateBlankString(lengthOfBlankString) + "key: \"test\" \t";
             checkValidKeyValueParsing(keyValue, lengthOfBlankString, "key", "test");
         }
 

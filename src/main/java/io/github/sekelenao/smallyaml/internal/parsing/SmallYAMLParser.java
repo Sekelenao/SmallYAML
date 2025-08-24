@@ -1,7 +1,7 @@
 package io.github.sekelenao.smallyaml.internal.parsing;
 
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
-import io.github.sekelenao.smallyaml.api.parsing.line.provider.LineProvider;
+import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
 import io.github.sekelenao.smallyaml.internal.parsing.line.EmptyLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.KeyLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.KeyValueLine;

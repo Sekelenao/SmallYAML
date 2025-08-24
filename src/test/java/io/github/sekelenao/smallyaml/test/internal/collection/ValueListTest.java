@@ -11,7 +11,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag(TestingTag.COLLECTION)
 final class ValueListTest {

@@ -1,15 +1,15 @@
 package io.github.sekelenao.smallyaml.api.document;
 
 import io.github.sekelenao.smallyaml.api.document.property.MultipleValuesProperty;
-import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
 import io.github.sekelenao.smallyaml.api.document.property.Property;
+import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
 import io.github.sekelenao.smallyaml.api.exception.config.DuplicatedPropertyException;
 import io.github.sekelenao.smallyaml.api.exception.config.MissingPropertyException;
 import io.github.sekelenao.smallyaml.api.exception.config.WrongTypeException;
+import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
+import io.github.sekelenao.smallyaml.internal.collection.ValueList;
 import io.github.sekelenao.smallyaml.internal.parsing.ParsingCollector;
 import io.github.sekelenao.smallyaml.internal.parsing.SmallYAMLParser;
-import io.github.sekelenao.smallyaml.api.parsing.line.provider.LineProvider;
-import io.github.sekelenao.smallyaml.internal.collection.ValueList;
 
 import java.io.IOException;
 import java.util.HashMap;

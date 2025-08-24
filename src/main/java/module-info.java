@@ -9,7 +9,7 @@ module SmallYAML {
     exports io.github.sekelenao.smallyaml.api.document.property;
 
     // Parsing
-    exports io.github.sekelenao.smallyaml.api.parsing.line.provider;
+    exports io.github.sekelenao.smallyaml.api.line.provider;
 
     // For tests
     exports io.github.sekelenao.smallyaml.internal.collection to SmallYAML.test;

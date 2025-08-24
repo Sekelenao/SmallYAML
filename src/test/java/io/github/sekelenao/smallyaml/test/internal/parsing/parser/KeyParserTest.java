@@ -1,8 +1,8 @@
 package io.github.sekelenao.smallyaml.test.internal.parsing.parser;
 
 import io.github.sekelenao.smallyaml.internal.parsing.parser.KeyParser;
-import io.github.sekelenao.smallyaml.test.util.TestUtilities;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
+import io.github.sekelenao.smallyaml.test.util.stringparser.StringParserTester;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ final class KeyParserTest {
 
     private final KeyParser parser = new KeyParser();
 
-    private final TestUtilities.StringParserTester parsingTester = new TestUtilities.StringParserTester(parser);
+    private final StringParserTester parsingTester = new StringParserTester(parser);
 
     @Test
     @DisplayName("Assertions")
@@ -60,7 +60,7 @@ final class KeyParserTest {
     @Test
     @DisplayName("Key parser can parse multiple values")
     void keyParserCanParseMultipleValues() {
-        var localParsingTester = new TestUtilities.StringParserTester(new KeyParser());
+        var localParsingTester = new StringParserTester(new KeyParser());
         assertAll(
                 () -> localParsingTester.checkException("-dash:", "key start with special character"),
                 () -> localParsingTester.checkValid("yes: ", "yes"),
