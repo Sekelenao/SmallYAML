@@ -1,12 +1,9 @@
 package io.github.sekelenao.smallyaml.test.util;
 
-import io.github.sekelenao.smallyaml.api.document.SmallYAMLDocument;
+import io.github.sekelenao.smallyaml.api.document.Document;
 import io.github.sekelenao.smallyaml.api.document.property.MultipleValuesProperty;
 import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
-import io.github.sekelenao.smallyaml.test.util.resource.TestResource;
 
-import java.net.URISyntaxException;
-import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Stream;
@@ -33,16 +30,7 @@ public final class TestUtilities {
         return Stream.generate(() -> RANDOM.nextInt(MAX)).limit(50);
     }
 
-    public static Path findResource(TestResource testResource) throws URISyntaxException {
-        Objects.requireNonNull(testResource);
-        var url = TestUtilities.class.getClassLoader().getResource(testResource.path());
-        if(url == null){
-            throw new IllegalArgumentException("Resource not found: " + testResource.path());
-        }
-        return Path.of(url.toURI());
-    }
-
-    public static void checkAmountOfEachPropertyType(SmallYAMLDocument document, int single, int multiple){
+    public static void checkAmountOfEachPropertyType(Document document, int single, int multiple){
         Objects.requireNonNull(document);
         int amountOfSingleValueProperties = 0;
         int amountOfMultipleValuesProperties = 0;

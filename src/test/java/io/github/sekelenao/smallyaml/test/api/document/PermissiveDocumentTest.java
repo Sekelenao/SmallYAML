@@ -5,7 +5,9 @@ import io.github.sekelenao.smallyaml.api.exception.config.MissingPropertyExcepti
 import io.github.sekelenao.smallyaml.api.line.provider.BufferedReaderLineProvider;
 import io.github.sekelenao.smallyaml.test.util.TestUtilities;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
-import io.github.sekelenao.smallyaml.test.util.document.correct.CorrectTestDocument;
+import io.github.sekelenao.smallyaml.test.util.document.CorrectTestDocument;
+import io.github.sekelenao.smallyaml.test.util.document.DocumentTester;
+import io.github.sekelenao.smallyaml.test.util.resource.TestResource;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@Tag(TestingTag.PARSING)
 @Tag(TestingTag.COLLECTION)
 final class PermissiveDocumentTest {
 
@@ -30,10 +33,9 @@ final class PermissiveDocumentTest {
     }
 
     @Test
-    @Tag(TestingTag.PARSING)
     @DisplayName("Parsing fake simple config is working")
     void parsingFakeSimpleConfig() throws URISyntaxException, IOException {
-        var file = TestUtilities.findResource(CorrectTestDocument.SIMPLE);
+        var file = TestResource.find(CorrectTestDocument.SIMPLE);
         try(var bufferedReaderLineProvider = new BufferedReaderLineProvider(Files.newBufferedReader(file))) {
             var document = PermissiveDocument.from(bufferedReaderLineProvider);
             assertAll(
@@ -46,6 +48,29 @@ final class PermissiveDocumentTest {
                 () -> assertEquals("default", document.getAsStringOrDefault("unknown", "default")),
                 () -> TestUtilities.checkAmountOfEachPropertyType(document, 2, 1)
             );
+        }
+    }
+
+    @Test
+    @Tag(TestingTag.PARSING)
+    @DisplayName("Contains all records for all documents")
+    void containsAllRecordsForAllDocuments() throws URISyntaxException, IOException {
+        for (var correctTestDocument : CorrectTestDocument.values()){
+            var file = TestResource.find(correctTestDocument);
+            try(var bufferedReaderLineProvider = new BufferedReaderLineProvider(Files.newBufferedReader(file))) {
+                var document = PermissiveDocument.from(bufferedReaderLineProvider);
+                var expectedRecordsCsvPath = correctTestDocument.expectedRecordsCsvResourcePath();
+                DocumentTester.ensureAllRecordsArePresent(
+                    expectedRecordsCsvPath,
+                    document::getAsStringOrThrows,
+                    document::getAsListOrThrows
+                );
+                DocumentTester.ensureAllRecordsArePresent(
+                    expectedRecordsCsvPath,
+                    key -> document.getAsStringOrDefault(key, "@"),
+                    key -> document.getAsListOrDefault(key, List.of("@"))
+                );
+            }
         }
     }
 

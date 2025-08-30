@@ -1,19 +1,19 @@
                                       # Main  configuration
 app:
   name: MyJavaApp
-  version: 1.2.0
+  version: "1.2.0"
   environment: production
   debug: false
-  base-url: https://api.myjavaapp.com
+  base-url: "https://api.myjavaapp.com"
 
 # HTTP server config
 server:
   port: 8080
-  host: 0.0.0.0
+  host: "0.0.0.0"
   context-path: /api
   ssl:
     enabled: true
-    key-store: config/keystore.p12
+    key-store: "config/keystore.p12"
     key-store-password: changeit
 
 # Security parameter
@@ -21,8 +21,8 @@ security:
   # Cors config
   cors:
     allowed-origins:
-      - https://frontend.myjavaapp.com
-      - http://localhost:3000
+      - "https://frontend.myjavaapp.com"
+      - "http://localhost:3000"
     allowed-methods:
       - GET
       - POST
@@ -34,8 +34,8 @@ security:
 
 # Database config
 database:
-  driver: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/mydb
+  driver: "org.postgresql.Driver"
+  url: "jdbc:postgresql://localhost:5432/mydb"
   username: myuser
   password: mypassword
   pool:
@@ -47,7 +47,7 @@ database:
 # Logs configuration
 logging:
   level: INFO
-  file: logs/app.log
+  file: "logs/app.log"
   max-size: 10MB
   max-files: 5
 
@@ -57,7 +57,7 @@ integrations:
     api-key: sk_test_abc123
     enabled: true
   sendgrid:
-    api-key: SG.xxxxx
+    api-key: "SG.xxxxx"
     enabled: false
 
 # List of features
@@ -65,7 +65,7 @@ features:
   - login
   - registration
   - metrics
-  - email-verification
+  - "email-verification"
   - hello
 
 # Personalized parameters

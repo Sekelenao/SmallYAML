@@ -1,7 +1,27 @@
 package io.github.sekelenao.smallyaml.test.util.resource;
 
+import io.github.sekelenao.smallyaml.test.util.TestUtilities;
+
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.util.Objects;
+
 public interface TestResource {
 
-    String path();
+    static Path find(String resourcePath) throws URISyntaxException {
+        Objects.requireNonNull(resourcePath);
+        var url = TestUtilities.class.getClassLoader().getResource(resourcePath);
+        if(url == null){
+            throw new IllegalArgumentException("Resource not found: " + resourcePath);
+        }
+        return Path.of(url.toURI());
+    }
+
+    static Path find(TestResource testResource) throws URISyntaxException {
+        Objects.requireNonNull(testResource);
+        return find(testResource.resourcePath());
+    }
+
+    String resourcePath();
 
 }

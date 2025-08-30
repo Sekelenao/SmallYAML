@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class PermissiveDocument implements Iterable<Property>, SmallYAMLDocument {
+public final class PermissiveDocument implements Iterable<Property>, Document {
 
     private final Map<String, Object> properties;
 

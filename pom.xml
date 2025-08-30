@@ -21,6 +21,12 @@
             <version>5.11.4</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.github.sekelenao</groupId>
+            <artifactId>SkCsv</artifactId>
+            <version>1.0.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

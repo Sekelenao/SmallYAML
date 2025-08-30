@@ -5,9 +5,9 @@ import io.github.sekelenao.smallyaml.internal.parsing.line.EmptyLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.KeyLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.KeyValueLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.ListValueLine;
-import io.github.sekelenao.smallyaml.test.util.TestUtilities;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
-import io.github.sekelenao.smallyaml.test.util.document.correct.CorrectTestDocument;
+import io.github.sekelenao.smallyaml.test.util.document.CorrectTestDocument;
+import io.github.sekelenao.smallyaml.test.util.resource.TestResource;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ final class BufferedReaderLineProviderTest {
         int keyLineCount = 0;
         int listValueLineCount = 0;
         int keyValueLineCount = 0;
-        var bufferedReader = Files.newBufferedReader(TestUtilities.findResource(CorrectTestDocument.SIMPLE));
+        var bufferedReader = Files.newBufferedReader(TestResource.find(CorrectTestDocument.SIMPLE));
         try (var provider = new BufferedReaderLineProvider(bufferedReader)){
             var line = provider.nextLine();
             while (line.isPresent()) {
