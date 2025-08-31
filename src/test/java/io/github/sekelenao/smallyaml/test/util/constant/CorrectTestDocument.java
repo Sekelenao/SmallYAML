@@ -6,6 +6,8 @@ import java.util.Locale;
 
 public enum CorrectTestDocument implements TestResource {
 
+    DOTS_DOCUMENT,
+    REGULAR_TEST_DOCUMENT,
     SIMPLE,
     COMPLETE;
 

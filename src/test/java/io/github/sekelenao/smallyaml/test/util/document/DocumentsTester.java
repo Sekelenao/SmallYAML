@@ -14,14 +14,18 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public final class DocumentTester<D extends Document> {
+public final class DocumentsTester<D extends Document> {
+
+    private static final Logger LOGGER = Logger.getLogger(DocumentsTester.class.getName());
 
     private final DocumentProvider<D> documentProvider;
 
-    public DocumentTester(DocumentProvider<D> documentProvider) {
+    public DocumentsTester(DocumentProvider<D> documentProvider) {
         this.documentProvider = Objects.requireNonNull(documentProvider);
     }
 
@@ -46,6 +50,7 @@ public final class DocumentTester<D extends Document> {
         Objects.requireNonNull(documentSingleStringGetter);
         Objects.requireNonNull(documentStringListGetter);
         for (var documentResource: CorrectTestDocument.values()){
+            LOGGER.log(Level.INFO, "Testing following document : {0}", documentResource);
             var bufferedReader = Files.newBufferedReader(TestResource.find(documentResource));
             var csvPath = TestResource.find(documentResource.csvResourcePath());
             var expectedRecordsCsv = SkCsv.from(csvPath);

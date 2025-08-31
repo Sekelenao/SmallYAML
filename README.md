@@ -3,32 +3,36 @@
 </p>
 
 <h2 align="center">
-Simplified YAML library with limited syntax support and built-in config validation
+Simplified YAML library with limited syntax support and built-in validation
 </h2>
 
 ## Roadmap
 
-### Version 1.0
+### Version 1.0.0
 
 - [ ] YAML parsing and loading
-- [ ] Safe loading (condition checking, default value...)
-- [ ] Deprecation warnings to keep configs simple
-- 
+
+### Version 1.1.0
+
+- [ ] Bounded documents
+- [ ] Deprecation warnings of properties in bounded documents
+
 ### Research & Exploration
 
-- Merging configs with override policies
-- Static config loader
-- Automatic casting at start for safe loading
-- Automatic config template generation
+- Merging documents with override policies
+- Automatic casting for bounded documents at the start for safe loading
+- Automatic document template generation for bounded documents
 
 
 ### Overview
 
-SmallYAML is a simplified YAML library designed with limited syntax support and built-in config validation. It provides a streamlined approach to YAML processing while maintaining essential functionality for most use cases.
+SmallYAML is a simplified YAML library designed with limited syntax support and built-in validation. It provides a 
+streamlined approach to YAML processing while maintaining essential functionality for most use cases.
 
 ### Limitations
 
-While smallYAML covers the majority of YAML use cases, it has some intentional limitations to keep the syntax simple and maintainable:
+While smallYAML covers the majority of YAML use cases, it has some intentional limitations to keep the syntax simple
+and maintainable:
 
 #### 1. Values Must Be on the Same Line as Keys (Except for Lists)
 
@@ -93,7 +97,7 @@ numbers:
 
 #### 4. No Inline Comments on Key Lines
 
-Comments are not allowed on the same line as keys to maintain clean and readable configuration files.
+Comments are not allowed on the same line as keys to maintain clean and readable SmallYAML documents.
 
 ```yaml
 log:

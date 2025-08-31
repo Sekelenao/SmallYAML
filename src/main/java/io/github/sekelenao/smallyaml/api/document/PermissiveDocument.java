@@ -102,7 +102,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         throw WrongTypeException.withExpectedInsteadOf(value.getClass(), String.class);
     }
 
-    public Optional<List<String>> getAsListValue(String key){
+    public Optional<List<String>> getAsList(String key){
         Objects.requireNonNull(key);
         var value = properties.get(key);
         if(value == null){

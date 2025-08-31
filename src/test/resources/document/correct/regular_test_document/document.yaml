@@ -1,0 +1,5 @@
+single-value: value
+multiple-values:
+  - one
+  - two
+  - three
