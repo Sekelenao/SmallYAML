@@ -6,7 +6,7 @@ import io.github.sekelenao.smallyaml.internal.parsing.line.KeyLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.KeyValueLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.ListValueLine;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
-import io.github.sekelenao.smallyaml.test.util.document.CorrectTestDocument;
+import io.github.sekelenao.smallyaml.test.util.constant.CorrectTestDocument;
 import io.github.sekelenao.smallyaml.test.util.resource.TestResource;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;

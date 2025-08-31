@@ -1,4 +1,4 @@
-package io.github.sekelenao.smallyaml.test.util.document;
+package io.github.sekelenao.smallyaml.test.util.constant;
 
 import io.github.sekelenao.smallyaml.test.util.resource.TestResource;
 
@@ -13,7 +13,7 @@ public enum CorrectTestDocument implements TestResource {
         return String.format("document/correct/%s/document.yaml", this.name().toLowerCase(Locale.ROOT));
     }
 
-    public String expectedRecordsCsvResourcePath() {
+    public String csvResourcePath() {
         return String.format("document/correct/%s/expected-records.csv", this.name().toLowerCase(Locale.ROOT));
     }
 
