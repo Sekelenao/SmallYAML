@@ -8,7 +8,15 @@ public class RegularTestDocument {
         throw new IllegalStateException("You cannot instantiate this class");
     }
 
-    public static final CorrectTestDocument TEST_DOCUMENT = CorrectTestDocument.REGULAR_TEST_DOCUMENT;
+    public static final CorrectTestDocument TEST_DOCUMENT = CorrectTestDocument.GENERIC_DOCUMENT_FOR_TEST;
+
+    public static final int EMPTY_LINE_COUNT = 3;
+
+    public static final int KEY_LINE_COUNT = 1;
+
+    public static final int LIST_VALUE_LINE_COUNT = 3;
+
+    public static final int KEY_VALUE_LINE_COUNT = 1;
 
     public static final String SINGLE_VALUE_KEY = "single-value";
 

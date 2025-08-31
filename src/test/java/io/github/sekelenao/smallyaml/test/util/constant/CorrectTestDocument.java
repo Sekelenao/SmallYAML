@@ -6,10 +6,10 @@ import java.util.Locale;
 
 public enum CorrectTestDocument implements TestResource {
 
-    DOTS_DOCUMENT,
-    REGULAR_TEST_DOCUMENT,
-    SIMPLE,
-    COMPLETE;
+    SINGLE_PROPERTY,
+    GENERIC_DOCUMENT_FOR_TEST,
+    DOTS,
+    APPLICATION_CONFIGURATION;
 
     public String resourcePath() {
         return String.format("document/correct/%s/document.yaml", this.name().toLowerCase(Locale.ROOT));

@@ -1,4 +1,7 @@
+# Single value
 single-value: value
+
+# Multiple values
 multiple-values:
   - one
   - two

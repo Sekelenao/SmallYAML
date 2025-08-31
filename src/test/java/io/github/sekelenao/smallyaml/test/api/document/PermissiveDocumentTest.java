@@ -1,7 +1,10 @@
 package io.github.sekelenao.smallyaml.test.api.document;
 
 import io.github.sekelenao.smallyaml.api.document.PermissiveDocument;
+import io.github.sekelenao.smallyaml.api.document.property.MultipleValuesProperty;
+import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
 import io.github.sekelenao.smallyaml.api.exception.config.MissingPropertyException;
+import io.github.sekelenao.smallyaml.api.exception.config.WrongTypeException;
 import io.github.sekelenao.smallyaml.api.line.provider.BufferedReaderLineProvider;
 import io.github.sekelenao.smallyaml.test.util.constant.RegularTestDocument;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
@@ -16,11 +19,13 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag(TestingTag.COLLECTION)
 final class PermissiveDocumentTest {
@@ -48,6 +53,10 @@ final class PermissiveDocumentTest {
         assertAll(
             () -> assertThrows(NullPointerException.class, () -> regularTestDocument.getAsStringOrThrows(null)),
             () -> assertThrows(MissingPropertyException.class, () -> regularTestDocument.getAsStringOrThrows(UNKNOWN_KEY)),
+            () -> assertThrows(
+                WrongTypeException.class,
+                () -> regularTestDocument.getAsStringOrThrows(RegularTestDocument.MULTIPLE_VALUES_KEY)
+            ),
             () -> assertEquals(
                 RegularTestDocument.SINGLE_VALUE,
                 regularTestDocument.getAsStringOrThrows(RegularTestDocument.SINGLE_VALUE_KEY)
@@ -61,6 +70,10 @@ final class PermissiveDocumentTest {
         assertAll(
             () -> assertThrows(NullPointerException.class, () -> regularTestDocument.getAsListOrThrows(null)),
             () -> assertThrows(MissingPropertyException.class, () -> regularTestDocument.getAsListOrThrows(UNKNOWN_KEY)),
+            () -> assertThrows(
+                WrongTypeException.class,
+                () -> regularTestDocument.getAsListOrThrows(RegularTestDocument.SINGLE_VALUE_KEY)
+            ),
             () -> assertEquals(
                 RegularTestDocument.MULTIPLE_VALUES,
                 regularTestDocument.getAsListOrThrows(RegularTestDocument.MULTIPLE_VALUES_KEY)
@@ -74,6 +87,10 @@ final class PermissiveDocumentTest {
         assertAll(
             () -> assertThrows(NullPointerException.class, () -> regularTestDocument.getAsString(null)),
             () -> assertEquals(Optional.empty(), regularTestDocument.getAsString(UNKNOWN_KEY)),
+            () -> assertThrows(
+                WrongTypeException.class,
+                () -> regularTestDocument.getAsString(RegularTestDocument.MULTIPLE_VALUES_KEY)
+            ),
             () -> assertEquals(
                 Optional.of(RegularTestDocument.SINGLE_VALUE),
                 regularTestDocument.getAsString(RegularTestDocument.SINGLE_VALUE_KEY)
@@ -87,6 +104,10 @@ final class PermissiveDocumentTest {
         assertAll(
             () -> assertThrows(NullPointerException.class, () -> regularTestDocument.getAsList(null)),
             () -> assertEquals(Optional.empty(), regularTestDocument.getAsList(UNKNOWN_KEY)),
+            () -> assertThrows(
+                WrongTypeException.class,
+                () -> regularTestDocument.getAsList(RegularTestDocument.SINGLE_VALUE_KEY)
+            ),
             () -> assertEquals(
                 Optional.of(RegularTestDocument.MULTIPLE_VALUES),
                 regularTestDocument.getAsList(RegularTestDocument.MULTIPLE_VALUES_KEY)
@@ -102,6 +123,10 @@ final class PermissiveDocumentTest {
             () -> assertThrows(
                 NullPointerException.class,
                 () -> regularTestDocument.getAsStringOrDefault(RegularTestDocument.SINGLE_VALUE, null)
+            ),
+            () -> assertThrows(
+                WrongTypeException.class,
+                () -> regularTestDocument.getAsStringOrDefault(RegularTestDocument.MULTIPLE_VALUES_KEY, "")
             ),
             () -> assertEquals(
                 RegularTestDocument.SINGLE_VALUE,
@@ -124,11 +149,34 @@ final class PermissiveDocumentTest {
                 NullPointerException.class,
                 () -> regularTestDocument.getAsListOrDefault(RegularTestDocument.MULTIPLE_VALUES_KEY, null)
             ),
+            () -> assertThrows(
+                WrongTypeException.class,
+                () -> regularTestDocument.getAsListOrDefault(RegularTestDocument.SINGLE_VALUE_KEY, emptyList)
+            ),
             () -> assertEquals(
                 RegularTestDocument.MULTIPLE_VALUES,
                 regularTestDocument.getAsListOrDefault(RegularTestDocument.MULTIPLE_VALUES_KEY, emptyList)
             ),
             () -> assertEquals(emptyList, regularTestDocument.getAsListOrDefault(UNKNOWN_KEY, emptyList))
+        );
+    }
+
+    @Test
+    @DisplayName("Property iterator")
+    void propertyIterator() {
+        var iterator = regularTestDocument.iterator();
+        assertAll(
+            () -> assertTrue(iterator.hasNext()),
+            () -> assertEquals(
+                new SingleValueProperty(RegularTestDocument.SINGLE_VALUE_KEY, RegularTestDocument.SINGLE_VALUE),
+                iterator.next()
+            ),
+            () -> assertTrue(iterator.hasNext()),
+            () -> assertEquals(
+                new MultipleValuesProperty(RegularTestDocument.MULTIPLE_VALUES_KEY, RegularTestDocument.MULTIPLE_VALUES),
+                iterator.next()
+            ),
+            () -> assertThrows(NoSuchElementException.class, iterator::next)
         );
     }
 

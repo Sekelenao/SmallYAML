@@ -5,8 +5,8 @@ import io.github.sekelenao.smallyaml.internal.parsing.line.EmptyLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.KeyLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.KeyValueLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.ListValueLine;
+import io.github.sekelenao.smallyaml.test.util.constant.RegularTestDocument;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
-import io.github.sekelenao.smallyaml.test.util.constant.CorrectTestDocument;
 import io.github.sekelenao.smallyaml.test.util.resource.TestResource;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -40,7 +40,7 @@ final class BufferedReaderLineProviderTest {
         int keyLineCount = 0;
         int listValueLineCount = 0;
         int keyValueLineCount = 0;
-        var bufferedReader = Files.newBufferedReader(TestResource.find(CorrectTestDocument.SIMPLE));
+        var bufferedReader = Files.newBufferedReader(TestResource.find(RegularTestDocument.TEST_DOCUMENT));
         try (var provider = new BufferedReaderLineProvider(bufferedReader)){
             var line = provider.nextLine();
             while (line.isPresent()) {
@@ -53,10 +53,10 @@ final class BufferedReaderLineProviderTest {
                 line = provider.nextLine();
             }
         }
-        assertEquals(3, emptyLineCount);
-        assertEquals(5, keyLineCount);
-        assertEquals(3, listValueLineCount);
-        assertEquals(2, keyValueLineCount);
+        assertEquals(RegularTestDocument.EMPTY_LINE_COUNT, emptyLineCount);
+        assertEquals(RegularTestDocument.KEY_LINE_COUNT, keyLineCount);
+        assertEquals(RegularTestDocument.LIST_VALUE_LINE_COUNT, listValueLineCount);
+        assertEquals(RegularTestDocument.KEY_VALUE_LINE_COUNT, keyValueLineCount);
     }
 
 }
