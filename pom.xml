@@ -9,24 +9,57 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
+
+        <!-- Dependencies versions -->
+        <dependency.junit.version>5.11.4</dependency.junit.version>
+        <dependency.skcsv.version>1.0.0</dependency.skcsv.version>
+
+        <!-- Plugins versions -->
+        <plugin.maven.compiler.version>3.14.0</plugin.maven.compiler.version>
+        <plugin.maven.surefire.version>3.5.3</plugin.maven.surefire.version>
+
+        <!-- Project configs -->
         <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.11.4</version>
+            <version>${dependency.junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.github.sekelenao</groupId>
             <artifactId>SkCsv</artifactId>
-            <version>1.0.0</version>
+            <version>${dependency.skcsv.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${plugin.maven.compiler.version}</version>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-Xlint:-module</arg>
+                    </compilerArgs>
+                </configuration>
+
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${plugin.maven.surefire.version}</version>
+            </plugin>
+        </plugins>
+    </build>
+
 
 </project>
