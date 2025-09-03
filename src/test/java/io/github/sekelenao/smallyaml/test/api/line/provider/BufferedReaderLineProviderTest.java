@@ -1,4 +1,4 @@
-package io.github.sekelenao.smallyaml.test.internal.parsing.provider;
+package io.github.sekelenao.smallyaml.test.api.line.provider;
 
 import io.github.sekelenao.smallyaml.api.line.provider.BufferedReaderLineProvider;
 import io.github.sekelenao.smallyaml.internal.parsing.line.EmptyLine;
@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@Tag(TestingTag.API)
 @Tag(TestingTag.PARSING)
 final class BufferedReaderLineProviderTest {
 

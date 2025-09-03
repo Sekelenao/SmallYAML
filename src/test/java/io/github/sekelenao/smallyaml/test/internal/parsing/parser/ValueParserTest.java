@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@Tag(TestingTag.INTERNAL)
 @Tag(TestingTag.PARSING)
 final class ValueParserTest {
 

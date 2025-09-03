@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@Tag(TestingTag.INTERNAL)
 @Tag(TestingTag.PARSING)
 final class LineParserTest {
 

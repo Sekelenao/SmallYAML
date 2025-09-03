@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Tag(TestingTag.API)
 @Tag(TestingTag.COLLECTION)
 final class PermissiveDocumentTest {
 

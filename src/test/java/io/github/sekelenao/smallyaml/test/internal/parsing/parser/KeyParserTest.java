@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@Tag(TestingTag.INTERNAL)
 @Tag(TestingTag.PARSING)
 final class KeyParserTest {
 

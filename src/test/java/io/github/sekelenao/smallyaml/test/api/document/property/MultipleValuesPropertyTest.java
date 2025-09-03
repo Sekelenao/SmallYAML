@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@Tag(TestingTag.API)
 @Tag(TestingTag.COLLECTION)
 final class MultipleValuesPropertyTest {
 
