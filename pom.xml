@@ -6,9 +6,12 @@
 
     <groupId>io.github.sekelenao</groupId>
     <artifactId>SmallYAML</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <properties>
+
+        <!-- Java version -->
+        <project.java.version>21</project.java.version>
 
         <!-- Dependencies versions -->
         <dependency.junit.version>5.11.4</dependency.junit.version>
@@ -19,8 +22,8 @@
         <plugin.maven.surefire.version>3.5.3</plugin.maven.surefire.version>
 
         <!-- Project configs -->
-        <maven.compiler.target>21</maven.compiler.target>
-        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>${project.java.version}</maven.compiler.target>
+        <maven.compiler.source>${project.java.version}</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     </properties>
