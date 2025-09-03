@@ -57,9 +57,6 @@ public final class ValueList implements Iterable<String> {
                 if(!hasNext()){
                     throw new NoSuchElementException();
                 }
-                if(version != nextEmptyIndex){
-                    throw new ConcurrentModificationException();
-                }
                 return values[currentIndex++];
             }
 

@@ -11,11 +11,14 @@ module SmallYAML {
     // Parsing
     exports io.github.sekelenao.smallyaml.api.line.provider;
 
-    // For tests
+    // Exports for tests
     exports io.github.sekelenao.smallyaml.internal.collection to SmallYAML.test;
     exports io.github.sekelenao.smallyaml.internal.parsing.line to SmallYAML.test;
     exports io.github.sekelenao.smallyaml.internal.parsing.parser to SmallYAML.test;
     exports io.github.sekelenao.smallyaml.internal.parsing to SmallYAML.test;
     exports io.github.sekelenao.smallyaml.internal.util to SmallYAML.test;
+
+    // Opens for tests
+    opens io.github.sekelenao.smallyaml.internal.util to SmallYAML.test;
 
 }

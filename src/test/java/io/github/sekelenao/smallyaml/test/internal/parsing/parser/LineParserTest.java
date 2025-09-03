@@ -220,7 +220,7 @@ final class LineParserTest {
     final class EmptyLineParsing {
 
         @ParameterizedTest
-        @ValueSource(strings = {" ", "    # Comment", "#Comment", "  \t    \t", "   \t##", "##"})
+        @ValueSource(strings = {"", " ", "    # Comment", "#Comment", "  \t    \t", "   \t##", "##"})
         @DisplayName("Empty line")
         void emptyLine(String rawLine) {
             var line = parser.parse(rawLine);
