@@ -50,7 +50,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
                     existingList.add(value);
                     return existingList;
                 }
-                throw WrongTypeException.withExpectedInsteadOf(existing.getClass(), ValueList.class);
+                throw new IllegalStateException("Unexpected type: " + existing.getClass());
             });
         }
 
