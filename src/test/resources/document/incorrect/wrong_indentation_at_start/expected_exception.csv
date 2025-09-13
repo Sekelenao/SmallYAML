@@ -1,0 +1,1 @@
+io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;Invalid indentation: first key should start at indentation 0 for: 'wrong-indentation-at-start'

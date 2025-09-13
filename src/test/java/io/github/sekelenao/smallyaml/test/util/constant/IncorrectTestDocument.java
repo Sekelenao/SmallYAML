@@ -7,7 +7,8 @@ import java.util.Locale;
 public enum IncorrectTestDocument implements TestResource {
 
     DUPLICATED_STRING_PROPERTY,
-    DUPLICATED_LIST_PROPERTY;
+    DUPLICATED_LIST_PROPERTY,
+    WRONG_INDENTATION_AT_START;
 
     public String resourcePath() {
         return String.format("document/incorrect/%s/document.yaml", this.name().toLowerCase(Locale.ROOT));

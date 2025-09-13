@@ -32,10 +32,10 @@ public final class DocumentsTester<D extends Document> {
 
     private void logCurrentTestResource(TestResource documentResource){
         var logMessage = String.format(
-            "Testing %s named '%s' for %s",
+            "Testing %s with %s: '%s'",
+            targetDocumentType.getSimpleName(),
             documentResource.getClass().getSimpleName(),
-            documentResource,
-            targetDocumentType
+            documentResource
         );
         System.out.println(logMessage);
     }

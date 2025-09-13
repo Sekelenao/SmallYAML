@@ -10,6 +10,7 @@ public enum CorrectTestDocument implements TestResource {
     GENERIC_DOCUMENT_FOR_TEST,
     DOTS,
     EMPTY,
+    EMPTY_WITH_ONLY_KEYS,
     APPLICATION_CONFIGURATION;
 
     public String resourcePath() {
