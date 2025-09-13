@@ -15,7 +15,7 @@
 
         <!-- Dependencies versions -->
         <dependency.junit.version>5.11.4</dependency.junit.version>
-        <dependency.skcsv.version>1.0.0</dependency.skcsv.version>
+        <dependency.skcsv.version>1.0.1</dependency.skcsv.version>
 
         <!-- Plugins versions -->
         <plugin.maven.compiler.version>3.14.0</plugin.maven.compiler.version>
