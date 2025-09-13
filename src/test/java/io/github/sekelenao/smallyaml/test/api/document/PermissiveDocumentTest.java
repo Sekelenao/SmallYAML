@@ -3,8 +3,8 @@ package io.github.sekelenao.smallyaml.test.api.document;
 import io.github.sekelenao.smallyaml.api.document.PermissiveDocument;
 import io.github.sekelenao.smallyaml.api.document.property.MultipleValuesProperty;
 import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
-import io.github.sekelenao.smallyaml.api.exception.config.MissingPropertyException;
-import io.github.sekelenao.smallyaml.api.exception.config.WrongTypeException;
+import io.github.sekelenao.smallyaml.api.exception.document.MissingPropertyException;
+import io.github.sekelenao.smallyaml.api.exception.document.WrongTypeException;
 import io.github.sekelenao.smallyaml.api.line.provider.BufferedReaderLineProvider;
 import io.github.sekelenao.smallyaml.test.util.constant.RegularTestDocument;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
@@ -185,11 +185,19 @@ final class PermissiveDocumentTest {
     @Tag(TestingTag.PARSING)
     @DisplayName("Contains all records for all documents")
     void containsAllRecordsForAllDocuments() throws URISyntaxException, IOException {
-        var documentTester = new DocumentsTester<>(PermissiveDocument::from);
+        var documentTester = new DocumentsTester<>(PermissiveDocument::from, PermissiveDocument.class);
         documentTester.testWithAllCorrectDocuments(
             PermissiveDocument::getAsStringOrThrows,
             PermissiveDocument::getAsListOrThrows
         );
+    }
+
+    @Test
+    @Tag(TestingTag.PARSING)
+    @DisplayName("Failing on all wrong documents")
+    void failingOnAllWrongDocuments() throws Exception {
+        var documentTester = new DocumentsTester<>(PermissiveDocument::from, PermissiveDocument.class);
+        documentTester.testWithAllIncorrectDocuments();
     }
 
 }

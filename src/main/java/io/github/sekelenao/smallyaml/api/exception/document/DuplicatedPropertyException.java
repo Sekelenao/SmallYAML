@@ -1,4 +1,4 @@
-package io.github.sekelenao.smallyaml.api.exception.config;
+package io.github.sekelenao.smallyaml.api.exception.document;
 
 public class DuplicatedPropertyException extends RuntimeException {
 

@@ -2,7 +2,7 @@ module SmallYAML {
     // Exception
     exports io.github.sekelenao.smallyaml.api.exception;
     exports io.github.sekelenao.smallyaml.api.exception.parsing;
-    exports io.github.sekelenao.smallyaml.api.exception.config;
+    exports io.github.sekelenao.smallyaml.api.exception.document;
 
     // Document
     exports io.github.sekelenao.smallyaml.api.document;

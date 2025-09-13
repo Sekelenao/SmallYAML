@@ -3,9 +3,9 @@ package io.github.sekelenao.smallyaml.api.document;
 import io.github.sekelenao.smallyaml.api.document.property.MultipleValuesProperty;
 import io.github.sekelenao.smallyaml.api.document.property.Property;
 import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
-import io.github.sekelenao.smallyaml.api.exception.config.DuplicatedPropertyException;
-import io.github.sekelenao.smallyaml.api.exception.config.MissingPropertyException;
-import io.github.sekelenao.smallyaml.api.exception.config.WrongTypeException;
+import io.github.sekelenao.smallyaml.api.exception.document.DuplicatedPropertyException;
+import io.github.sekelenao.smallyaml.api.exception.document.MissingPropertyException;
+import io.github.sekelenao.smallyaml.api.exception.document.WrongTypeException;
 import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
 import io.github.sekelenao.smallyaml.internal.collection.ValueList;
 import io.github.sekelenao.smallyaml.internal.parsing.ParsingCollector;
@@ -39,15 +39,18 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         }
 
         @Override
-        public void collectListValue(String key, String value) {
+        public void collectListValue(String key, String value, boolean isNewList) {
             Objects.requireNonNull(key);
             Objects.requireNonNull(value);
             collectedProperties.merge(key, new ValueList(value), (existing, newValue) -> {
+                if(isNewList){
+                    throw DuplicatedPropertyException.forFollowing(key);
+                }
                 if (existing instanceof ValueList existingList) {
                     existingList.add(value);
                     return existingList;
                 }
-                throw DuplicatedPropertyException.forFollowing(key);
+                throw WrongTypeException.withExpectedInsteadOf(existing.getClass(), ValueList.class);
             });
         }
 

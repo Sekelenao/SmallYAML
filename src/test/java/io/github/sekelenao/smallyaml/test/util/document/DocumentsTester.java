@@ -6,6 +6,7 @@ import io.github.sekelenao.smallyaml.api.document.property.MultipleValuesPropert
 import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
 import io.github.sekelenao.smallyaml.api.line.provider.BufferedReaderLineProvider;
 import io.github.sekelenao.smallyaml.test.util.constant.CorrectTestDocument;
+import io.github.sekelenao.smallyaml.test.util.constant.IncorrectTestDocument;
 import io.github.sekelenao.smallyaml.test.util.document.property.PropertyType;
 import io.github.sekelenao.smallyaml.test.util.document.property.PropertyTypeCounter;
 import io.github.sekelenao.smallyaml.test.util.resource.TestResource;
@@ -16,13 +17,27 @@ import java.nio.file.Files;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public final class DocumentsTester<D extends Document> {
 
     private final DocumentProvider<D> documentProvider;
 
-    public DocumentsTester(DocumentProvider<D> documentProvider) {
+    private final Class<D> targetDocumentType;
+
+    public DocumentsTester(DocumentProvider<D> documentProvider, Class<D> targetDocumentType) {
         this.documentProvider = Objects.requireNonNull(documentProvider);
+        this.targetDocumentType = Objects.requireNonNull(targetDocumentType);
+    }
+
+    private void logCurrentTestResource(TestResource documentResource){
+        var logMessage = String.format(
+            "Testing %s named '%s' for %s",
+            documentResource.getClass().getSimpleName(),
+            documentResource,
+            targetDocumentType
+        );
+        System.out.println(logMessage);
     }
 
     private static PropertyTypeCounter amountOfPropertyTypeFor(Document document){
@@ -46,13 +61,12 @@ public final class DocumentsTester<D extends Document> {
         Objects.requireNonNull(documentSingleStringGetter);
         Objects.requireNonNull(documentStringListGetter);
         for (var documentResource: CorrectTestDocument.values()){
+            logCurrentTestResource(documentResource);
             var bufferedReader = Files.newBufferedReader(TestResource.find(documentResource));
             var csvPath = TestResource.find(documentResource.csvResourcePath());
             var expectedRecordsCsv = SkCsv.from(csvPath);
             try(var bufferedReaderLineProvider = new BufferedReaderLineProvider(bufferedReader)) {
                 var document = documentProvider.from(bufferedReaderLineProvider);
-                var logMessage = String.format("Testing correct document '%s' with %s", documentResource, document.getClass());
-                System.out.println(logMessage);
                 var propertyTypeInCsvCounter = new  PropertyTypeCounter();
                 for (var line : expectedRecordsCsv){
                     var key = line.getFirst();
@@ -74,6 +88,28 @@ public final class DocumentsTester<D extends Document> {
             }
         }
 
+    }
+
+    @SuppressWarnings("unchecked")
+    public void testWithAllIncorrectDocuments() throws IOException, URISyntaxException, ClassNotFoundException {
+        for (var documentResource: IncorrectTestDocument.values()) {
+            logCurrentTestResource(documentResource);
+            var bufferedReader = Files.newBufferedReader(TestResource.find(documentResource));
+            var csvPath = TestResource.find(documentResource.csvResourcePath());
+            var expectedExceptionCsv = SkCsv.from(csvPath);
+            try (var bufferedReaderLineProvider = new BufferedReaderLineProvider(bufferedReader)) {
+                var expectedExceptionRow = expectedExceptionCsv.getFirst();
+                var expectedExceptionType = Class.forName(expectedExceptionRow.getFirst());
+                var expectedExceptionMessage = expectedExceptionRow.get(1);
+                var exceptionClass = (Class<? extends RuntimeException>) expectedExceptionType;
+                var exception = assertThrows(
+                    exceptionClass,
+                    () -> documentProvider.from(bufferedReaderLineProvider),
+                    "Expected exception: " + expectedExceptionType
+                );
+                assertEquals(exception.getMessage(), expectedExceptionMessage);
+            }
+        }
     }
 
 }

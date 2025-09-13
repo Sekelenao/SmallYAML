@@ -1,4 +1,4 @@
-package io.github.sekelenao.smallyaml.api.exception.config;
+package io.github.sekelenao.smallyaml.api.exception.document;
 
 import io.github.sekelenao.smallyaml.api.exception.SmallYAMLException;
 
