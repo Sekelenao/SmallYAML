@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag(TestingTag.INTERNAL)
@@ -49,6 +50,23 @@ final class ValueParserTest {
     @DisplayName("Unescaped quote inside quoted value")
     void unescapedQuoteInsideQuotedValue() {
         parsingTester.checkException("\"te\"st\"", "unescaped quote");
+    }
+
+    @Test
+    @DisplayName("Backslash is handled correctly")
+    void backslashIsHandledCorrectly() {
+        assertAll(
+            () -> parsingTester.checkValid("\"te\\st\"", "te\\st"),
+            () -> parsingTester.checkValid("te\\st", "te\\st"),
+            () -> parsingTester.checkValid("test\\", "test\\"),
+            () -> parsingTester.checkValid("\"test\\\"", "test\\")
+        );
+    }
+
+    @Test
+    @DisplayName("Missing ending quote")
+    void missingEndingQuote() {
+        parsingTester.checkException("\"", "missing ending quote");
     }
 
     @ParameterizedTest

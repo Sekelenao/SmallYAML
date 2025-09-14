@@ -8,7 +8,9 @@ public enum IncorrectTestDocument implements TestResource {
 
     DUPLICATED_STRING_PROPERTY,
     DUPLICATED_LIST_PROPERTY,
-    WRONG_INDENTATION_AT_START;
+    WRONG_INDENTATION_AT_START,
+    LIST_VALUE_WITHOUT_KEY,
+    LIST_VALUE_ALONE;
 
     public String resourcePath() {
         return String.format("document/incorrect/%s/document.yaml", this.name().toLowerCase(Locale.ROOT));

@@ -44,7 +44,7 @@ public final class SmallYAMLParser {
 
     private void onListValueLine(ListValueLine listValueLine, ParsingCollector collector){
         if(previousLineType != KeyLine.class && previousLineType != ListValueLine.class){
-            throw ParsingException.wrongValue("no key to attach", "-" + listValueLine.value());
+            throw ParsingException.wrongValue("no key to attach", "- " + listValueLine.value());
         }
         collector.collectListValue(generateKey(), listValueLine.value(), previousLineType != ListValueLine.class);
     }

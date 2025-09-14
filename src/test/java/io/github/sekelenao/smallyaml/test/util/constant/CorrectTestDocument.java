@@ -11,6 +11,7 @@ public enum CorrectTestDocument implements TestResource {
     DOTS,
     EMPTY,
     EMPTY_WITH_ONLY_KEYS,
+    KEY_WITH_BLANK_VALUE,
     APPLICATION_CONFIGURATION;
 
     public String resourcePath() {
