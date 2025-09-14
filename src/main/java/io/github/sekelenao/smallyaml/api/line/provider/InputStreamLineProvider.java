@@ -89,6 +89,7 @@ public class InputStreamLineProvider implements LineProvider {
                     return Optional.empty();
                 }
                 var lastLine = stringBuilder.toString();
+                stringBuilder.setLength(0);
                 return Optional.of(lineParser.parse(lastLine));
             }
         }
@@ -103,5 +104,4 @@ public class InputStreamLineProvider implements LineProvider {
     public void close() throws IOException {
         channel.close();
     }
-
 }
