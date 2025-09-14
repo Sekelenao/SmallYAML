@@ -4,7 +4,7 @@ import io.github.sekelenao.skcsv.SkCsv;
 import io.github.sekelenao.smallyaml.api.document.Document;
 import io.github.sekelenao.smallyaml.api.document.property.MultipleValuesProperty;
 import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
-import io.github.sekelenao.smallyaml.api.line.provider.BufferedReaderLineProvider;
+import io.github.sekelenao.smallyaml.api.line.provider.InputStreamLineProvider;
 import io.github.sekelenao.smallyaml.test.util.constant.CorrectTestDocument;
 import io.github.sekelenao.smallyaml.test.util.constant.IncorrectTestDocument;
 import io.github.sekelenao.smallyaml.test.util.document.property.PropertyType;
@@ -13,7 +13,6 @@ import io.github.sekelenao.smallyaml.test.util.resource.TestResource;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -62,10 +61,10 @@ public final class DocumentsTester<D extends Document> {
         Objects.requireNonNull(documentStringListGetter);
         for (var documentResource: CorrectTestDocument.values()){
             logCurrentTestResource(documentResource);
-            var bufferedReader = Files.newBufferedReader(TestResource.find(documentResource));
             var csvPath = TestResource.find(documentResource.csvResourcePath());
             var expectedRecordsCsv = SkCsv.from(csvPath);
-            try(var bufferedReaderLineProvider = new BufferedReaderLineProvider(bufferedReader)) {
+            var inputStream = TestResource.asInputStream(documentResource);
+            try(var bufferedReaderLineProvider = new InputStreamLineProvider(inputStream)) {
                 var document = documentProvider.from(bufferedReaderLineProvider);
                 var propertyTypeInCsvCounter = new  PropertyTypeCounter();
                 for (var line : expectedRecordsCsv){
@@ -94,10 +93,10 @@ public final class DocumentsTester<D extends Document> {
     public void testWithAllIncorrectDocuments() throws IOException, URISyntaxException, ClassNotFoundException {
         for (var documentResource: IncorrectTestDocument.values()) {
             logCurrentTestResource(documentResource);
-            var bufferedReader = Files.newBufferedReader(TestResource.find(documentResource));
+            var inputStream = TestResource.asInputStream(documentResource);
             var csvPath = TestResource.find(documentResource.csvResourcePath());
             var expectedExceptionCsv = SkCsv.from(csvPath);
-            try (var bufferedReaderLineProvider = new BufferedReaderLineProvider(bufferedReader)) {
+            try (var bufferedReaderLineProvider = new InputStreamLineProvider(inputStream)) {
                 var expectedExceptionRow = expectedExceptionCsv.getFirst();
                 var expectedExceptionType = Class.forName(expectedExceptionRow.getFirst());
                 var expectedExceptionMessage = expectedExceptionRow.get(1);

@@ -12,24 +12,20 @@ public final class BufferedReaderLineProvider implements LineProvider {
 
     private final LineParser parser = new LineParser();
 
-    private final BufferedReader reader;
+    private final BufferedReader bufferedReader;
 
-    public BufferedReaderLineProvider(BufferedReader reader){
-        this.reader = Objects.requireNonNull(reader);
+    public BufferedReaderLineProvider(BufferedReader bufferedReader){
+        this.bufferedReader = Objects.requireNonNull(bufferedReader);
     }
 
     @Override
     public Optional<Line> nextLine() throws IOException {
-        var rawLine = reader.readLine();
-        if(rawLine == null){
-            return Optional.empty();
-        }
-        return Optional.of(parser.parse(rawLine));
+        return Optional.ofNullable(bufferedReader.readLine()).map(parser::parse);
     }
 
     @Override
     public void close() throws IOException {
-        reader.close();
+        bufferedReader.close();
     }
 
 }

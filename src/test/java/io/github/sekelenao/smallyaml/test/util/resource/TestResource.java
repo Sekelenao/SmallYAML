@@ -2,6 +2,7 @@ package io.github.sekelenao.smallyaml.test.util.resource;
 
 import io.github.sekelenao.smallyaml.test.util.TestUtilities;
 
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -20,6 +21,10 @@ public interface TestResource {
     static Path find(TestResource testResource) throws URISyntaxException {
         Objects.requireNonNull(testResource);
         return find(testResource.resourcePath());
+    }
+
+    static InputStream asInputStream(TestResource testResource) {
+        return TestUtilities.class.getClassLoader().getResourceAsStream(testResource.resourcePath());
     }
 
     String resourcePath();
