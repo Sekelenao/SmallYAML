@@ -6,8 +6,10 @@
 Simplified YAML library with limited syntax support and built-in validation
 </h2>
 
+[![Build](./badges/build.svg)](https://github.com/Sekelenao/SmallYAML/actions/workflows/maven.yml)
 [![Coverage](./badges/jacoco.svg)](https://github.com/Sekelenao/SmallYAML/actions/workflows/maven.yml)
 [![Branches](./badges/branches.svg)](https://github.com/Sekelenao/SmallYAML/actions/workflows/maven.yml)
+![Java](https://img.shields.io/badge/Java-21%2B-orange)
 
 ## Overview
 
