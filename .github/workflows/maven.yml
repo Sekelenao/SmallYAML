@@ -29,6 +29,10 @@ jobs:
         badges-directory: badges
         generate-branches-badge: true
         generate-summary: true
+        coverage-badge-filename: Coverage.svg
+        branches-badge-filename: Branches.svg
+        coverage-label: Coverage
+        branches-label: Branches
 
     - name: Commit and push badges
       if: github.event_name == 'push'

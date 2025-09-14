@@ -6,10 +6,11 @@
 Simplified YAML library with limited syntax support and built-in validation
 </h2>
 
-[![Build](./badges/build.svg)](https://github.com/Sekelenao/SmallYAML/actions/workflows/maven.yml)
-[![Coverage](./badges/jacoco.svg)](https://github.com/Sekelenao/SmallYAML/actions/workflows/maven.yml)
-[![Branches](./badges/branches.svg)](https://github.com/Sekelenao/SmallYAML/actions/workflows/maven.yml)
-![Java](https://img.shields.io/badge/Java-21%2B-orange)
+### Status: No stable release yet
+
+[![Java](https://img.shields.io/badge/Java_21%2B-%23ED8B00.svg?logo=openjdk&logoColor=white)](https://docs.oracle.com/en/java/javase/21/docs/api/index.html)
+[![Coverage](./badges/Coverage.svg)](https://github.com/Sekelenao/SmallYAML/actions/workflows/maven.yml)
+[![Branches](./badges/Branches.svg)](https://github.com/Sekelenao/SmallYAML/actions/workflows/maven.yml)
 
 ## Overview
 
