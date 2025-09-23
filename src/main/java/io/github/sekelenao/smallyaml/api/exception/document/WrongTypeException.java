@@ -5,8 +5,6 @@ import io.github.sekelenao.smallyaml.api.exception.SmallYAMLException;
 
 public class WrongTypeException extends SmallYAMLException {
 
-    public enum Type { SINGLE, MULTIPLE }
-
     private WrongTypeException(String message) {
         super(message);
     }
