@@ -19,10 +19,4 @@ public final class Assertions {
         }
     }
 
-    public static void isStrictlyPositive(int value){
-        if(value <= 0){
-            throw new IllegalArgumentException("Value must be strictly positive: " + value);
-        }
-    }
-
 }

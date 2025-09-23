@@ -1,7 +1,7 @@
 package io.github.sekelenao.smallyaml.test.internal.util;
 
 import io.github.sekelenao.smallyaml.internal.util.Assertions;
-import io.github.sekelenao.smallyaml.test.util.TestUtilities;
+import io.github.sekelenao.smallyaml.test.util.Reflections;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -19,7 +19,7 @@ final class AssertionsTest {
     @Test
     @DisplayName("Private constructor throws AssertionError")
     void privateConstructorTest() {
-        assertAll(() -> TestUtilities.ensureIsUtilityClass(Assertions.class));
+        assertAll(() -> Reflections.ensureIsUtilityClass(Assertions.class));
     }
 
     @ParameterizedTest

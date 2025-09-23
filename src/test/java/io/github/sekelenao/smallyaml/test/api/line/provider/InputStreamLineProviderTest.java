@@ -1,7 +1,6 @@
 package io.github.sekelenao.smallyaml.test.api.line.provider;
 
 import io.github.sekelenao.smallyaml.api.line.provider.InputStreamLineProvider;
-import io.github.sekelenao.smallyaml.test.util.constant.CorrectTestDocument;
 import io.github.sekelenao.smallyaml.test.util.constant.RegularTestDocument;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import io.github.sekelenao.smallyaml.test.util.line.provider.LineProviderTester;
@@ -67,7 +66,7 @@ final class InputStreamLineProviderTest {
     })
     @DisplayName("Complete config parsing with different charsets")
     void completeConfigParsingWithDifferentCharsets(String charset) throws IOException, URISyntaxException {
-        var test = TestResource.find(CorrectTestDocument.GENERIC_DOCUMENT_FOR_TEST);
+        var test = TestResource.find(RegularTestDocument.TEST_DOCUMENT);
         var targetCharset = Charset.forName(charset);
         var bytes = Files.readString(test).getBytes(targetCharset);
         var inputStream = new ByteArrayInputStream(bytes);

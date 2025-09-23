@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 public final class PermissiveDocument implements Iterable<Property>, Document {
 
@@ -77,7 +78,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         if(value instanceof String valueAsString){
             return Optional.of(valueAsString);
         }
-        throw WrongTypeException.withExpectedInsteadOf(value.getClass(), String.class);
+        throw WrongTypeException.withExpected(Property.Type.SINGLE);
     }
 
     public String getAsStringOrDefault(String key, String defaultValue){
@@ -90,7 +91,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         if(value instanceof String valueAsString){
             return valueAsString;
         }
-        throw WrongTypeException.withExpectedInsteadOf(value.getClass(), String.class);
+        throw WrongTypeException.withExpected(Property.Type.SINGLE);
     }
 
     public String getAsStringOrThrows(String key){
@@ -102,10 +103,10 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         if(value instanceof String valueAsString){
             return valueAsString;
         }
-        throw WrongTypeException.withExpectedInsteadOf(value.getClass(), String.class);
+        throw WrongTypeException.withExpected(Property.Type.SINGLE);
     }
 
-    public Optional<List<String>> getAsList(String key){
+    public Optional<List<String>> getAsStringList(String key){
         Objects.requireNonNull(key);
         var value = properties.get(key);
         if(value == null){
@@ -114,10 +115,10 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         if(value instanceof ValueList valueList){
             return Optional.of(valueList.asListView());
         }
-        throw WrongTypeException.withExpectedInsteadOf(value.getClass(), List.class);
+        throw WrongTypeException.withExpected(Property.Type.MULTIPLE);
     }
 
-    public List<String> getAsListOrDefault(String key, List<String> defaultValue){
+    public List<String> getAsStringListOrDefault(String key, List<String> defaultValue){
         Objects.requireNonNull(key);
         Objects.requireNonNull(defaultValue);
         var value = properties.get(key);
@@ -127,10 +128,10 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         if(value instanceof ValueList valueList){
             return valueList.asListView();
         }
-        throw WrongTypeException.withExpectedInsteadOf(value.getClass(), List.class);
+        throw WrongTypeException.withExpected(Property.Type.MULTIPLE);
     }
 
-    public List<String> getAsListOrThrows(String key){
+    public List<String> getAsStringListOrThrows(String key){
         Objects.requireNonNull(key);
         var value = properties.get(key);
         if(value == null){
@@ -139,7 +140,21 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         if(value instanceof ValueList valueList){
             return valueList.asListView();
         }
-        throw WrongTypeException.withExpectedInsteadOf(value.getClass(), List.class);
+        throw WrongTypeException.withExpected(Property.Type.MULTIPLE);
+    }
+
+    public <T> Optional<T> getSingle(String key, Function<? super String, T> converter){
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(converter);
+        var value = properties.get(key);
+        if(value == null){
+            return Optional.empty();
+        }
+        if(value instanceof String valueAsString){
+            var convertedValue = converter.apply(valueAsString);
+            return Optional.of(convertedValue);
+        }
+        throw WrongTypeException.withExpected(Property.Type.SINGLE);
     }
 
     @Override

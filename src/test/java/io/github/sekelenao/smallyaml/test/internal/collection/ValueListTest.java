@@ -44,7 +44,7 @@ final class ValueListTest {
     }
 
     @ParameterizedTest(name = "{displayName} ({0})")
-    @MethodSource("io.github.sekelenao.smallyaml.test.util.TestUtilities#intProvider")
+    @MethodSource("io.github.sekelenao.smallyaml.test.util.Randoms#intStream")
     @DisplayName("Adding a lot of value")
     void addingALotOfValue(int amount) {
         var valueList = new ValueList("first");

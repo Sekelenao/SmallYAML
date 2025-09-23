@@ -31,7 +31,6 @@ public final class InputStreamLineProvider implements LineProvider {
 
     @Override
     public Optional<Line> nextLine() throws IOException {
-
         return Optional.ofNullable(bufferedReader.readLine()).map(parser::parse);
     }
 

@@ -2,12 +2,11 @@ package io.github.sekelenao.smallyaml.test.util.stringparser;
 
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
 import io.github.sekelenao.smallyaml.internal.parsing.parser.StringParser;
+import io.github.sekelenao.smallyaml.test.util.Exceptions;
 
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class StringParserTester {
 
@@ -26,10 +25,10 @@ public final class StringParserTester {
     public void checkException(String rawLine, String expectedExceptionDetails) {
         Objects.requireNonNull(rawLine);
         Objects.requireNonNull(expectedExceptionDetails);
-        var exception = assertThrows(ParsingException.class, () -> parser.parse(rawLine));
-        assertTrue(
-            exception.getMessage().contains(expectedExceptionDetails),
-            "Exception message should contain " + expectedExceptionDetails + " but is: " + exception.getMessage()
+        Exceptions.isThrownAndContains(
+            ParsingException.class,
+            () -> parser.parse(rawLine),
+            expectedExceptionDetails
         );
     }
 

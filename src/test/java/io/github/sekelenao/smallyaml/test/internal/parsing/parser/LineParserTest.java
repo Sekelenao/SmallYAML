@@ -7,8 +7,8 @@ import io.github.sekelenao.smallyaml.internal.parsing.line.KeyValueLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.Line;
 import io.github.sekelenao.smallyaml.internal.parsing.line.ListValueLine;
 import io.github.sekelenao.smallyaml.internal.parsing.parser.LineParser;
-import io.github.sekelenao.smallyaml.test.util.TestUtilities;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
+import io.github.sekelenao.smallyaml.test.util.Randoms;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -69,10 +69,10 @@ final class LineParserTest {
         }
 
         @ParameterizedTest(name = "{displayName} ({0})")
-        @MethodSource("io.github.sekelenao.smallyaml.test.util.TestUtilities#intProvider")
+        @MethodSource("io.github.sekelenao.smallyaml.test.util.Randoms#intStream")
         @DisplayName("Leading spaces")
         void blankString(int lengthOfBlankString) {
-            var listValue = TestUtilities.generateBlankString(lengthOfBlankString) + "-  \"test\"";
+            var listValue = Randoms.blankString(lengthOfBlankString) + "-  \"test\"";
             checkValidListValueParsing(listValue, lengthOfBlankString, "test");
         }
 
@@ -116,10 +116,10 @@ final class LineParserTest {
         }
 
         @ParameterizedTest(name = "{displayName} ({0})")
-        @MethodSource("io.github.sekelenao.smallyaml.test.util.TestUtilities#intProvider")
+        @MethodSource("io.github.sekelenao.smallyaml.test.util.Randoms#intStream")
         @DisplayName("Leading spaces")
         void blankString(int lengthOfBlankString) {
-            var key = TestUtilities.generateBlankString(lengthOfBlankString) + "key: ";
+            var key = Randoms.blankString(lengthOfBlankString) + "key: ";
             checkValidKeyParsing(key, lengthOfBlankString, "key");
         }
 
@@ -178,10 +178,10 @@ final class LineParserTest {
         }
 
         @ParameterizedTest(name = "{displayName} ({0})")
-        @MethodSource("io.github.sekelenao.smallyaml.test.util.TestUtilities#intProvider")
+        @MethodSource("io.github.sekelenao.smallyaml.test.util.Randoms#intStream")
         @DisplayName("Leading spaces")
         void blankString(int lengthOfBlankString) {
-            var keyValue = TestUtilities.generateBlankString(lengthOfBlankString) + "key: \"test\" \t";
+            var keyValue = Randoms.blankString(lengthOfBlankString) + "key: \"test\" \t";
             checkValidKeyValueParsing(keyValue, lengthOfBlankString, "key", "test");
         }
 
