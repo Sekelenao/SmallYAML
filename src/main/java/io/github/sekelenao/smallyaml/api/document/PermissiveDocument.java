@@ -157,6 +157,74 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         throw WrongTypeException.withExpected(Property.Type.SINGLE);
     }
 
+    public <T> T getSingleOrDefault(String key, Function<? super String, T> converter, T defaultValue){
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(converter);
+        Objects.requireNonNull(defaultValue);
+        var value = properties.get(key);
+        if(value == null){
+            return defaultValue;
+        }
+        if(value instanceof String valueAsString){
+            return converter.apply(valueAsString);
+        }
+        throw WrongTypeException.withExpected(Property.Type.SINGLE);
+    }
+
+    public <T> T getSingleOrThrows(String key, Function<? super String, T> converter){
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(converter);
+        var value = properties.get(key);
+        if(value == null){
+            throw MissingPropertyException.forFollowing(key);
+        }
+        if(value instanceof String valueAsString){
+            return converter.apply(valueAsString);
+        }
+        throw WrongTypeException.withExpected(Property.Type.SINGLE);
+    }
+
+    public <T> Optional<T> getMultiple(String key, Function<Iterable<? super String>, T> converter){
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(converter);
+        var value = properties.get(key);
+        if(value == null){
+            return Optional.empty();
+        }
+        if(value instanceof ValueList valueList){
+            var convertedValue = converter.apply(valueList.asListView());
+            return Optional.of(convertedValue);
+        }
+        throw WrongTypeException.withExpected(Property.Type.MULTIPLE);
+    }
+
+    public <T> T getMultipleOrDefault(String key, Function<Iterable<? super String>, T> converter, T defaultValue){
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(converter);
+        Objects.requireNonNull(defaultValue);
+        var value = properties.get(key);
+        if(value == null){
+            return defaultValue;
+        }
+        if(value instanceof ValueList valueList){
+            return converter.apply(valueList.asListView());
+        }
+        throw WrongTypeException.withExpected(Property.Type.MULTIPLE);
+    }
+
+    public <T> T getMultipleOrThrows(String key, Function<Iterable<? super String>, T> converter){
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(converter);
+        var value = properties.get(key);
+        if(value == null){
+            throw MissingPropertyException.forFollowing(key);
+        }
+        if(value instanceof ValueList valueList){
+            return converter.apply(valueList.asListView());
+        }
+        throw WrongTypeException.withExpected(Property.Type.MULTIPLE);
+    }
+
     @Override
     public Iterator<Property> iterator() {
         return new Iterator<>() {
