@@ -69,7 +69,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         return new PermissiveDocument(collector.collectedProperties);
     }
 
-    public Optional<String> getAsString(String key){
+    public Optional<String> getSingleString(String key){
         Objects.requireNonNull(key);
         var value = properties.get(key);
         if(value == null){
@@ -81,7 +81,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
     }
 
-    public String getAsStringOrDefault(String key, String defaultValue){
+    public String getSingleStringOrDefault(String key, String defaultValue){
         Objects.requireNonNull(key);
         Objects.requireNonNull(defaultValue);
         var value = properties.get(key);
@@ -94,7 +94,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
     }
 
-    public String getAsStringOrThrows(String key){
+    public String getSingleStringOrThrows(String key){
         Objects.requireNonNull(key);
         var value = properties.get(key);
         if(value == null){
@@ -106,7 +106,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
     }
 
-    public Optional<List<String>> getAsStringList(String key){
+    public Optional<List<String>> getMultipleStrings(String key){
         Objects.requireNonNull(key);
         var value = properties.get(key);
         if(value == null){
@@ -118,7 +118,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
     }
 
-    public List<String> getAsStringListOrDefault(String key, List<String> defaultValue){
+    public List<String> getMultipleStringsOrDefault(String key, List<String> defaultValue){
         Objects.requireNonNull(key);
         Objects.requireNonNull(defaultValue);
         var value = properties.get(key);
@@ -131,7 +131,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
     }
 
-    public List<String> getAsStringListOrThrows(String key){
+    public List<String> getMultipleStringsOrThrows(String key){
         Objects.requireNonNull(key);
         var value = properties.get(key);
         if(value == null){
