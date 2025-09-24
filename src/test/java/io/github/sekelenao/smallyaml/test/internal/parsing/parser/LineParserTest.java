@@ -69,7 +69,7 @@ final class LineParserTest {
         }
 
         @ParameterizedTest(name = "{displayName} ({0})")
-        @MethodSource("io.github.sekelenao.smallyaml.test.util.Randoms#intStream")
+        @MethodSource("io.github.sekelenao.smallyaml.test.util.Randoms#intStreamWithSize50")
         @DisplayName("Leading spaces")
         void blankString(int lengthOfBlankString) {
             var listValue = Randoms.blankString(lengthOfBlankString) + "-  \"test\"";
@@ -116,7 +116,7 @@ final class LineParserTest {
         }
 
         @ParameterizedTest(name = "{displayName} ({0})")
-        @MethodSource("io.github.sekelenao.smallyaml.test.util.Randoms#intStream")
+        @MethodSource("io.github.sekelenao.smallyaml.test.util.Randoms#intStreamWithSize50")
         @DisplayName("Leading spaces")
         void blankString(int lengthOfBlankString) {
             var key = Randoms.blankString(lengthOfBlankString) + "key: ";
@@ -178,7 +178,7 @@ final class LineParserTest {
         }
 
         @ParameterizedTest(name = "{displayName} ({0})")
-        @MethodSource("io.github.sekelenao.smallyaml.test.util.Randoms#intStream")
+        @MethodSource("io.github.sekelenao.smallyaml.test.util.Randoms#intStreamWithSize50")
         @DisplayName("Leading spaces")
         void blankString(int lengthOfBlankString) {
             var keyValue = Randoms.blankString(lengthOfBlankString) + "key: \"test\" \t";

@@ -7,7 +7,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Spliterator;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public final class ValueList implements Iterable<String> {
 
@@ -80,6 +84,58 @@ public final class ValueList implements Iterable<String> {
             @Override
             public int size() {
                 return nextEmptyIndex;
+            }
+
+            private Spliterator<T> customSpliterator(int start, int end, String[] array) {
+                return new Spliterator<>() {
+
+                    private int index = start;
+
+                    @Override
+                    public boolean tryAdvance(Consumer<? super T> action) {
+                        if (index < end) {
+                            action.accept(mapper.apply(array[index++]));
+                            return true;
+                        }
+                        return false;
+                    }
+
+                    @Override
+                    public Spliterator<T> trySplit() {
+                        if(end - start < 1024){
+                            return null;
+                        }
+                        var middle = (index + end) >>> 1;
+                        if (middle == index) {
+                            return null;
+                        }
+                        var spliterator = customSpliterator(index, middle, array);
+                        index = middle;
+                        return spliterator;
+                    }
+
+                    @Override
+                    public long estimateSize() {
+                        return (end - index);
+                    }
+
+                    @Override
+                    public int characteristics() {
+                        return SIZED | SUBSIZED | ORDERED | NONNULL;
+                    }
+
+                };
+
+            }
+
+            @Override
+            public Spliterator<T> spliterator() {
+                return customSpliterator(0, nextEmptyIndex, values);
+            }
+
+            @Override
+            public Stream<T> stream() {
+                return StreamSupport.stream(spliterator(), false);
             }
 
         };

@@ -24,7 +24,12 @@ public final class Randoms {
     }
 
     @SuppressWarnings("unused")
-    public static IntStream intStream() {
+    public static IntStream intStreamWithSize5() {
+        return IntStream.generate(() -> RANDOM.nextInt(MAX_INT_VALUE)).limit(5);
+    }
+
+    @SuppressWarnings("unused")
+    public static IntStream intStreamWithSize50() {
         return IntStream.generate(() -> RANDOM.nextInt(MAX_INT_VALUE)).limit(50);
     }
 

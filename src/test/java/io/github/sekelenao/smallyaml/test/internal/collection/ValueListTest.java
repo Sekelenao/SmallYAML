@@ -10,11 +10,15 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Tag(TestingTag.INTERNAL)
 @Tag(TestingTag.COLLECTION)
@@ -44,7 +48,7 @@ final class ValueListTest {
     }
 
     @ParameterizedTest(name = "{displayName} ({0})")
-    @MethodSource("io.github.sekelenao.smallyaml.test.util.Randoms#intStream")
+    @MethodSource("io.github.sekelenao.smallyaml.test.util.Randoms#intStreamWithSize50")
     @DisplayName("Adding a lot of value")
     void addingALotOfValue(int amount) {
         var valueList = new ValueList("first");
@@ -61,7 +65,7 @@ final class ValueListTest {
     @Test
     @DisplayName("Get assertions")
     void getAssertions() {
-        ValueList list = new ValueList("first");
+        var list = new ValueList("first");
         assertAll(
                 () -> assertThrows(IndexOutOfBoundsException.class, () -> list.get(-1)),
                 () -> assertThrows(IndexOutOfBoundsException.class, () -> list.get(2))
@@ -71,7 +75,7 @@ final class ValueListTest {
     @Test
     @DisplayName("Iterator is working")
     void iteratorIsWorking() {
-        ValueList list = new ValueList("0");
+        var list = new ValueList("0");
         list.add("1");
         list.add("2");
         list.add("3");
@@ -86,7 +90,7 @@ final class ValueListTest {
     @Test
     @DisplayName("Iterator concurrent modification")
     void iteratorConcurrentModification() {
-        ValueList list = new ValueList("0");
+        var list = new ValueList("0");
         var iterator = list.iterator();
         list.add("forbidden");
         assertThrows(ConcurrentModificationException.class, iterator::hasNext);
@@ -96,13 +100,132 @@ final class ValueListTest {
     @Test
     @DisplayName("For each is working")
     void forEachIsWorking() {
-        ValueList list = new ValueList("0");
+        var list = new ValueList("0");
         list.add("1");
         list.add("2");
         list.add("3");
         for (int i = 0; i < list.size(); i++) {
             assertEquals(String.valueOf(i), list.get(i));
         }
+    }
+
+    @Test
+    @DisplayName("List view stream is working")
+    void streamIsWorking() {
+        var valueList = new ValueList("0");
+        for (int i = 1; i < 10_000; i++) {
+            valueList.add(String.valueOf(i));
+        }
+        var expectedList = IntStream.range(0, 10_000).boxed().toList();
+        var actualList = valueList.asListView().stream().map(Integer::parseInt).toList();
+        assertAll(
+            () -> assertEquals(actualList, expectedList),
+            () -> assertEquals(10_000, actualList.size())
+        );
+    }
+
+    @Test
+    @DisplayName("List view stream is working with parallel")
+    void streamIsWorkingWithParallel() {
+        var valueList = new ValueList("0");
+        for (int i = 1; i < 10_000; i++) {
+            valueList.add(String.valueOf(i));
+        }
+        var expectedList = IntStream.range(0, 10_000).boxed().toList();
+        var actualList = valueList.asListView().parallelStream().map(Integer::parseInt).toList();
+        assertAll(
+            () -> assertEquals(actualList, expectedList),
+            () -> assertEquals(10_000, actualList.size())
+        );
+    }
+
+    @ParameterizedTest(name = "{displayName} ({0})")
+    @MethodSource("io.github.sekelenao.smallyaml.test.util.Randoms#intStreamWithSize5")
+    @DisplayName("List view parallel stream with random size")
+    void streamParallelRandomSize(int size) {
+        var valueList = new ValueList("0");
+        for (int i = 1; i < size; i++) {
+            valueList.add(String.valueOf(i));
+        }
+        var expectedList = IntStream.range(0, size).boxed().toList();
+        var actualList = valueList.asListView().parallelStream().map(Integer::parseInt).toList();
+        assertAll(
+            () -> assertEquals(actualList, expectedList),
+            () -> assertEquals(size, actualList.size())
+        );
+    }
+
+    @Test
+    @DisplayName("List view parallel stream is really parallel")
+    void streamParallel() {
+        var valueList = new ValueList("0");
+        for (int i = 1; i < 10_000; i++) {
+            valueList.add(String.valueOf(i));
+        }
+        var thread = Thread.currentThread();
+        var otherThreadCount = valueList.asListView().stream()
+            .parallel()
+            .mapToInt(ignored -> thread != Thread.currentThread() ? 1 : 0)
+            .sum();
+        assertNotEquals(0, otherThreadCount);
+    }
+
+    @Test
+    @DisplayName("List view short stream")
+    void shortStream() {
+        var valueList = new ValueList("0");
+        for (int i = 1; i < 3; i++) {
+            valueList.add(String.valueOf(i));
+        }
+        var expectedList = IntStream.range(0, 3).boxed().toList();
+        var actualList = valueList.asListView().stream().map(Integer::parseInt).toList();
+        assertAll(
+            () -> assertEquals(actualList, expectedList),
+            () -> assertEquals(3, actualList.size())
+        );
+    }
+
+    @Test
+    @DisplayName("List view spliterator trySplit returns null when middle == index")
+    void spliteratorTrySplitReturnsNullWhenMiddleEqualsIndex() {
+        var valueList = new ValueList("a");
+        valueList.add("b");
+        valueList.add("c");
+        var spliterator = valueList.asListView().spliterator();
+        assertAll(
+            () -> assertTrue(spliterator.tryAdvance(s -> {})),
+            () -> assertTrue(spliterator.tryAdvance(s -> {})),
+            () -> {
+                var split = spliterator.trySplit();
+                // index = 2, end = 3 -> middle = (2+3)/2 = 2 → middle == index
+                assertNull(split, "Expected trySplit to return null when middle == index");
+            },
+            () -> assertTrue(spliterator.tryAdvance(s -> {}), "Last element should still be consumable"),
+            () -> assertFalse(spliterator.tryAdvance(s -> {}), "No more elements should be left")
+        );
+    }
+
+    @Test
+    @DisplayName("List view trySplit returns null when middle == index (one element left and total >= 1024)")
+    void trySplitReturnsNullWhenMiddleEqualsIndex() {
+        final int size = 1024;
+        var valueList = new ValueList("0");
+        for (int i = 1; i < size; i++) {
+            valueList.add(String.valueOf(i));
+        }
+        var spliterator = valueList.asListView().spliterator();
+        // consume size - 1 elements so that only one element remains (index == end - 1)
+        for (int i = 0; i < size - 1; i++) {
+            assertTrue(spliterator.tryAdvance(e -> {}), "tryAdvance should succeed while elements remain");
+        }
+        // now index = end - 1 -> middle == index -> trySplit() must return null
+        var splitWhenOneLeft = spliterator.trySplit();
+        assertAll(
+            () -> assertNull(splitWhenOneLeft, "trySplit must return null when middle == index (one element left)"),
+            // the last element must still be consumable, then nothing remains
+            () -> assertTrue(spliterator.tryAdvance(e -> {}), "Last element should still be consumable"),
+            () -> assertFalse(spliterator.tryAdvance(e -> {}), "No more elements should remain")
+        );
     }
 
 }
