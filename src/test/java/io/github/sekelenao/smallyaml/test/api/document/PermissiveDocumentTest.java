@@ -157,7 +157,7 @@ final class PermissiveDocumentTest {
     }
 
     @Test
-    @DisplayName("Default list getter")
+    @DisplayName("Default string list getter")
     void defaultListGetterIsWorking() {
         List<String> emptyList = Collections.emptyList();
         assertAll(
@@ -232,15 +232,116 @@ final class PermissiveDocumentTest {
                 RegularTestDocument.MULTIPLE_VALUES.stream().map(String::toUpperCase).toList(),
                 regularTestDocument.getMultiple(RegularTestDocument.MULTIPLE_VALUES_KEY, String::toUpperCase).orElseThrow()
             ),
-            () -> assertArrayEquals(
-                RegularTestDocument.MULTIPLE_VALUES.stream().mapToInt(String::length).toArray(),
-                regularTestDocument.getMultiple(RegularTestDocument.MULTIPLE_VALUES_KEY, String::length)
-                    .orElseThrow().stream().mapToInt(Integer::intValue).toArray()
+            () -> assertEquals(
+                RegularTestDocument.MULTIPLE_VALUES.stream().map(String::length).toList(),
+                regularTestDocument.getMultiple(RegularTestDocument.MULTIPLE_VALUES_KEY, String::length).orElseThrow()
             ),
             () -> assertDoesNotThrow(
                 () -> regularTestDocument.getMultiple(
                     RegularTestDocument.MULTIPLE_VALUES_KEY,
                     (CharSequence charSequence) -> charSequence.charAt(0) // Should compile
+                )
+            )
+        );
+    }
+
+    @Test
+    @DisplayName("Mapping single getter or default")
+    void mappingGetterOrDefaultIsWorking() {
+        assertAll(
+            () -> assertThrows(
+                NullPointerException.class,
+                () -> regularTestDocument.getSingleOrDefault(null, String::trim, "")
+            ),
+            () -> assertThrows(
+                NullPointerException.class,
+                () -> regularTestDocument.getSingleOrDefault(RegularTestDocument.SINGLE_VALUE_KEY, null, "")
+            ),
+            () -> assertThrows(
+                NullPointerException.class,
+                () -> regularTestDocument.getSingleOrDefault(RegularTestDocument.SINGLE_VALUE_KEY, String::length, null)
+            ),
+            () -> assertEquals(
+                "default",
+                regularTestDocument.getSingleOrDefault(UNKNOWN_KEY, String::toUpperCase, "default")
+            ),
+            () -> assertEquals(
+                10,
+                regularTestDocument.getSingleOrDefault(UNKNOWN_KEY, String::length, 10)
+            ),
+            () -> Exceptions.isThrownAndContains(
+                WrongPropertyTypeException.class,
+                () -> regularTestDocument.getSingleOrDefault(RegularTestDocument.MULTIPLE_VALUES_KEY, String::trim, ""),
+                "Expected single value but was multiple values"
+            ),
+            () -> assertEquals(
+                RegularTestDocument.SINGLE_VALUE.toUpperCase(),
+                regularTestDocument.getSingleOrDefault(
+                    RegularTestDocument.SINGLE_VALUE_KEY,
+                    String::toUpperCase,
+                    "Default"
+                )
+            ),
+            () -> assertEquals(
+                RegularTestDocument.SINGLE_VALUE.length(),
+                regularTestDocument.getSingleOrDefault(RegularTestDocument.SINGLE_VALUE_KEY, String::length, 48)
+            ),
+            () -> assertDoesNotThrow(
+                () -> regularTestDocument.getSingleOrDefault(
+                    RegularTestDocument.SINGLE_VALUE_KEY,
+                    (CharSequence charSequence) -> charSequence.charAt(0),
+                    "Default"
+                )
+            )
+        );
+    }
+
+    @Test
+    @DisplayName("Mapping multiple getter or default")
+    void mappingMultipleGetterOrDefaultIsWorking() {
+        var stringList = List.of("default");
+        var intList = List.of(10);
+        List<CharSequence> charsequenceList = List.of("Default");
+        assertAll(
+            () -> assertThrows(
+                NullPointerException.class,
+                () -> regularTestDocument.getMultipleOrDefault(null, String::trim, stringList)
+            ),
+            () -> assertThrows(
+                NullPointerException.class,
+                () -> regularTestDocument.getMultipleOrDefault(RegularTestDocument.MULTIPLE_VALUES_KEY, null, stringList)
+            ),
+            () -> assertThrows(
+                NullPointerException.class,
+                () -> regularTestDocument.getMultipleOrDefault(RegularTestDocument.MULTIPLE_VALUES_KEY, String::length, null)
+            ),
+            () -> assertEquals(
+                stringList,
+                regularTestDocument.getMultipleOrDefault(UNKNOWN_KEY, String::toUpperCase, stringList)
+            ),
+            () -> assertEquals(intList, regularTestDocument.getMultipleOrDefault(UNKNOWN_KEY, String::length, intList)),
+            () -> Exceptions.isThrownAndContains(
+                WrongPropertyTypeException.class,
+                () -> regularTestDocument.getMultipleOrDefault(RegularTestDocument.SINGLE_VALUE_KEY, String::trim, stringList),
+                "Expected multiple values but was single value"
+            ),
+            () -> assertEquals(
+                RegularTestDocument.MULTIPLE_VALUES.stream().map(String::toUpperCase).toList(),
+                regularTestDocument.getMultipleOrDefault(
+                    RegularTestDocument.MULTIPLE_VALUES_KEY,
+                    String::toUpperCase,
+                    stringList
+                )
+            ),
+            () -> assertEquals(
+                RegularTestDocument.MULTIPLE_VALUES.stream().map(String::length).toList(),
+                regularTestDocument.getMultipleOrDefault(RegularTestDocument.MULTIPLE_VALUES_KEY, String::length, intList)
+            ),
+            () -> assertDoesNotThrow(
+                () -> regularTestDocument.getMultipleOrDefault(
+                    RegularTestDocument.MULTIPLE_VALUES_KEY,
+                    (CharSequence charSequence) -> charSequence,
+                    charsequenceList
                 )
             )
         );
