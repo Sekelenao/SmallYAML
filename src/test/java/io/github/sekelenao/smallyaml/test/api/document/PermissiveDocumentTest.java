@@ -4,7 +4,7 @@ import io.github.sekelenao.smallyaml.api.document.PermissiveDocument;
 import io.github.sekelenao.smallyaml.api.document.property.MultipleValuesProperty;
 import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
 import io.github.sekelenao.smallyaml.api.exception.document.MissingPropertyException;
-import io.github.sekelenao.smallyaml.api.exception.document.WrongTypeException;
+import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
 import io.github.sekelenao.smallyaml.api.line.provider.BufferedReaderLineProvider;
 import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
 import io.github.sekelenao.smallyaml.internal.parsing.line.Line;
@@ -63,7 +63,7 @@ final class PermissiveDocumentTest {
                 UNKNOWN_KEY
             ),
             () -> Exceptions.isThrownAndContains(
-                WrongTypeException.class,
+                WrongPropertyTypeException.class,
                 () -> regularTestDocument.getAsStringOrThrows(RegularTestDocument.MULTIPLE_VALUES_KEY),
                 "Expected single value but was multiple values"
             ),
@@ -85,7 +85,7 @@ final class PermissiveDocumentTest {
                 UNKNOWN_KEY
             ),
             () -> Exceptions.isThrownAndContains(
-                WrongTypeException.class,
+                WrongPropertyTypeException.class,
                 () -> regularTestDocument.getAsStringListOrThrows(RegularTestDocument.SINGLE_VALUE_KEY),
                 "Expected multiple values but was single value"
             ),
@@ -103,7 +103,7 @@ final class PermissiveDocumentTest {
             () -> assertThrows(NullPointerException.class, () -> regularTestDocument.getAsString(null)),
             () -> assertEquals(Optional.empty(), regularTestDocument.getAsString(UNKNOWN_KEY)),
             () -> Exceptions.isThrownAndContains(
-                WrongTypeException.class,
+                WrongPropertyTypeException.class,
                 () -> regularTestDocument.getAsString(RegularTestDocument.MULTIPLE_VALUES_KEY),
                 "Expected single value but was multiple values"
             ),
@@ -121,7 +121,7 @@ final class PermissiveDocumentTest {
             () -> assertThrows(NullPointerException.class, () -> regularTestDocument.getAsStringList(null)),
             () -> assertEquals(Optional.empty(), regularTestDocument.getAsStringList(UNKNOWN_KEY)),
             () -> Exceptions.isThrownAndContains(
-                WrongTypeException.class,
+                WrongPropertyTypeException.class,
                 () -> regularTestDocument.getAsStringList(RegularTestDocument.SINGLE_VALUE_KEY),
                 "Expected multiple values but was single value"
             ),
@@ -142,7 +142,7 @@ final class PermissiveDocumentTest {
                 () -> regularTestDocument.getAsStringOrDefault(RegularTestDocument.SINGLE_VALUE, null)
             ),
             () -> Exceptions.isThrownAndContains(
-                WrongTypeException.class,
+                WrongPropertyTypeException.class,
                 () -> regularTestDocument.getAsStringOrDefault(RegularTestDocument.MULTIPLE_VALUES_KEY, ""),
                 "Expected single value but was multiple values"
             ),
@@ -168,7 +168,7 @@ final class PermissiveDocumentTest {
                 () -> regularTestDocument.getAsStringListOrDefault(RegularTestDocument.MULTIPLE_VALUES_KEY, null)
             ),
             () -> Exceptions.isThrownAndContains(
-                WrongTypeException.class,
+                WrongPropertyTypeException.class,
                 () -> regularTestDocument.getAsStringListOrDefault(RegularTestDocument.SINGLE_VALUE_KEY, emptyList),
                 "Expected multiple values but was single value"
             ),
@@ -177,6 +177,50 @@ final class PermissiveDocumentTest {
                 regularTestDocument.getAsStringListOrDefault(RegularTestDocument.MULTIPLE_VALUES_KEY, emptyList)
             ),
             () -> assertEquals(emptyList, regularTestDocument.getAsStringListOrDefault(UNKNOWN_KEY, emptyList))
+        );
+    }
+
+    @Test
+    @DisplayName("Mapping single getter")
+    void mappingGetterIsWorking(){
+        assertAll(
+            () -> assertThrows(NullPointerException.class, () -> regularTestDocument.getSingle(null, String::trim)),
+            () -> assertThrows(
+                NullPointerException.class,
+                () -> regularTestDocument.getSingle(RegularTestDocument.SINGLE_VALUE, null)
+            ),
+            () -> assertEquals(Optional.empty(), regularTestDocument.getSingle(UNKNOWN_KEY, String::trim)),
+            () -> Exceptions.isThrownAndContains(
+                WrongPropertyTypeException.class,
+                () -> regularTestDocument.getSingle(RegularTestDocument.MULTIPLE_VALUES_KEY, String::trim),
+                "Expected single value but was multiple values"
+            ),
+            () -> assertEquals(
+                RegularTestDocument.SINGLE_VALUE.toUpperCase(),
+                regularTestDocument.getSingle(RegularTestDocument.SINGLE_VALUE_KEY, String::toUpperCase).orElseThrow()
+            )
+        );
+    }
+
+    @Test
+    @DisplayName("Mapping multiple getter")
+    void mappingListGetterIsWorking(){
+        assertAll(
+            () -> assertThrows(NullPointerException.class, () -> regularTestDocument.getMultiple(null, String::trim)),
+            () -> assertThrows(
+                NullPointerException.class,
+                () -> regularTestDocument.getMultiple(RegularTestDocument.SINGLE_VALUE, null)
+            ),
+            () -> assertEquals(Optional.empty(), regularTestDocument.getMultiple(UNKNOWN_KEY, String::trim)),
+            () -> Exceptions.isThrownAndContains(
+                WrongPropertyTypeException.class,
+                () -> regularTestDocument.getMultiple(RegularTestDocument.SINGLE_VALUE_KEY, String::trim),
+                "Expected multiple values but was single value"
+            ),
+            () -> assertEquals(
+                RegularTestDocument.MULTIPLE_VALUES.stream().map(String::toUpperCase).toList(),
+                regularTestDocument.getMultiple(RegularTestDocument.MULTIPLE_VALUES_KEY, String::toUpperCase).orElseThrow()
+            )
         );
     }
 

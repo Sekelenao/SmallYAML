@@ -5,8 +5,9 @@ import io.github.sekelenao.smallyaml.api.document.property.Property;
 import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
 import io.github.sekelenao.smallyaml.api.exception.document.DuplicatedPropertyException;
 import io.github.sekelenao.smallyaml.api.exception.document.MissingPropertyException;
-import io.github.sekelenao.smallyaml.api.exception.document.WrongTypeException;
+import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
 import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
+import io.github.sekelenao.smallyaml.api.mapping.PropertyValueMapper;
 import io.github.sekelenao.smallyaml.internal.collection.ValueList;
 import io.github.sekelenao.smallyaml.internal.parsing.ParsingCollector;
 import io.github.sekelenao.smallyaml.internal.parsing.SmallYAMLParser;
@@ -19,7 +20,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 
 public final class PermissiveDocument implements Iterable<Property>, Document {
 
@@ -78,7 +78,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         if(value instanceof String valueAsString){
             return Optional.of(valueAsString);
         }
-        throw WrongTypeException.withExpected(Property.Type.SINGLE);
+        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
     }
 
     public String getAsStringOrDefault(String key, String defaultValue){
@@ -91,7 +91,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         if(value instanceof String valueAsString){
             return valueAsString;
         }
-        throw WrongTypeException.withExpected(Property.Type.SINGLE);
+        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
     }
 
     public String getAsStringOrThrows(String key){
@@ -103,7 +103,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         if(value instanceof String valueAsString){
             return valueAsString;
         }
-        throw WrongTypeException.withExpected(Property.Type.SINGLE);
+        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
     }
 
     public Optional<List<String>> getAsStringList(String key){
@@ -115,7 +115,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         if(value instanceof ValueList valueList){
             return Optional.of(valueList.asListView());
         }
-        throw WrongTypeException.withExpected(Property.Type.MULTIPLE);
+        throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
     }
 
     public List<String> getAsStringListOrDefault(String key, List<String> defaultValue){
@@ -128,7 +128,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         if(value instanceof ValueList valueList){
             return valueList.asListView();
         }
-        throw WrongTypeException.withExpected(Property.Type.MULTIPLE);
+        throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
     }
 
     public List<String> getAsStringListOrThrows(String key){
@@ -140,10 +140,10 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         if(value instanceof ValueList valueList){
             return valueList.asListView();
         }
-        throw WrongTypeException.withExpected(Property.Type.MULTIPLE);
+        throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
     }
 
-    public <T> Optional<T> getSingle(String key, Function<? super String, T> mapper){
+    public <T> Optional<T> getSingle(String key, PropertyValueMapper<? super String, T> mapper){
         Objects.requireNonNull(key);
         Objects.requireNonNull(mapper);
         var value = properties.get(key);
@@ -154,10 +154,10 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
             var mappedValue = mapper.apply(valueAsString);
             return Optional.of(mappedValue);
         }
-        throw WrongTypeException.withExpected(Property.Type.SINGLE);
+        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
     }
 
-    public <T> T getSingleOrDefault(String key, Function<? super String, T> mapper, T defaultValue){
+    public <T> T getSingleOrDefault(String key, PropertyValueMapper<? super String, T> mapper, T defaultValue){
         Objects.requireNonNull(key);
         Objects.requireNonNull(mapper);
         Objects.requireNonNull(defaultValue);
@@ -168,10 +168,10 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         if(value instanceof String valueAsString){
             return mapper.apply(valueAsString);
         }
-        throw WrongTypeException.withExpected(Property.Type.SINGLE);
+        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
     }
 
-    public <T> T getSingleOrThrows(String key, Function<? super String, T> mapper){
+    public <T> T getSingleOrThrows(String key, PropertyValueMapper<? super String, T> mapper){
         Objects.requireNonNull(key);
         Objects.requireNonNull(mapper);
         var value = properties.get(key);
@@ -181,10 +181,10 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         if(value instanceof String valueAsString){
             return mapper.apply(valueAsString);
         }
-        throw WrongTypeException.withExpected(Property.Type.SINGLE);
+        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
     }
 
-    public <T> Optional<List<T>> getMultiple(String key, Function<? super String, T> mapper){
+    public <T> Optional<List<T>> getMultiple(String key, PropertyValueMapper<? super String, T> mapper){
         Objects.requireNonNull(key);
         Objects.requireNonNull(mapper);
         var value = properties.get(key);
@@ -194,10 +194,10 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         if(value instanceof ValueList valueList){
             return Optional.of(valueList.asListView(mapper));
         }
-        throw WrongTypeException.withExpected(Property.Type.MULTIPLE);
+        throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
     }
 
-    public <T> List<T> getMultipleOrDefault(String key, Function<? super String, T> mapper, List<T> defaultValue){
+    public <T> List<T> getMultipleOrDefault(String key, PropertyValueMapper<? super String, T> mapper, List<T> defaultValue){
         Objects.requireNonNull(key);
         Objects.requireNonNull(mapper);
         Objects.requireNonNull(defaultValue);
@@ -208,10 +208,10 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         if(value instanceof ValueList valueList){
             return valueList.asListView(mapper);
         }
-        throw WrongTypeException.withExpected(Property.Type.MULTIPLE);
+        throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
     }
 
-    public <T> List<T> getMultipleOrThrows(String key, Function<? super String, T> mapper){
+    public <T> List<T> getMultipleOrThrows(String key, PropertyValueMapper<? super String, T> mapper){
         Objects.requireNonNull(key);
         Objects.requireNonNull(mapper);
         var value = properties.get(key);
@@ -221,7 +221,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         if(value instanceof ValueList valueList){
             return valueList.asListView(mapper);
         }
-        throw WrongTypeException.withExpected(Property.Type.MULTIPLE);
+        throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
     }
 
     @Override
