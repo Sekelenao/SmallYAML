@@ -143,84 +143,83 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         throw WrongTypeException.withExpected(Property.Type.MULTIPLE);
     }
 
-    public <T> Optional<T> getSingle(String key, Function<? super String, T> converter){
+    public <T> Optional<T> getSingle(String key, Function<? super String, T> mapper){
         Objects.requireNonNull(key);
-        Objects.requireNonNull(converter);
+        Objects.requireNonNull(mapper);
         var value = properties.get(key);
         if(value == null){
             return Optional.empty();
         }
         if(value instanceof String valueAsString){
-            var convertedValue = converter.apply(valueAsString);
-            return Optional.of(convertedValue);
+            var mappedValue = mapper.apply(valueAsString);
+            return Optional.of(mappedValue);
         }
         throw WrongTypeException.withExpected(Property.Type.SINGLE);
     }
 
-    public <T> T getSingleOrDefault(String key, Function<? super String, T> converter, T defaultValue){
+    public <T> T getSingleOrDefault(String key, Function<? super String, T> mapper, T defaultValue){
         Objects.requireNonNull(key);
-        Objects.requireNonNull(converter);
+        Objects.requireNonNull(mapper);
         Objects.requireNonNull(defaultValue);
         var value = properties.get(key);
         if(value == null){
             return defaultValue;
         }
         if(value instanceof String valueAsString){
-            return converter.apply(valueAsString);
+            return mapper.apply(valueAsString);
         }
         throw WrongTypeException.withExpected(Property.Type.SINGLE);
     }
 
-    public <T> T getSingleOrThrows(String key, Function<? super String, T> converter){
+    public <T> T getSingleOrThrows(String key, Function<? super String, T> mapper){
         Objects.requireNonNull(key);
-        Objects.requireNonNull(converter);
+        Objects.requireNonNull(mapper);
         var value = properties.get(key);
         if(value == null){
             throw MissingPropertyException.forFollowing(key);
         }
         if(value instanceof String valueAsString){
-            return converter.apply(valueAsString);
+            return mapper.apply(valueAsString);
         }
         throw WrongTypeException.withExpected(Property.Type.SINGLE);
     }
 
-    public <T> Optional<T> getMultiple(String key, Function<Iterable<? super String>, T> converter){
+    public <T> Optional<List<T>> getMultiple(String key, Function<? super String, T> mapper){
         Objects.requireNonNull(key);
-        Objects.requireNonNull(converter);
+        Objects.requireNonNull(mapper);
         var value = properties.get(key);
         if(value == null){
             return Optional.empty();
         }
         if(value instanceof ValueList valueList){
-            var convertedValue = converter.apply(valueList.asListView());
-            return Optional.of(convertedValue);
+            return Optional.of(valueList.asListView(mapper));
         }
         throw WrongTypeException.withExpected(Property.Type.MULTIPLE);
     }
 
-    public <T> T getMultipleOrDefault(String key, Function<Iterable<? super String>, T> converter, T defaultValue){
+    public <T> List<T> getMultipleOrDefault(String key, Function<? super String, T> mapper, List<T> defaultValue){
         Objects.requireNonNull(key);
-        Objects.requireNonNull(converter);
+        Objects.requireNonNull(mapper);
         Objects.requireNonNull(defaultValue);
         var value = properties.get(key);
         if(value == null){
             return defaultValue;
         }
         if(value instanceof ValueList valueList){
-            return converter.apply(valueList.asListView());
+            return valueList.asListView(mapper);
         }
         throw WrongTypeException.withExpected(Property.Type.MULTIPLE);
     }
 
-    public <T> T getMultipleOrThrows(String key, Function<Iterable<? super String>, T> converter){
+    public <T> List<T> getMultipleOrThrows(String key, Function<? super String, T> mapper){
         Objects.requireNonNull(key);
-        Objects.requireNonNull(converter);
+        Objects.requireNonNull(mapper);
         var value = properties.get(key);
         if(value == null){
             throw MissingPropertyException.forFollowing(key);
         }
         if(value instanceof ValueList valueList){
-            return converter.apply(valueList.asListView());
+            return valueList.asListView(mapper);
         }
         throw WrongTypeException.withExpected(Property.Type.MULTIPLE);
     }

@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.function.Function;
 
 public final class ValueList implements Iterable<String> {
 
@@ -64,12 +65,16 @@ public final class ValueList implements Iterable<String> {
     }
 
     public List<String> asListView(){
+        return asListView(Function.identity());
+    }
+
+    public <T> List<T> asListView(Function<? super String, T> mapper){
         return new AbstractList<>() {
 
             @Override
-            public String get(int index) {
+            public T get(int index) {
                 Objects.checkIndex(index, nextEmptyIndex);
-                return values[index];
+                return mapper.apply(values[index]);
             }
 
             @Override

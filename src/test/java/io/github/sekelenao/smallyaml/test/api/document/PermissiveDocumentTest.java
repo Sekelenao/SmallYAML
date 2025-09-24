@@ -6,6 +6,8 @@ import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
 import io.github.sekelenao.smallyaml.api.exception.document.MissingPropertyException;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongTypeException;
 import io.github.sekelenao.smallyaml.api.line.provider.BufferedReaderLineProvider;
+import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
+import io.github.sekelenao.smallyaml.internal.parsing.line.Line;
 import io.github.sekelenao.smallyaml.test.util.Exceptions;
 import io.github.sekelenao.smallyaml.test.util.constant.RegularTestDocument;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
@@ -25,6 +27,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -192,6 +195,27 @@ final class PermissiveDocumentTest {
                 new MultipleValuesProperty(RegularTestDocument.MULTIPLE_VALUES_KEY, RegularTestDocument.MULTIPLE_VALUES),
                 iterator.next()
             ),
+            () -> assertThrows(NoSuchElementException.class, iterator::next)
+        );
+    }
+
+    @Test
+    @DisplayName("Empty property iterator")
+    void emptyPropertyIterator() throws IOException {
+        var document = PermissiveDocument.from(new LineProvider() {
+
+            @Override
+            public Optional<Line> nextLine() {
+                return Optional.empty();
+            }
+
+            @Override
+            public void close() { /* No resource to close */ }
+
+        });
+        var iterator = document.iterator();
+        assertAll(
+            () -> assertFalse(iterator::hasNext),
             () -> assertThrows(NoSuchElementException.class, iterator::next)
         );
     }
