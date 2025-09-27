@@ -141,4 +141,45 @@ public final class ValueList implements Iterable<String> {
         };
     }
 
+    public boolean[] asArrayOfStrictBooleans(){
+        var array = new boolean[nextEmptyIndex];
+        for(int i = 0; i < nextEmptyIndex; i++){
+            var value = values[i];
+            if(value.equalsIgnoreCase("TRUE")){
+                array[i] = true;
+            }
+            else if(value.equalsIgnoreCase("FALSE")){
+                array[i] = false;
+            }
+            else {
+                throw new IllegalArgumentException("Boolean should be case insensitive 'TRUE' or 'FALSE'");
+            }
+        }
+        return array;
+    }
+
+    public int[] asArrayOfInts(){
+        var array = new int[nextEmptyIndex];
+        for(int i = 0; i < nextEmptyIndex; i++){
+            array[i] = Integer.parseInt(values[i]);
+        }
+        return array;
+    }
+
+    public long[] asArrayOfLongs(){
+        var array = new long[nextEmptyIndex];
+        for(int i = 0; i < nextEmptyIndex; i++){
+            array[i] = Long.parseLong(values[i]);
+        }
+        return array;
+    }
+
+    public double[] asArrayOfDoubles(){
+        var array = new double[nextEmptyIndex];
+        for(int i = 0; i < nextEmptyIndex; i++){
+            array[i] = Double.parseDouble(values[i]);
+        }
+        return array;
+    }
+
 }

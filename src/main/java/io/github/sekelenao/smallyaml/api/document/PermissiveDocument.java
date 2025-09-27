@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 public final class PermissiveDocument implements Iterable<Property>, Document {
 
@@ -141,6 +142,42 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
             return valueList.asListView();
         }
         throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
+    }
+
+    public OptionalInt getSingleInt(String key){
+        Objects.requireNonNull(key);
+        var value = properties.get(key);
+        if(value == null) {
+            return OptionalInt.empty();
+        }
+        if (value instanceof String valueAsString) {
+            return OptionalInt.of(Integer.parseInt(valueAsString));
+        }
+        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
+    }
+
+    public int getSingleIntOrDefault(String key, int defaultValue){
+        Objects.requireNonNull(key);
+        var value = properties.get(key);
+        if(value == null){
+            return defaultValue;
+        }
+        if(value instanceof String valueAsString){
+            return Integer.parseInt(valueAsString);
+        }
+        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
+    }
+
+    public int getSingleIntOrThrows(String key){
+        Objects.requireNonNull(key);
+        var value = properties.get(key);
+        if(value == null){
+            throw MissingPropertyException.forFollowing(key);
+        }
+        if(value instanceof String valueAsString){
+            return Integer.parseInt(valueAsString);
+        }
+        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
     }
 
     public <T> Optional<T> getSingle(String key, PropertyValueMapper<? super String, T> mapper){

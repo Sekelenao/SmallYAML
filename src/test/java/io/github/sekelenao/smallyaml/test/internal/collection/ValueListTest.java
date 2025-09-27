@@ -13,6 +13,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -214,17 +215,32 @@ final class ValueListTest {
             valueList.add(String.valueOf(i));
         }
         var spliterator = valueList.asListView().spliterator();
-        // consume size - 1 elements so that only one element remains (index == end - 1)
+        // Consume size - 1 elements so that only one element remains (index == end - 1)
         for (int i = 0; i < size - 1; i++) {
             assertTrue(spliterator.tryAdvance(e -> {}), "tryAdvance should succeed while elements remain");
         }
-        // now index = end - 1 -> middle == index -> trySplit() must return null
+        // Now index = end - 1 -> middle == index -> trySplit() must return null
         var splitWhenOneLeft = spliterator.trySplit();
         assertAll(
             () -> assertNull(splitWhenOneLeft, "trySplit must return null when middle == index (one element left)"),
-            // the last element must still be consumable, then nothing remains
+            // The last element must still be consumable, then nothing remains
             () -> assertTrue(spliterator.tryAdvance(e -> {}), "Last element should still be consumable"),
             () -> assertFalse(spliterator.tryAdvance(e -> {}), "No more elements should remain")
+        );
+    }
+
+    @Test
+    @DisplayName("As array of booleans")
+    void asArrayOfStrictBooleans() {
+        var valueList = new ValueList("True");
+        valueList.add("False");
+        valueList.add("true");
+        valueList.add("false");
+        valueList.add("TRuE");
+        var wrongValueList = new ValueList("NotABoolean");
+        assertAll(
+            () -> assertArrayEquals(new boolean[]{ true, false, true, false, true }, valueList.asArrayOfStrictBooleans()),
+            () -> assertThrows(IllegalArgumentException.class, wrongValueList::asArrayOfStrictBooleans)
         );
     }
 
