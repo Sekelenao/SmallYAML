@@ -1,5 +1,7 @@
 package io.github.sekelenao.smallyaml.internal.collection;
 
+import io.github.sekelenao.smallyaml.internal.parsing.parser.StrictBooleanParser;
+
 import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.ConcurrentModificationException;
@@ -144,16 +146,7 @@ public final class ValueList implements Iterable<String> {
     public boolean[] asArrayOfStrictBooleans(){
         var array = new boolean[nextEmptyIndex];
         for(int i = 0; i < nextEmptyIndex; i++){
-            var value = values[i];
-            if(value.equalsIgnoreCase("TRUE")){
-                array[i] = true;
-            }
-            else if(value.equalsIgnoreCase("FALSE")){
-                array[i] = false;
-            }
-            else {
-                throw new IllegalArgumentException("Boolean should be case insensitive 'TRUE' or 'FALSE'");
-            }
+            array[i] = StrictBooleanParser.parse(values[i]);
         }
         return array;
     }

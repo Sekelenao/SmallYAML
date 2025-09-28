@@ -11,6 +11,7 @@ import io.github.sekelenao.smallyaml.api.mapping.PropertyValueMapper;
 import io.github.sekelenao.smallyaml.internal.collection.ValueList;
 import io.github.sekelenao.smallyaml.internal.parsing.ParsingCollector;
 import io.github.sekelenao.smallyaml.internal.parsing.SmallYAMLParser;
+import io.github.sekelenao.smallyaml.internal.parsing.parser.StrictBooleanParser;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -68,6 +69,11 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         var collector = new PermissiveDocumentCollector();
         parser.parse(lineProvider, collector);
         return new PermissiveDocument(collector.collectedProperties);
+    }
+
+    public boolean hasProperty(String key){
+        Objects.requireNonNull(key);
+        return properties.containsKey(key);
     }
 
     public Optional<String> getSingleString(String key){
@@ -144,10 +150,34 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
     }
 
+    public boolean getSingleBooleanOrDefault(String key, boolean defaultValue){
+        Objects.requireNonNull(key);
+        var value = properties.get(key);
+        if(value == null){
+            return defaultValue;
+        }
+        if(value instanceof String valueAsString){
+            return StrictBooleanParser.parse(valueAsString);
+        }
+        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
+    }
+
+    public boolean getSingleBooleanOrThrows(String key){
+        Objects.requireNonNull(key);
+        var value = properties.get(key);
+        if(value == null){
+            throw MissingPropertyException.forFollowing(key);
+        }
+        if(value instanceof String valueAsString){
+            return StrictBooleanParser.parse(valueAsString);
+        }
+        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
+    }
+
     public OptionalInt getSingleInt(String key){
         Objects.requireNonNull(key);
         var value = properties.get(key);
-        if(value == null) {
+        if(value == null){
             return OptionalInt.empty();
         }
         if (value instanceof String valueAsString) {
