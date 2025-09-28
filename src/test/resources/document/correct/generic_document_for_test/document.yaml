@@ -1,0 +1,35 @@
+# Single value
+single-value: value
+
+# Multiples values
+multiple-values:
+  - one
+  - two
+  - three
+
+# Single boolean
+single-boolean: True
+
+# Multiples booleans
+multiple-booleans:
+  - true
+  - False
+  - TRUE
+
+# Single int
+single-long: 20
+
+# Multiple ints
+multiple-longs:
+  - 1
+  - 2
+  - 3
+
+# Single double
+single-double: "1.2"
+
+# Multiple doubles
+multiple-doubles:
+  - "1.1"
+  - "2.2"
+  - "3.3"

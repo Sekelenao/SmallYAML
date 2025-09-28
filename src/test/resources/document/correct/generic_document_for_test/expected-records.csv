@@ -1,0 +1,8 @@
+single-value;value
+multiple-values;one;two;three
+single-boolean;True
+multiple-booleans;true;False;TRUE
+single-long;20
+multiple-longs;1;2;3
+single-double;1.2
+multiple-doubles;1.1;2.2;3.3

@@ -6,12 +6,170 @@
 
     <groupId>io.github.sekelenao</groupId>
     <artifactId>SmallYAML</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>SmallYAML</name>
+    <description>
+        SmallYAML is a simplified YAML library that prioritizes maintainability and predictability over comprehensive
+        YAML specification coverage. Rather than supporting the full YAML 1.2 specification, SmallYAML intentionally
+        constrains the allowed syntax to a carefully chosen subset that eliminates common sources of configuration
+        complexity and parsing ambiguity.
+    </description>
+    <url>https://github.com/Sekelenao/SmallYAML</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://www.opensource.org/licenses/mit-license.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Sekelenao</name>
+            <email>sekelenao@protonmail.com</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/Sekelenao/SmallYAML.git</connection>
+        <developerConnection>scm:git:ssh://github.com/Sekelenao/SmallYAML.git</developerConnection>
+        <url>https://github.com/Sekelenao/SmallYAML</url>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/sekelenao/SmallYAML/issues</url>
+    </issueManagement>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+
+        <!-- Java version -->
+        <java.version>21</java.version>
+
+        <!-- Dependencies versions -->
+        <dependency.junit.version>5.11.4</dependency.junit.version>
+        <dependency.skcsv.version>1.0.1</dependency.skcsv.version>
+
+        <!-- Plugins versions -->
+        <plugin.maven.compiler.version>3.14.0</plugin.maven.compiler.version>
+        <plugin.maven.surefire.version>3.5.4</plugin.maven.surefire.version>
+        <plugin.maven.surefire.report.version>3.5.4</plugin.maven.surefire.report.version>
+        <plugin.jacoco.version>0.8.13</plugin.jacoco.version>
+        <plugin.maven.site.version>4.0.0-M16</plugin.maven.site.version>
+        <plugin.maven.project.info.reports.version>3.9.0</plugin.maven.project.info.reports.version>
+        <plugin.maven.javadoc.version>3.11.3</plugin.maven.javadoc.version>
+        <plugin.maven.jxr.version>3.6.0</plugin.maven.jxr.version>
+
+        <!-- Project configs -->
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <test.minimum.coverage>0.90</test.minimum.coverage>
+
     </properties>
+
+    <dependencies>
+
+        <!--   Test   -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${dependency.junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.sekelenao</groupId>
+            <artifactId>SkCsv</artifactId>
+            <version>${dependency.skcsv.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${plugin.maven.compiler.version}</version>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-Xlint:-module</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${plugin.maven.surefire.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${plugin.jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>jacoco-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>INSTRUCTION</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${test.minimum.coverage}</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>BRANCH</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${test.minimum.coverage}</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${plugin.maven.javadoc.version}</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <detectJavaApiLink>true</detectJavaApiLink>
+                    <links>
+                        <link>https://docs.oracle.com/en/java/javase/${java.version}/docs/api/</link>
+                    </links>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
 
 </project>
