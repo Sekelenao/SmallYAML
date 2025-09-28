@@ -244,4 +244,43 @@ final class ValueListTest {
         );
     }
 
+    @Test
+    @DisplayName("As array of ints")
+    void asArrayOfInts() {
+        var valueList = new ValueList("1");
+        valueList.add("2");
+        valueList.add("3");
+        var wrongValueList = new ValueList("NotAnInt");
+        assertAll(
+            () -> assertArrayEquals(new int[]{ 1, 2, 3 }, valueList.asArrayOfInts()),
+            () -> assertThrows(NumberFormatException.class, wrongValueList::asArrayOfInts)
+        );
+    }
+
+    @Test
+    @DisplayName("As array of longs")
+    void asArrayOfLongs() {
+        var valueList = new ValueList("1");
+        valueList.add("2");
+        valueList.add("3");
+        var wrongValueList = new ValueList("NotALong");
+        assertAll(
+            () -> assertArrayEquals(new long[]{ 1, 2, 3 }, valueList.asArrayOfLongs()),
+            () -> assertThrows(NumberFormatException.class, wrongValueList::asArrayOfLongs)
+        );
+    }
+
+    @Test
+    @DisplayName("As array of doubles")
+    void asArrayOfDoubles() {
+        var valueList = new ValueList("1");
+        valueList.add("2.2");
+        valueList.add("3.1");
+        var wrongValueList = new ValueList("NotADouble");
+        assertAll(
+            () -> assertArrayEquals(new double[]{ 1, 2.2, 3.1 }, valueList.asArrayOfDoubles()),
+            () -> assertThrows(NumberFormatException.class, wrongValueList::asArrayOfDoubles)
+        );
+    }
+
 }
