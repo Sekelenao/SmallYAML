@@ -12,6 +12,12 @@ Simplified YAML library with limited syntax support and built-in validation
 [![Coverage](./badges/Coverage.svg)](https://github.com/Sekelenao/SmallYAML/actions/workflows/maven.yml)
 [![Branches](./badges/Branches.svg)](https://github.com/Sekelenao/SmallYAML/actions/workflows/maven.yml)
 
+## Versions
+
+### Version 1.0.0 (Not released)
+
+- [ ] YAML parsing and loading
+
 ## Overview
 
 SmallYAML is a simplified YAML library that prioritizes maintainability and predictability over comprehensive YAML
@@ -19,19 +25,11 @@ specification coverage. Rather than supporting the full YAML 1.2 specification, 
 allowed syntax to a carefully chosen subset that eliminates common sources of configuration complexity and parsing
 ambiguity.
 
-## Roadmap
+### Futur ideas
 
-### Version 1.0.0
-
-- [ ] YAML parsing and loading
-
-### Version 1.1.0
-
-- [ ] Bounded documents
-- [ ] Deprecation warnings of properties in bounded documents
-
-### Research & Exploration
-
+- Validator to ensure config is correct before PROD deployment
+- Bounded documents
+- Deprecation warnings of properties in bounded documents
 - Merging documents with override policies
 - Automatic casting for bounded documents at the start for safe loading
 - Automatic document template generation for bounded documents

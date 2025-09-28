@@ -56,20 +56,20 @@ final class PermissiveDocumentTest {
     @DisplayName("Throwing string getter")
     void throwingGetterIsWorking() {
         assertAll(
-            () -> assertThrows(NullPointerException.class, () -> regularTestDocument.getSingleStringOrThrows(null)),
+            () -> assertThrows(NullPointerException.class, () -> regularTestDocument.getSingleStringOrThrow(null)),
             () -> Exceptions.isThrownAndContains(
                 MissingPropertyException.class,
-                () -> regularTestDocument.getSingleStringOrThrows(UNKNOWN_KEY),
+                () -> regularTestDocument.getSingleStringOrThrow(UNKNOWN_KEY),
                 UNKNOWN_KEY
             ),
             () -> Exceptions.isThrownAndContains(
                 WrongPropertyTypeException.class,
-                () -> regularTestDocument.getSingleStringOrThrows(RegularTestDocument.MULTIPLE_VALUES_KEY),
+                () -> regularTestDocument.getSingleStringOrThrow(RegularTestDocument.MULTIPLE_VALUES_KEY),
                 "Expected single value but was multiple values"
             ),
             () -> assertEquals(
                 RegularTestDocument.SINGLE_VALUE,
-                regularTestDocument.getSingleStringOrThrows(RegularTestDocument.SINGLE_VALUE_KEY)
+                regularTestDocument.getSingleStringOrThrow(RegularTestDocument.SINGLE_VALUE_KEY)
             )
         );
     }
@@ -78,20 +78,20 @@ final class PermissiveDocumentTest {
     @DisplayName("Throwing list getter")
     void throwingListGetterIsWorking() {
         assertAll(
-            () -> assertThrows(NullPointerException.class, () -> regularTestDocument.getMultipleStringsOrThrows(null)),
+            () -> assertThrows(NullPointerException.class, () -> regularTestDocument.getMultipleStringsOrThrow(null)),
             () -> assertThrows(
                 MissingPropertyException.class,
-                () -> regularTestDocument.getMultipleStringsOrThrows(UNKNOWN_KEY),
+                () -> regularTestDocument.getMultipleStringsOrThrow(UNKNOWN_KEY),
                 UNKNOWN_KEY
             ),
             () -> Exceptions.isThrownAndContains(
                 WrongPropertyTypeException.class,
-                () -> regularTestDocument.getMultipleStringsOrThrows(RegularTestDocument.SINGLE_VALUE_KEY),
+                () -> regularTestDocument.getMultipleStringsOrThrow(RegularTestDocument.SINGLE_VALUE_KEY),
                 "Expected multiple values but was single value"
             ),
             () -> assertEquals(
                 RegularTestDocument.MULTIPLE_VALUES,
-                regularTestDocument.getMultipleStringsOrThrows(RegularTestDocument.MULTIPLE_VALUES_KEY)
+                regularTestDocument.getMultipleStringsOrThrow(RegularTestDocument.MULTIPLE_VALUES_KEY)
             )
         );
     }
@@ -136,21 +136,21 @@ final class PermissiveDocumentTest {
     @DisplayName("Default string getter")
     void defaultGetterIsWorking() {
         assertAll(
-            () -> assertThrows(NullPointerException.class, () -> regularTestDocument.getSingleStringOrDefault(null, "")),
+            () -> assertThrows(NullPointerException.class, () -> regularTestDocument.getSingleStringOrDefault(null, () -> "")),
             () -> assertThrows(
                 NullPointerException.class,
                 () -> regularTestDocument.getSingleStringOrDefault(RegularTestDocument.SINGLE_VALUE, null)
             ),
             () -> Exceptions.isThrownAndContains(
                 WrongPropertyTypeException.class,
-                () -> regularTestDocument.getSingleStringOrDefault(RegularTestDocument.MULTIPLE_VALUES_KEY, ""),
+                () -> regularTestDocument.getSingleStringOrDefault(RegularTestDocument.MULTIPLE_VALUES_KEY, () -> ""),
                 "Expected single value but was multiple values"
             ),
             () -> assertEquals(
                 RegularTestDocument.SINGLE_VALUE,
-                regularTestDocument.getSingleStringOrDefault(RegularTestDocument.SINGLE_VALUE_KEY, "")
+                regularTestDocument.getSingleStringOrDefault(RegularTestDocument.SINGLE_VALUE_KEY, () -> "")
             ),
-            () -> assertEquals("", regularTestDocument.getSingleStringOrDefault(UNKNOWN_KEY, ""))
+            () -> assertEquals("", regularTestDocument.getSingleStringOrDefault(UNKNOWN_KEY, () -> ""))
         );
     }
 
@@ -161,7 +161,7 @@ final class PermissiveDocumentTest {
         assertAll(
             () -> assertThrows(
                 NullPointerException.class,
-                () -> regularTestDocument.getMultipleStringsOrDefault(null, emptyList)
+                () -> regularTestDocument.getMultipleStringsOrDefault(null, Collections::emptyList)
             ),
             () -> assertThrows(
                 NullPointerException.class,
@@ -169,14 +169,14 @@ final class PermissiveDocumentTest {
             ),
             () -> Exceptions.isThrownAndContains(
                 WrongPropertyTypeException.class,
-                () -> regularTestDocument.getMultipleStringsOrDefault(RegularTestDocument.SINGLE_VALUE_KEY, emptyList),
+                () -> regularTestDocument.getMultipleStringsOrDefault(RegularTestDocument.SINGLE_VALUE_KEY, Collections::emptyList),
                 "Expected multiple values but was single value"
             ),
             () -> assertEquals(
                 RegularTestDocument.MULTIPLE_VALUES,
-                regularTestDocument.getMultipleStringsOrDefault(RegularTestDocument.MULTIPLE_VALUES_KEY, emptyList)
+                regularTestDocument.getMultipleStringsOrDefault(RegularTestDocument.MULTIPLE_VALUES_KEY, Collections::emptyList)
             ),
-            () -> assertEquals(emptyList, regularTestDocument.getMultipleStringsOrDefault(UNKNOWN_KEY, emptyList))
+            () -> assertEquals(emptyList, regularTestDocument.getMultipleStringsOrDefault(UNKNOWN_KEY, Collections::emptyList))
         );
     }
 
@@ -249,11 +249,11 @@ final class PermissiveDocumentTest {
         assertAll(
             () -> assertThrows(
                 NullPointerException.class,
-                () -> regularTestDocument.getSingleOrDefault(null, String::trim, "")
+                () -> regularTestDocument.getSingleOrDefault(null, String::trim, String::new)
             ),
             () -> assertThrows(
                 NullPointerException.class,
-                () -> regularTestDocument.getSingleOrDefault(RegularTestDocument.SINGLE_VALUE_KEY, null, "")
+                () -> regularTestDocument.getSingleOrDefault(RegularTestDocument.SINGLE_VALUE_KEY, null, String::new)
             ),
             () -> assertThrows(
                 NullPointerException.class,
@@ -261,15 +261,15 @@ final class PermissiveDocumentTest {
             ),
             () -> assertEquals(
                 "default",
-                regularTestDocument.getSingleOrDefault(UNKNOWN_KEY, String::toUpperCase, "default")
+                regularTestDocument.getSingleOrDefault(UNKNOWN_KEY, String::toUpperCase, () -> "default")
             ),
             () -> assertEquals(
                 10,
-                regularTestDocument.getSingleOrDefault(UNKNOWN_KEY, String::length, 10)
+                regularTestDocument.getSingleOrDefault(UNKNOWN_KEY, String::length, () -> 10)
             ),
             () -> Exceptions.isThrownAndContains(
                 WrongPropertyTypeException.class,
-                () -> regularTestDocument.getSingleOrDefault(RegularTestDocument.MULTIPLE_VALUES_KEY, String::trim, ""),
+                () -> regularTestDocument.getSingleOrDefault(RegularTestDocument.MULTIPLE_VALUES_KEY, String::trim, String::new),
                 "Expected single value but was multiple values"
             ),
             () -> assertEquals(
@@ -277,18 +277,18 @@ final class PermissiveDocumentTest {
                 regularTestDocument.getSingleOrDefault(
                     RegularTestDocument.SINGLE_VALUE_KEY,
                     String::toUpperCase,
-                    "Default"
+                    () -> "Default"
                 )
             ),
             () -> assertEquals(
                 RegularTestDocument.SINGLE_VALUE.length(),
-                regularTestDocument.getSingleOrDefault(RegularTestDocument.SINGLE_VALUE_KEY, String::length, 48)
+                regularTestDocument.getSingleOrDefault(RegularTestDocument.SINGLE_VALUE_KEY, String::length, () -> 48)
             ),
             () -> assertDoesNotThrow(
                 () -> regularTestDocument.getSingleOrDefault(
                     RegularTestDocument.SINGLE_VALUE_KEY,
                     (CharSequence charSequence) -> charSequence.charAt(0),
-                    "Default"
+                    () -> "Default"
                 )
             )
         );
@@ -303,11 +303,11 @@ final class PermissiveDocumentTest {
         assertAll(
             () -> assertThrows(
                 NullPointerException.class,
-                () -> regularTestDocument.getMultipleOrDefault(null, String::trim, stringList)
+                () -> regularTestDocument.getMultipleOrDefault(null, String::trim, () -> stringList)
             ),
             () -> assertThrows(
                 NullPointerException.class,
-                () -> regularTestDocument.getMultipleOrDefault(RegularTestDocument.MULTIPLE_VALUES_KEY, null, stringList)
+                () -> regularTestDocument.getMultipleOrDefault(RegularTestDocument.MULTIPLE_VALUES_KEY, null, () -> stringList)
             ),
             () -> assertThrows(
                 NullPointerException.class,
@@ -315,12 +315,12 @@ final class PermissiveDocumentTest {
             ),
             () -> assertEquals(
                 stringList,
-                regularTestDocument.getMultipleOrDefault(UNKNOWN_KEY, String::toUpperCase, stringList)
+                regularTestDocument.getMultipleOrDefault(UNKNOWN_KEY, String::toUpperCase, () -> stringList)
             ),
-            () -> assertEquals(intList, regularTestDocument.getMultipleOrDefault(UNKNOWN_KEY, String::length, intList)),
+            () -> assertEquals(intList, regularTestDocument.getMultipleOrDefault(UNKNOWN_KEY, String::length, () -> intList)),
             () -> Exceptions.isThrownAndContains(
                 WrongPropertyTypeException.class,
-                () -> regularTestDocument.getMultipleOrDefault(RegularTestDocument.SINGLE_VALUE_KEY, String::trim, stringList),
+                () -> regularTestDocument.getMultipleOrDefault(RegularTestDocument.SINGLE_VALUE_KEY, String::trim, () -> stringList),
                 "Expected multiple values but was single value"
             ),
             () -> assertEquals(
@@ -328,18 +328,18 @@ final class PermissiveDocumentTest {
                 regularTestDocument.getMultipleOrDefault(
                     RegularTestDocument.MULTIPLE_VALUES_KEY,
                     String::toUpperCase,
-                    stringList
+                    () -> stringList
                 )
             ),
             () -> assertEquals(
                 RegularTestDocument.MULTIPLE_VALUES.stream().map(String::length).toList(),
-                regularTestDocument.getMultipleOrDefault(RegularTestDocument.MULTIPLE_VALUES_KEY, String::length, intList)
+                regularTestDocument.getMultipleOrDefault(RegularTestDocument.MULTIPLE_VALUES_KEY, String::length, () -> intList)
             ),
             () -> assertDoesNotThrow(
                 () -> regularTestDocument.getMultipleOrDefault(
                     RegularTestDocument.MULTIPLE_VALUES_KEY,
                     (CharSequence charSequence) -> charSequence,
-                    charsequenceList
+                    () -> charsequenceList
                 )
             )
         );
@@ -351,31 +351,31 @@ final class PermissiveDocumentTest {
         assertAll(
             () -> assertThrows(
                 NullPointerException.class,
-                () -> regularTestDocument.getSingleOrThrows(null, String::length)
+                () -> regularTestDocument.getSingleOrThrow(null, String::length)
             ),
             () -> assertThrows(
                 NullPointerException.class,
-                () -> regularTestDocument.getSingleOrThrows(RegularTestDocument.SINGLE_VALUE, null)
+                () -> regularTestDocument.getSingleOrThrow(RegularTestDocument.SINGLE_VALUE, null)
             ),
             () -> assertThrows(
                 MissingPropertyException.class,
-                () -> regularTestDocument.getSingleOrThrows(UNKNOWN_KEY, String::length)
+                () -> regularTestDocument.getSingleOrThrow(UNKNOWN_KEY, String::length)
             ),
             () -> Exceptions.isThrownAndContains(
                 WrongPropertyTypeException.class,
-                () -> regularTestDocument.getSingleOrThrows(RegularTestDocument.MULTIPLE_VALUES_KEY, String::length),
+                () -> regularTestDocument.getSingleOrThrow(RegularTestDocument.MULTIPLE_VALUES_KEY, String::length),
                 "Expected single value but was multiple values"
             ),
             () -> assertEquals(
                 RegularTestDocument.SINGLE_VALUE.toUpperCase(),
-                regularTestDocument.getSingleOrThrows(RegularTestDocument.SINGLE_VALUE_KEY, String::toUpperCase)
+                regularTestDocument.getSingleOrThrow(RegularTestDocument.SINGLE_VALUE_KEY, String::toUpperCase)
             ),
             () -> assertEquals(
                 RegularTestDocument.SINGLE_VALUE.length(),
-                regularTestDocument.getSingleOrThrows(RegularTestDocument.SINGLE_VALUE_KEY, String::length)
+                regularTestDocument.getSingleOrThrow(RegularTestDocument.SINGLE_VALUE_KEY, String::length)
             ),
             () -> assertDoesNotThrow(
-                () -> regularTestDocument.getSingleOrThrows(
+                () -> regularTestDocument.getSingleOrThrow(
                     RegularTestDocument.SINGLE_VALUE_KEY,
                     (CharSequence charsequence) -> charsequence.charAt(0)
                 )
@@ -389,32 +389,32 @@ final class PermissiveDocumentTest {
         assertAll(
             () -> assertThrows(
                 NullPointerException.class,
-                () -> regularTestDocument.getMultipleOrThrows(null, String::length)
+                () -> regularTestDocument.getMultipleOrThrow(null, String::length)
             ),
             () -> assertThrows(
                 NullPointerException.class,
-                () -> regularTestDocument.getMultipleOrThrows(RegularTestDocument.SINGLE_VALUE, null)
+                () -> regularTestDocument.getMultipleOrThrow(RegularTestDocument.SINGLE_VALUE, null)
             ),
             () -> assertThrows(
                 MissingPropertyException.class,
-                () -> regularTestDocument.getMultipleOrThrows(UNKNOWN_KEY, String::length)
+                () -> regularTestDocument.getMultipleOrThrow(UNKNOWN_KEY, String::length)
             ),
             () -> Exceptions.isThrownAndContains(
                 WrongPropertyTypeException.class,
-                () -> regularTestDocument.getMultipleOrThrows(RegularTestDocument.SINGLE_VALUE_KEY, String::length),
+                () -> regularTestDocument.getMultipleOrThrow(RegularTestDocument.SINGLE_VALUE_KEY, String::length),
                 "Expected multiple values but was single value"
             ),
             () -> assertEquals(
                 RegularTestDocument.MULTIPLE_VALUES.stream().map(String::toUpperCase).toList(),
-                regularTestDocument.getMultipleOrThrows(RegularTestDocument.MULTIPLE_VALUES_KEY, String::toUpperCase)
+                regularTestDocument.getMultipleOrThrow(RegularTestDocument.MULTIPLE_VALUES_KEY, String::toUpperCase)
             ),
             () -> assertArrayEquals(
                 RegularTestDocument.MULTIPLE_VALUES.stream().mapToInt(String::length).toArray(),
-                regularTestDocument.getMultipleOrThrows(RegularTestDocument.MULTIPLE_VALUES_KEY, String::length)
+                regularTestDocument.getMultipleOrThrow(RegularTestDocument.MULTIPLE_VALUES_KEY, String::length)
                     .stream().mapToInt(Integer::intValue).toArray()
             ),
             () -> assertDoesNotThrow(
-                () -> regularTestDocument.getMultipleOrThrows(
+                () -> regularTestDocument.getMultipleOrThrow(
                     RegularTestDocument.MULTIPLE_VALUES_KEY,
                     (CharSequence charsequence) -> charsequence.charAt(0)
                 )
@@ -461,8 +461,8 @@ final class PermissiveDocumentTest {
     void containsAllRecordsForAllDocuments() throws URISyntaxException, IOException {
         var documentTester = new DocumentsTester<>(PermissiveDocument::from, PermissiveDocument.class);
         documentTester.testWithAllCorrectDocuments(
-            PermissiveDocument::getSingleStringOrThrows,
-            PermissiveDocument::getMultipleStringsOrThrows
+            PermissiveDocument::getSingleStringOrThrow,
+            PermissiveDocument::getMultipleStringsOrThrow
         );
     }
 
