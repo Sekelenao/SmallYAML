@@ -18,6 +18,16 @@ Simplified YAML library with limited syntax support and built-in validation
 
 - [ ] YAML parsing and loading
 
+### What am I working on right now?
+
+- Writing tests for the new primitive features in PermissiveDocument
+- Adding more templates of correct documents (indents...)
+- Thinking about static methods for LineProviders
+- Thinking about providing default PropertyValueMappers
+- Testing the API in Simple projects and Spring projects
+- Adding javadocs
+- Adding documentation
+
 ## Overview
 
 SmallYAML is a simplified YAML library that prioritizes maintainability and predictability over comprehensive YAML
