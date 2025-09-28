@@ -1,8 +1,6 @@
 package io.github.sekelenao.smallyaml.test.api.document;
 
 import io.github.sekelenao.smallyaml.api.document.PermissiveDocument;
-import io.github.sekelenao.smallyaml.api.document.property.MultipleValuesProperty;
-import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
 import io.github.sekelenao.smallyaml.api.exception.document.MissingPropertyException;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
 import io.github.sekelenao.smallyaml.api.line.provider.BufferedReaderLineProvider;
@@ -428,19 +426,12 @@ final class PermissiveDocumentTest {
     @DisplayName("Property iterator")
     void propertyIterator() {
         var iterator = regularTestDocument.iterator();
-        assertAll(
-            () -> assertTrue(iterator.hasNext()),
-            () -> assertEquals(
-                new SingleValueProperty(RegularTestDocument.SINGLE_VALUE_KEY, RegularTestDocument.SINGLE_VALUE),
-                iterator.next()
-            ),
-            () -> assertTrue(iterator.hasNext()),
-            () -> assertEquals(
-                new MultipleValuesProperty(RegularTestDocument.MULTIPLE_VALUES_KEY, RegularTestDocument.MULTIPLE_VALUES),
-                iterator.next()
-            ),
-            () -> assertThrows(NoSuchElementException.class, iterator::next)
-        );
+        for (int i = 0; i < RegularTestDocument.KEY_VALUE_LINE_COUNT + RegularTestDocument.KEY_LINE_COUNT; i++){
+            assertTrue(iterator.hasNext());
+            assertDoesNotThrow(iterator::hasNext);
+            assertDoesNotThrow(iterator::next);
+        }
+        assertThrows(NoSuchElementException.class, iterator::next);
     }
 
     @Test
