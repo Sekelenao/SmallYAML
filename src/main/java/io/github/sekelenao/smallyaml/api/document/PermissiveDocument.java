@@ -4,7 +4,6 @@ import io.github.sekelenao.smallyaml.api.document.property.MultipleValuesPropert
 import io.github.sekelenao.smallyaml.api.document.property.Property;
 import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
 import io.github.sekelenao.smallyaml.api.exception.document.DuplicatedPropertyException;
-import io.github.sekelenao.smallyaml.api.exception.document.MissingPropertyException;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
 import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
 import io.github.sekelenao.smallyaml.api.mapping.PropertyValueMapper;
@@ -24,7 +23,6 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
-import java.util.function.Supplier;
 
 public final class PermissiveDocument implements Iterable<Property>, Document {
 
@@ -91,31 +89,6 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
     }
 
-    public String getSingleStringOrDefault(String key, Supplier<String> defaultValueSupplier){
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(defaultValueSupplier);
-        var value = properties.get(key);
-        if(value == null){
-            return defaultValueSupplier.get();
-        }
-        if(value instanceof String valueAsString){
-            return valueAsString;
-        }
-        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
-    }
-
-    public String getSingleStringOrThrow(String key){
-        Objects.requireNonNull(key);
-        var value = properties.get(key);
-        if(value == null){
-            throw MissingPropertyException.forFollowing(key);
-        }
-        if(value instanceof String valueAsString){
-            return valueAsString;
-        }
-        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
-    }
-
     public Optional<List<String>> getMultipleStrings(String key){
         Objects.requireNonNull(key);
         var value = properties.get(key);
@@ -124,31 +97,6 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         }
         if(value instanceof ValueList valueList){
             return Optional.of(valueList.asListView());
-        }
-        throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
-    }
-
-    public List<String> getMultipleStringsOrDefault(String key, Supplier<List<String>> defaultValueSupplier){
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(defaultValueSupplier);
-        var value = properties.get(key);
-        if(value == null){
-            return defaultValueSupplier.get();
-        }
-        if(value instanceof ValueList valueList){
-            return valueList.asListView();
-        }
-        throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
-    }
-
-    public List<String> getMultipleStringsOrThrow(String key){
-        Objects.requireNonNull(key);
-        var value = properties.get(key);
-        if(value == null){
-            throw MissingPropertyException.forFollowing(key);
-        }
-        if(value instanceof ValueList valueList){
-            return valueList.asListView();
         }
         throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
     }
@@ -169,7 +117,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         Objects.requireNonNull(key);
         var value = properties.get(key);
         if(value == null){
-            throw MissingPropertyException.forFollowing(key);
+            throw new NoSuchElementException();
         }
         if(value instanceof String valueAsString){
             return StrictBooleanParser.parse(valueAsString);
@@ -189,30 +137,6 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
     }
 
-    public int getSingleIntOrDefault(String key, int defaultValue){
-        Objects.requireNonNull(key);
-        var value = properties.get(key);
-        if(value == null){
-            return defaultValue;
-        }
-        if(value instanceof String valueAsString){
-            return Integer.parseInt(valueAsString);
-        }
-        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
-    }
-
-    public int getSingleIntOrThrow(String key){
-        Objects.requireNonNull(key);
-        var value = properties.get(key);
-        if(value == null){
-            throw MissingPropertyException.forFollowing(key);
-        }
-        if(value instanceof String valueAsString){
-            return Integer.parseInt(valueAsString);
-        }
-        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
-    }
-
     public Optional<int[]> getMultipleInts(String key){
         Objects.requireNonNull(key);
         var value = properties.get(key);
@@ -221,32 +145,6 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         }
         if(value instanceof ValueList valueList){
             return Optional.of(valueList.asArrayOfInts());
-        }
-        throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
-    }
-
-    public int[] getMultipleIntsOrDefault(String key, Supplier<int[]> defaultValueSupplier){
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(defaultValueSupplier);
-        var value = properties.get(key);
-        if(value == null){
-            return defaultValueSupplier.get();
-        }
-        if(value instanceof ValueList valueList){
-            return valueList.asArrayOfInts();
-        }
-        throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
-    }
-
-    public int[] getMultipleIntsOrThrow(String key, Supplier<int[]> defaultValueSupplier){
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(defaultValueSupplier);
-        var value = properties.get(key);
-        if(value == null){
-            throw MissingPropertyException.forFollowing(key);
-        }
-        if(value instanceof ValueList valueList){
-            return valueList.asArrayOfInts();
         }
         throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
     }
@@ -263,30 +161,6 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
     }
 
-    public long getSingleLongOrDefault(String key, long defaultValue){
-        Objects.requireNonNull(key);
-        var value = properties.get(key);
-        if(value == null){
-            return defaultValue;
-        }
-        if(value instanceof String valueAsString){
-            return Long.parseLong(valueAsString);
-        }
-        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
-    }
-
-    public long getSingleLongOrThrow(String key){
-        Objects.requireNonNull(key);
-        var value = properties.get(key);
-        if(value == null){
-            throw MissingPropertyException.forFollowing(key);
-        }
-        if(value instanceof String valueAsString){
-            return Long.parseLong(valueAsString);
-        }
-        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
-    }
-
     public Optional<long[]> getMultipleLongs(String key){
         Objects.requireNonNull(key);
         var value = properties.get(key);
@@ -295,31 +169,6 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         }
         if(value instanceof ValueList valueList){
             return Optional.of(valueList.asArrayOfLongs());
-        }
-        throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
-    }
-
-    public long[] getMultipleLongsOrDefault(String key, Supplier<long[]> defaultValueSupplier){
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(defaultValueSupplier);
-        var value = properties.get(key);
-        if(value == null){
-            return defaultValueSupplier.get();
-        }
-        if(value instanceof ValueList valueList){
-            return valueList.asArrayOfLongs();
-        }
-        throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
-    }
-
-    public long[] getMultipleLongsOrThrow(String key){
-        Objects.requireNonNull(key);
-        var value = properties.get(key);
-        if(value == null){
-            throw MissingPropertyException.forFollowing(key);
-        }
-        if(value instanceof ValueList valueList){
-            return valueList.asArrayOfLongs();
         }
         throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
     }
@@ -336,30 +185,6 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
     }
 
-    public double getSingleDoubleOrDefault(String key, double defaultValue){
-        Objects.requireNonNull(key);
-        var value = properties.get(key);
-        if(value == null){
-            return defaultValue;
-        }
-        if(value instanceof String valueAsString){
-            return Double.parseDouble(valueAsString);
-        }
-        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
-    }
-
-    public double getSingleDoubleOrThrow(String key){
-        Objects.requireNonNull(key);
-        var value = properties.get(key);
-        if(value == null){
-            throw MissingPropertyException.forFollowing(key);
-        }
-        if(value instanceof String valueAsString){
-            return Double.parseDouble(valueAsString);
-        }
-        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
-    }
-
     public Optional<double[]> getMultipleDoubles(String key){
         Objects.requireNonNull(key);
         var value = properties.get(key);
@@ -370,31 +195,6 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
             return Optional.of(valueList.asArrayOfDoubles());
         }
         throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
-    }
-
-    public double[] getMultipleDoublesOrDefault(String key, Supplier<double[]> defaultValueSupplier){
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(defaultValueSupplier);
-        var value = properties.get(key);
-        if(value == null){
-            return defaultValueSupplier.get();
-        }
-        if(value instanceof ValueList valueList){
-            return valueList.asArrayOfDoubles();
-        }
-        throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
-    }
-
-    public double[] getMultipleDoublesOrThrow(String key){
-       Objects.requireNonNull(key);
-       var value = properties.get(key);
-       if(value == null){
-           throw MissingPropertyException.forFollowing(key);
-       }
-       if(value instanceof ValueList valueList){
-           return valueList.asArrayOfDoubles();
-       }
-       throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
     }
 
     public <T> Optional<T> getSingle(String key, PropertyValueMapper<? super String, T> mapper){
@@ -411,33 +211,6 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
     }
 
-    public <T> T getSingleOrDefault(String key, PropertyValueMapper<? super String, T> mapper, Supplier<T> defaultValueSupplier){
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(mapper);
-        Objects.requireNonNull(defaultValueSupplier);
-        var value = properties.get(key);
-        if(value == null){
-            return defaultValueSupplier.get();
-        }
-        if(value instanceof String valueAsString){
-            return mapper.apply(valueAsString);
-        }
-        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
-    }
-
-    public <T> T getSingleOrThrow(String key, PropertyValueMapper<? super String, T> mapper){
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(mapper);
-        var value = properties.get(key);
-        if(value == null){
-            throw MissingPropertyException.forFollowing(key);
-        }
-        if(value instanceof String valueAsString){
-            return mapper.apply(valueAsString);
-        }
-        throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
-    }
-
     public <T> Optional<List<T>> getMultiple(String key, PropertyValueMapper<? super String, T> mapper){
         Objects.requireNonNull(key);
         Objects.requireNonNull(mapper);
@@ -447,33 +220,6 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         }
         if(value instanceof ValueList valueList){
             return Optional.of(valueList.asListView(mapper));
-        }
-        throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
-    }
-
-    public <T> List<T> getMultipleOrDefault(String key, PropertyValueMapper<? super String, T> mapper, Supplier<List<T>> defaultValueSupplier){
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(mapper);
-        Objects.requireNonNull(defaultValueSupplier);
-        var value = properties.get(key);
-        if(value == null){
-            return defaultValueSupplier.get();
-        }
-        if(value instanceof ValueList valueList){
-            return valueList.asListView(mapper);
-        }
-        throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
-    }
-
-    public <T> List<T> getMultipleOrThrow(String key, PropertyValueMapper<? super String, T> mapper){
-        Objects.requireNonNull(key);
-        Objects.requireNonNull(mapper);
-        var value = properties.get(key);
-        if(value == null){
-            throw MissingPropertyException.forFollowing(key);
-        }
-        if(value instanceof ValueList valueList){
-            return valueList.asListView(mapper);
         }
         throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
     }

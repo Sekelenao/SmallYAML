@@ -8,7 +8,7 @@ multiple-values:
   - three
 
 # Single boolean
-single-boolean: True
+single-boolean: False
 
 # Multiples booleans
 multiple-booleans:
@@ -31,5 +31,5 @@ single-double: "1.2"
 # Multiple doubles
 multiple-doubles:
   - "1.1"
-  - "2.2"
+  - "2"
   - "3.3"
