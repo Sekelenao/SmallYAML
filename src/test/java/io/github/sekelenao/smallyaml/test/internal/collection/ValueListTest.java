@@ -284,4 +284,48 @@ final class ValueListTest {
         );
     }
 
+    @Test
+    @DisplayName("Hashcode is working")
+    void hashcodeIsWorking() {
+        var valueList1 = new ValueList("first");
+        valueList1.add("second");
+        valueList1.add("third");
+        var valueList2 = new ValueList("first");
+        valueList2.add("second");
+        valueList2.add("third");
+        assertAll(
+            () -> assertEquals(0, new ValueList("").hashCode()),
+            () -> assertEquals(valueList1.hashCode(), valueList2.hashCode()),
+            () -> assertNotEquals(0, valueList1.hashCode())
+        );
+    }
+
+    @Test
+    @DisplayName("Equals is working")
+    void equalsIsWorking() {
+        var valueList1 = new ValueList("first");
+        valueList1.add("second");
+        valueList1.add("third");
+        var valueList2 = new ValueList("first");
+        valueList2.add("second");
+        valueList2.add("third");
+        var valueList3 = new ValueList("first");
+        valueList3.add("second");
+        valueList3.add("fourth");
+        assertAll(
+            () -> assertEquals(valueList1, valueList2),
+            () -> assertNotEquals(valueList1, valueList3),
+            () -> assertNotEquals(valueList2, valueList3)
+        );
+    }
+
+    @Test
+    @DisplayName("To string is working")
+    void toStringIsWorking() {
+        var valueList = new ValueList("first");
+        valueList.add("second");
+        valueList.add("third");
+        assertEquals("[first, second, third]", valueList.toString());
+    }
+
 }
