@@ -1,0 +1,1 @@
+io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;"Invalid indentation: unexpected whitespace character for: '	tab-before: ""value""'"
