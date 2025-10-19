@@ -25,10 +25,15 @@ public final class LineParser {
     private static int leadingSpaces(String rawLine){
         int currentCharacterIndex = 0;
         for(int i = 0; i < rawLine.length(); i++){
-            if(!Character.isWhitespace(rawLine.charAt(i))){
-                return currentCharacterIndex;
+            var character = rawLine.charAt(i);
+            if(Character.isWhitespace(character)){
+                if(character != ' '){
+                    throw ParsingException.wrongIndentation("unexpected whitespace character", rawLine);
+                }
+                currentCharacterIndex++;
+            } else {
+                break;
             }
-            currentCharacterIndex++;
         }
         return currentCharacterIndex;
     }

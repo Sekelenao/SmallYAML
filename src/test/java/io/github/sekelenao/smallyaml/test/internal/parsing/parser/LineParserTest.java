@@ -8,7 +8,6 @@ import io.github.sekelenao.smallyaml.internal.parsing.line.Line;
 import io.github.sekelenao.smallyaml.internal.parsing.line.ListValueLine;
 import io.github.sekelenao.smallyaml.internal.parsing.parser.LineParser;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
-import io.github.sekelenao.smallyaml.test.util.Randoms;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -68,12 +67,21 @@ final class LineParserTest {
             }
         }
 
+        @Test
+        @DisplayName("Wrong indent whitespace")
+        void wrongIndentWhitespace() {
+            assertAll(
+                () -> checkException("\t-test", "unexpected whitespace character"),
+                () -> checkException("   \t  -test", "unexpected whitespace character")
+            );
+        }
+
         @ParameterizedTest(name = "{displayName} ({0})")
         @MethodSource("io.github.sekelenao.smallyaml.test.util.Randoms#intStreamWithSize50")
         @DisplayName("Leading spaces")
-        void blankString(int lengthOfBlankString) {
-            var listValue = Randoms.blankString(lengthOfBlankString) + "-  \"test\"";
-            checkValidListValueParsing(listValue, lengthOfBlankString, "test");
+        void blankString(int amountOfSpaces) {
+            var listValue = " ".repeat(amountOfSpaces) + "-  \"test\"";
+            checkValidListValueParsing(listValue, amountOfSpaces, "test");
         }
 
         @Test
@@ -82,11 +90,11 @@ final class LineParserTest {
             assertAll(
                     () -> checkValidListValueParsing("-test", 0, "test"),
                     () -> checkValidListValueParsing("- test", 0, "test"),
-                    () -> checkValidListValueParsing("\t- test", 1, "test"),
-                    () -> checkValidListValueParsing("\t\t- \":1:2:3:\"", 2, ":1:2:3:"),
-                    () -> checkValidListValueParsing("\t\t- \"test\"", 2, "test"),
-                    () -> checkValidListValueParsing("\t\t- \"test\" \t", 2, "test"),
-                    () -> checkValidListValueParsing("\t\t- \"test\" \t \t", 2, "test")
+                    () -> checkValidListValueParsing("  - test", 2, "test"),
+                    () -> checkValidListValueParsing("    - \":1:2:3:\"", 4, ":1:2:3:"),
+                    () -> checkValidListValueParsing("    - \"test\"", 4, "test"),
+                    () -> checkValidListValueParsing("    - \"test\" \t", 4, "test"),
+                    () -> checkValidListValueParsing("    - \"test\" \t \t", 4, "test")
             );
         }
 
@@ -115,12 +123,21 @@ final class LineParserTest {
             }
         }
 
+        @Test
+        @DisplayName("Wrong indent whitespace")
+        void wrongIndentWhitespace() {
+            assertAll(
+                () -> checkException("\ttest:", "unexpected whitespace character"),
+                () -> checkException("   \t  test:", "unexpected whitespace character")
+            );
+        }
+
         @ParameterizedTest(name = "{displayName} ({0})")
         @MethodSource("io.github.sekelenao.smallyaml.test.util.Randoms#intStreamWithSize50")
         @DisplayName("Leading spaces")
-        void blankString(int lengthOfBlankString) {
-            var key = Randoms.blankString(lengthOfBlankString) + "key: ";
-            checkValidKeyParsing(key, lengthOfBlankString, "key");
+        void blankString(int amountOfSpaces) {
+            var key = " ".repeat(amountOfSpaces) + "key: ";
+            checkValidKeyParsing(key, amountOfSpaces, "key");
         }
 
         @Test
@@ -129,16 +146,16 @@ final class LineParserTest {
             assertAll(
                     () -> checkValidKeyParsing("test:", 0, "test"),
                     () -> checkValidKeyParsing("test-2:", 0, "test-2"),
-                    () -> checkValidKeyParsing("\ttest:", 1, "test"),
-                    () -> checkValidKeyParsing("\t\t 1-2_3:", 3, "1-2_3"),
-                    () -> checkValidKeyParsing("\t\t   1.2.3:", 5, "1.2.3"),
-                    () -> checkValidKeyParsing("\t\tkey: \t", 2, "key"),
-                    () -> checkValidKeyParsing("\t\tdouble--dash:\t \t", 2, "double--dash")
+                    () -> checkValidKeyParsing("  test:", 2, "test"),
+                    () -> checkValidKeyParsing("     1-2_3:", 5, "1-2_3"),
+                    () -> checkValidKeyParsing("       1.2.3:", 7, "1.2.3"),
+                    () -> checkValidKeyParsing("    key: \t", 4, "key"),
+                    () -> checkValidKeyParsing("    double--dash:\t \t", 4, "double--dash")
             );
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {":", " :", "\t:", "   :    "})
+        @ValueSource(strings = {":", " :", "  :", "   :    "})
         @DisplayName("Empty key")
         void wrongListValue(String listValue) {
             checkException(listValue, "empty key");
@@ -177,12 +194,21 @@ final class LineParserTest {
             }
         }
 
+        @Test
+        @DisplayName("Wrong indent whitespace")
+        void wrongIndentWhitespace() {
+            assertAll(
+                () -> checkException("\ttest: value", "unexpected whitespace character"),
+                () -> checkException("   \t  test: value", "unexpected whitespace character")
+            );
+        }
+
         @ParameterizedTest(name = "{displayName} ({0})")
         @MethodSource("io.github.sekelenao.smallyaml.test.util.Randoms#intStreamWithSize50")
         @DisplayName("Leading spaces")
-        void blankString(int lengthOfBlankString) {
-            var keyValue = Randoms.blankString(lengthOfBlankString) + "key: \"test\" \t";
-            checkValidKeyValueParsing(keyValue, lengthOfBlankString, "key", "test");
+        void blankString(int amountOfSpaces) {
+            var keyValue = " ".repeat(amountOfSpaces) + "key: \"test\" \t";
+            checkValidKeyValueParsing(keyValue, amountOfSpaces, "key", "test");
         }
 
         @Test
@@ -191,11 +217,11 @@ final class LineParserTest {
             assertAll(
                     () -> checkValidKeyValueParsing("   key:   \"value \"   ", 3, "key", "value "),
                     () -> checkValidKeyValueParsing("test-2: 2", 0, "test-2", "2"),
-                    () -> checkValidKeyValueParsing("\ttest: value", 1, "test", "value"),
-                    () -> checkValidKeyValueParsing("\t\t 1-2_3: 3", 3, "1-2_3", "3"),
-                    () -> checkValidKeyValueParsing("\t\t   1.2.3:  \":yes:\"", 5, "1.2.3", ":yes:"),
-                    () -> checkValidKeyValueParsing("\t\tkey: \tvalue", 2, "key", "value"),
-                    () -> checkValidKeyValueParsing("\t\tdouble--dash:\t \tok", 2, "double--dash", "ok")
+                    () -> checkValidKeyValueParsing("  test: value", 2, "test", "value"),
+                    () -> checkValidKeyValueParsing("     1-2_3: 3", 5, "1-2_3", "3"),
+                    () -> checkValidKeyValueParsing("       1.2.3:  \":yes:\"", 7, "1.2.3", ":yes:"),
+                    () -> checkValidKeyValueParsing("    key: \tvalue", 4, "key", "value"),
+                    () -> checkValidKeyValueParsing("    double--dash:\t \tok", 4, "double--dash", "ok")
             );
         }
 
@@ -207,7 +233,7 @@ final class LineParserTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"key:value", "\tkey:value", " key:value"})
+        @ValueSource(strings = {"key:value", "  key:value", " key:value"})
         @DisplayName("No space after key")
         void missingEndingQuote(String rawKey) {
             checkException(rawKey, "forbidden character");
@@ -220,7 +246,7 @@ final class LineParserTest {
     final class EmptyLineParsing {
 
         @ParameterizedTest
-        @ValueSource(strings = {"", " ", "    # Comment", "#Comment", "  \t    \t", "   \t##", "##"})
+        @ValueSource(strings = {"", " ", "    \t# Comment", "#Comment", "          ", "     ##", "##", "\t \t"})
         @DisplayName("Empty line")
         void emptyLine(String rawLine) {
             var line = parser.parse(rawLine);
