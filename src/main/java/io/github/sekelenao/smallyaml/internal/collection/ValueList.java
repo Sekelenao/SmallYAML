@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -173,6 +174,26 @@ public final class ValueList implements Iterable<String> {
             array[i] = Double.parseDouble(values[i]);
         }
         return array;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof ValueList otherList
+            && nextEmptyIndex == otherList.nextEmptyIndex
+            && Arrays.equals(values, 0, nextEmptyIndex, otherList.values, 0, nextEmptyIndex);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.stream(values, 0, nextEmptyIndex)
+            .mapToInt(Objects::hashCode)
+            .reduce(0, (acc, value) -> acc ^ value);
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.stream(values, 0, nextEmptyIndex)
+            .collect(Collectors.joining(", ", "[", "]"));
     }
 
 }
