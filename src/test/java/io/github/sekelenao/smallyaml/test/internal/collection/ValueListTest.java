@@ -60,8 +60,12 @@ final class ValueListTest {
             assertEquals("value-" + i, valueList.get(i));
         }
         assertEquals("first", valueList.get(0));
-        assertEquals(amount == 0 ? 1 : amount, valueList.size());
-        assertEquals("value-" + (amount - 1), valueList.get(valueList.size() - 1));
+        assertEquals(Math.max(1, amount), valueList.size());
+        if (amount > 1) {
+            assertEquals("value-" + (amount - 1), valueList.get(valueList.size() - 1));
+        } else {
+            assertEquals("first", valueList.get(valueList.size() - 1));
+        }
     }
 
     @Test
