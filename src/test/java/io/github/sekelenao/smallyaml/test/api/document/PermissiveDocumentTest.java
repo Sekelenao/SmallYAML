@@ -4,6 +4,7 @@ import io.github.sekelenao.smallyaml.api.document.PermissiveDocument;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
 import io.github.sekelenao.smallyaml.api.line.provider.BufferedReaderLineProvider;
 import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
+import io.github.sekelenao.smallyaml.internal.parsing.line.KeyValueLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.Line;
 import io.github.sekelenao.smallyaml.test.util.Exceptions;
 import io.github.sekelenao.smallyaml.test.util.constant.RegularTestDocument;
@@ -18,19 +19,21 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
-import java.util.OptionalDouble;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 @Tag(TestingTag.API)
 @Tag(TestingTag.COLLECTION)
@@ -43,6 +46,54 @@ final class PermissiveDocumentTest {
     private static final String UNKNOWN_KEY = "UNKNOWN";
 
     private final PermissiveDocument regularTestDocument;
+
+    private static final class EmptyLineProvider implements LineProvider {
+
+        @Override
+        public Optional<Line> nextLine() {
+            return Optional.empty();
+        }
+
+        @Override
+        public void close() { /* No resource to close */ }
+
+    }
+
+    private static final class FirstLineProvider implements LineProvider {
+
+        private boolean shouldReturn = true;
+
+        @Override
+        public Optional<Line> nextLine() {
+            if(shouldReturn) {
+                shouldReturn = false;
+                return Optional.of(new KeyValueLine(0, "Key", "First"));
+            }
+            return Optional.empty();
+        }
+
+        @Override
+        public void close() { /* No resource to close */ }
+
+    }
+
+    private static final class SecondLineProvider implements LineProvider {
+
+        private boolean shouldReturn = true;
+
+        @Override
+        public Optional<Line> nextLine() {
+            if(shouldReturn) {
+                shouldReturn = false;
+                return Optional.of(new KeyValueLine(0, "Key", "Second"));
+            }
+            return Optional.empty();
+        }
+
+        @Override
+        public void close() { /* No resource to close */ }
+
+    }
 
     public PermissiveDocumentTest() throws URISyntaxException, IOException {
         var file = TestResource.find(RegularTestDocument.TEST_DOCUMENT);
@@ -322,21 +373,65 @@ final class PermissiveDocumentTest {
     @Test
     @DisplayName("Empty property iterator")
     void emptyPropertyIterator() throws IOException {
-        var document = PermissiveDocument.from(new LineProvider() {
-
-            @Override
-            public Optional<Line> nextLine() {
-                return Optional.empty();
-            }
-
-            @Override
-            public void close() { /* No resource to close */ }
-
-        });
+        var document = PermissiveDocument.from(new EmptyLineProvider());
         var iterator = document.iterator();
         assertAll(
             () -> assertFalse(iterator::hasNext),
             () -> assertThrows(NoSuchElementException.class, iterator::next)
+        );
+    }
+
+    @Test
+    @DisplayName("Equals is working")
+    void equalsIsWorking() throws URISyntaxException, IOException {
+        var file = TestResource.find(RegularTestDocument.TEST_DOCUMENT);
+        var otherEmptyDocument1 = PermissiveDocument.from(new EmptyLineProvider());
+        var otherEmptyDocument2 = PermissiveDocument.from(new EmptyLineProvider());
+        var firstDocument = PermissiveDocument.from(new FirstLineProvider());
+        var secondDocument = PermissiveDocument.from(new SecondLineProvider());
+        try (var bufferedReaderLineProvider = new BufferedReaderLineProvider(Files.newBufferedReader(file))) {
+            var sameDocument = PermissiveDocument.from(bufferedReaderLineProvider);
+            assertAll(
+                () -> assertEquals(regularTestDocument, sameDocument),
+                () -> assertNotEquals(otherEmptyDocument1, regularTestDocument),
+                () -> assertEquals(otherEmptyDocument1, otherEmptyDocument2),
+                () -> assertNotEquals(Collections.emptyMap(), otherEmptyDocument1),
+                () -> assertEquals(regularTestDocument, regularTestDocument),
+                () -> assertNotEquals(firstDocument, secondDocument)
+            );
+        }
+    }
+
+    @Test
+    @DisplayName("Hashcode is working")
+    void hashcodeIsWorking() throws URISyntaxException, IOException {
+        var file = TestResource.find(RegularTestDocument.TEST_DOCUMENT);
+        try (var bufferedReaderLineProvider = new BufferedReaderLineProvider(Files.newBufferedReader(file))) {
+            var sameDocument = PermissiveDocument.from(bufferedReaderLineProvider);
+            var emptyDocument = PermissiveDocument.from(new EmptyLineProvider());
+            var firstDocument = PermissiveDocument.from(new FirstLineProvider());
+            var secondDocument = PermissiveDocument.from(new SecondLineProvider());
+            assertAll(
+                () -> assertEquals(regularTestDocument.hashCode(), sameDocument.hashCode()),
+                () -> assertNotEquals(regularTestDocument.hashCode(), new Object().hashCode()),
+                () -> assertEquals(0, emptyDocument.hashCode()),
+                () -> assertNotEquals(0, regularTestDocument.hashCode()),
+                () -> assertNotEquals(firstDocument.hashCode(), secondDocument.hashCode())
+            );
+        }
+    }
+
+    @Test
+    @DisplayName("To string is working")
+    void toStringIsWorking() throws IOException {
+        var emptyDocument = PermissiveDocument.from(new EmptyLineProvider());
+        var firstDocument = PermissiveDocument.from(new FirstLineProvider());
+        var secondDocument = PermissiveDocument.from(new SecondLineProvider());
+        assertAll(
+            () -> assertEquals("{single-value=value, single-long=20, multiple-doubles=[1.1, 2, 3.3], single-boolean=False, single-double=1.2, multiple-booleans=[true, False, TRUE], multiple-longs=[1, 2, 3], multiple-values=[one, two, three]}", regularTestDocument.toString()),
+            () -> assertEquals("{}", emptyDocument.toString()),
+            () -> assertEquals("{Key=First}", firstDocument.toString()),
+            () -> assertEquals("{Key=Second}", secondDocument.toString())
         );
     }
 

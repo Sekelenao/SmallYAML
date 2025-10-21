@@ -250,4 +250,22 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
 
         };
     }
+
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof PermissiveDocument otherDocument
+            && properties.size() == otherDocument.properties.size()
+            && properties.equals(otherDocument.properties);
+    }
+
+    @Override
+    public int hashCode() {
+        return properties.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return properties.toString();
+    }
+
 }
