@@ -66,10 +66,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git stash -u
           git fetch origin badges
           git checkout badges
-          git stash pop
+          cp badges-temp/Coverage.svg badges-temp/Branches.svg .
           git add Coverage.svg Branches.svg
           git diff --staged --quiet || git commit -m "Update coverage badges"
           git push origin badges
