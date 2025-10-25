@@ -9,9 +9,8 @@ Simplified YAML library with limited syntax support and built-in validation
 ### Status: No stable release yet
 
 [![Java](https://img.shields.io/badge/Java_21%2B-%23ED8B00.svg?logo=openjdk&logoColor=white)](https://docs.oracle.com/en/java/javase/21/docs/api/index.html)
-![Coverage](https://raw.githubusercontent.com/Sekelenao/SmallYAML/jacoco-badge/Coverage.svg)
-![Branches](https://raw.githubusercontent.com/Sekelenao/SmallYAML/jacoco-badge/Branches.svg)
-
+![Coverage](https://raw.githubusercontent.com/Sekelenao/SmallYAML/badges/Coverage.svg)
+![Branches](https://raw.githubusercontent.com/Sekelenao/SmallYAML/badges/Branches.svg)
 ## Versions
 
 ### Version 1.0.0 (Not released)
