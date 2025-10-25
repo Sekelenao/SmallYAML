@@ -12,6 +12,8 @@ jobs:
   test:
     name: Build and Test
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v4
@@ -24,36 +26,36 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        run: mvn -B verify --file pom.xml
 
-      - name: Upload JaCoCo report
-        uses: actions/upload-artifact@v4
+      - name: Generate JaCoCo Badge
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        with:
-          name: jacoco-report
-          path: target/site/jacoco/
-          retention-days: 1
-
-  badges:
-    name: Update Coverage Badges
-    needs: test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Download JaCoCo report
-        uses: actions/download-artifact@v4
-        with:
-          name: jacoco-report
-          path: target/site/jacoco/
-
-      - name: Generate and deploy badges
+        id: jacoco
         uses: cicirello/jacoco-badge-generator@v2
         with:
-          jacoco-csv-file: target/site/jacoco/jacoco.csv
           generate-branches-badge: true
-          generate-summary: true
+          jacoco-csv-file: target/site/jacoco/jacoco.csv
+
+      - name: Log coverage percentage
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          echo "coverage = ${{ steps.jacoco.outputs.coverage }}"
+          echo "branch coverage = ${{ steps.jacoco.outputs.branches }}"
+
+      - name: Checkout badges branch
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/checkout@v4
+        with:
+          ref: badges
+          path: badges-repo
+
+      - name: Copy badges
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          cp .github/badges/*.svg badges-repo/
+          cd badges-repo
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add *.svg
+          git diff --staged --quiet || git commit -m "Update badges"
+          git push
