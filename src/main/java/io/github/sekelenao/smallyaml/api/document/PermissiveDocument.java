@@ -75,6 +75,10 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         return new PermissiveDocument(collector.collectedProperties);
     }
 
+    public static PermissiveDocument empty(){
+        return new PermissiveDocument(new HashMap<>());
+    }
+
     public boolean hasProperty(String key){
         Objects.requireNonNull(key);
         return properties.containsKey(key);
