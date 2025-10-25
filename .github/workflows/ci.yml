@@ -51,24 +51,9 @@ jobs:
           name: jacoco-report
           path: target/site/jacoco/
 
-      - name: Generate JaCoCo Badges
+      - name: Generate and deploy badges
         uses: cicirello/jacoco-badge-generator@v2
         with:
-          badges-directory: .
+          jacoco-csv-file: target/site/jacoco/jacoco.csv
           generate-branches-badge: true
           generate-summary: true
-          coverage-badge-filename: Coverage.svg
-          branches-badge-filename: Branches.svg
-          coverage-label: Coverage
-          branches-label: Branches
-
-      - name: Deploy badges to badges branch
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git fetch origin badges
-          git checkout badges
-          cp badges-temp/Coverage.svg badges-temp/Branches.svg .
-          git add Coverage.svg Branches.svg
-          git diff --staged --quiet || git commit -m "Update coverage badges"
-          git push origin badges
