@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class BufferedReaderLineProvider implements LineProvider {
+public final class BufferedReaderLineProvider implements LineProvider, AutoCloseable {
 
     private final LineParser parser = new LineParser();
 

@@ -54,9 +54,6 @@ final class PermissiveDocumentTest {
             return Optional.empty();
         }
 
-        @Override
-        public void close() { /* No resource to close */ }
-
     }
 
     private static final class FirstLineProvider implements LineProvider {
@@ -72,9 +69,6 @@ final class PermissiveDocumentTest {
             return Optional.empty();
         }
 
-        @Override
-        public void close() { /* No resource to close */ }
-
     }
 
     private static final class SecondLineProvider implements LineProvider {
@@ -89,9 +83,6 @@ final class PermissiveDocumentTest {
             }
             return Optional.empty();
         }
-
-        @Override
-        public void close() { /* No resource to close */ }
 
     }
 
