@@ -3,10 +3,7 @@ package io.github.sekelenao.smallyaml.test.api.document;
 import io.github.sekelenao.smallyaml.api.document.PermissiveDocument;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
 import io.github.sekelenao.smallyaml.api.line.provider.BufferedReaderLineProvider;
-import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
 import io.github.sekelenao.smallyaml.api.line.provider.StringLineProvider;
-import io.github.sekelenao.smallyaml.internal.parsing.line.KeyValueLine;
-import io.github.sekelenao.smallyaml.internal.parsing.line.Line;
 import io.github.sekelenao.smallyaml.test.util.Exceptions;
 import io.github.sekelenao.smallyaml.test.util.constant.RegularTestDocument;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
@@ -50,45 +47,6 @@ final class PermissiveDocumentTest {
 
     private final PermissiveDocument regularTestDocument;
 
-    private static final class EmptyLineProvider implements LineProvider {
-
-        @Override
-        public Optional<Line> nextLine() {
-            return Optional.empty();
-        }
-
-    }
-
-    private static final class FirstLineProvider implements LineProvider {
-
-        private boolean shouldReturn = true;
-
-        @Override
-        public Optional<Line> nextLine() {
-            if (shouldReturn) {
-                shouldReturn = false;
-                return Optional.of(new KeyValueLine(0, "Key", "First"));
-            }
-            return Optional.empty();
-        }
-
-    }
-
-    private static final class SecondLineProvider implements LineProvider {
-
-        private boolean shouldReturn = true;
-
-        @Override
-        public Optional<Line> nextLine() {
-            if (shouldReturn) {
-                shouldReturn = false;
-                return Optional.of(new KeyValueLine(0, "Key", "Second"));
-            }
-            return Optional.empty();
-        }
-
-    }
-
     public PermissiveDocumentTest() throws URISyntaxException, IOException {
         var file = TestResource.find(RegularTestDocument.TEST_DOCUMENT);
         try (var bufferedReaderLineProvider = new BufferedReaderLineProvider(Files.newBufferedReader(file))) {
@@ -96,10 +54,24 @@ final class PermissiveDocumentTest {
         }
     }
 
-    @Test
-    @DisplayName("PermissiveDocument assertions")
-    void assertions() {
-        assertThrows(NullPointerException.class, () -> PermissiveDocument.from(null));
+    @Nested
+    final class Factories {
+
+        @Test
+        @DisplayName("From is working")
+        void constructionsAreWorking(){
+            assertAll(
+                () -> assertThrows(NullPointerException.class, () -> PermissiveDocument.from(null)),
+                () -> assertDoesNotThrow(() -> PermissiveDocument.from(StringLineProvider.of("")))
+            );
+        }
+
+        @Test
+        @DisplayName("Empty permissive document")
+        void emptyPermissiveDocument(){
+            assertEquals("{}", PermissiveDocument.empty().toString());
+        }
+
     }
 
     @Test
@@ -357,8 +329,8 @@ final class PermissiveDocumentTest {
 
         @Test
         @DisplayName("Subkeys assertions")
-        void assertions() throws IOException {
-            var permissiveDocument = PermissiveDocument.from(new EmptyLineProvider());
+        void assertions() {
+            var permissiveDocument = PermissiveDocument.empty();
             assertThrows(NullPointerException.class, () -> permissiveDocument.subKeysOf(null));
         }
 
@@ -478,8 +450,8 @@ final class PermissiveDocumentTest {
 
     @Test
     @DisplayName("Empty property iterator")
-    void emptyPropertyIterator() throws IOException {
-        var document = PermissiveDocument.from(new EmptyLineProvider());
+    void emptyPropertyIterator() {
+        var document = PermissiveDocument.empty();
         var iterator = document.iterator();
         assertAll(
             () -> assertFalse(iterator::hasNext),
@@ -491,10 +463,10 @@ final class PermissiveDocumentTest {
     @DisplayName("Equals is working")
     void equalsIsWorking() throws URISyntaxException, IOException {
         var file = TestResource.find(RegularTestDocument.TEST_DOCUMENT);
-        var otherEmptyDocument1 = PermissiveDocument.from(new EmptyLineProvider());
-        var otherEmptyDocument2 = PermissiveDocument.from(new EmptyLineProvider());
-        var firstDocument = PermissiveDocument.from(new FirstLineProvider());
-        var secondDocument = PermissiveDocument.from(new SecondLineProvider());
+        var otherEmptyDocument1 = PermissiveDocument.empty();
+        var otherEmptyDocument2 = PermissiveDocument.empty();
+        var firstDocument = PermissiveDocument.from(StringLineProvider.of("Key: First"));
+        var secondDocument = PermissiveDocument.from(StringLineProvider.of("Key: Second"));
         try (var bufferedReaderLineProvider = new BufferedReaderLineProvider(Files.newBufferedReader(file))) {
             var sameDocument = PermissiveDocument.from(bufferedReaderLineProvider);
             assertAll(
@@ -514,9 +486,9 @@ final class PermissiveDocumentTest {
         var file = TestResource.find(RegularTestDocument.TEST_DOCUMENT);
         try (var bufferedReaderLineProvider = new BufferedReaderLineProvider(Files.newBufferedReader(file))) {
             var sameDocument = PermissiveDocument.from(bufferedReaderLineProvider);
-            var emptyDocument = PermissiveDocument.from(new EmptyLineProvider());
-            var firstDocument = PermissiveDocument.from(new FirstLineProvider());
-            var secondDocument = PermissiveDocument.from(new SecondLineProvider());
+            var emptyDocument = PermissiveDocument.empty();
+            var firstDocument = PermissiveDocument.from(StringLineProvider.of("Key: First"));
+            var secondDocument = PermissiveDocument.from(StringLineProvider.of("Key: Second"));
             assertAll(
                 () -> assertEquals(regularTestDocument.hashCode(), sameDocument.hashCode()),
                 () -> assertNotEquals(regularTestDocument.hashCode(), new Object().hashCode()),
@@ -530,9 +502,9 @@ final class PermissiveDocumentTest {
     @Test
     @DisplayName("To string is working")
     void toStringIsWorking() throws IOException {
-        var emptyDocument = PermissiveDocument.from(new EmptyLineProvider());
-        var firstDocument = PermissiveDocument.from(new FirstLineProvider());
-        var secondDocument = PermissiveDocument.from(new SecondLineProvider());
+        var emptyDocument = PermissiveDocument.empty();
+        var firstDocument = PermissiveDocument.from(StringLineProvider.of("Key: First"));
+        var secondDocument = PermissiveDocument.from(StringLineProvider.of("Key: Second"));
         assertAll(
             () -> assertEquals("{single-value=value, single-long=20, multiple-doubles=[1.1, 2, 3.3], single-boolean=False, single-double=1.2, multiple-booleans=[true, False, TRUE], multiple-longs=[1, 2, 3], multiple-values=[one, two, three]}", regularTestDocument.toString()),
             () -> assertEquals("{}", emptyDocument.toString()),
