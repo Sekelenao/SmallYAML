@@ -52,10 +52,11 @@ jobs:
       - name: Copy badges
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          cp .github/badges/*.svg badges-repo/
+          cp .github/badges/jacoco.svg badges-repo/Coverage.svg
+          cp .github/badges/branches.svg badges-repo/Branches.svg
           cd badges-repo
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add *.svg
           git diff --staged --quiet || git commit -m "Update badges"
           git push
