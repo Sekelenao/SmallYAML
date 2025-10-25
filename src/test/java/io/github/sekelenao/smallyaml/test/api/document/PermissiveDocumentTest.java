@@ -4,6 +4,7 @@ import io.github.sekelenao.smallyaml.api.document.PermissiveDocument;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
 import io.github.sekelenao.smallyaml.api.line.provider.BufferedReaderLineProvider;
 import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
+import io.github.sekelenao.smallyaml.api.line.provider.StringLineProvider;
 import io.github.sekelenao.smallyaml.internal.parsing.line.KeyValueLine;
 import io.github.sekelenao.smallyaml.internal.parsing.line.Line;
 import io.github.sekelenao.smallyaml.test.util.Exceptions;
@@ -12,6 +13,7 @@ import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import io.github.sekelenao.smallyaml.test.util.document.DocumentsTester;
 import io.github.sekelenao.smallyaml.test.util.resource.TestResource;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +27,7 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -38,9 +41,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tag(TestingTag.API)
 @Tag(TestingTag.COLLECTION)
 final class PermissiveDocumentTest {
-    
+
     private static final String EXPECTED_SINGLE_MESSAGE = "Expected single value but was multiple values";
-    
+
     private static final String EXPECTED_MULTIPLE_MESSAGE = "Expected multiple values but was single value";
 
     private static final String UNKNOWN_KEY = "UNKNOWN";
@@ -62,7 +65,7 @@ final class PermissiveDocumentTest {
 
         @Override
         public Optional<Line> nextLine() {
-            if(shouldReturn) {
+            if (shouldReturn) {
                 shouldReturn = false;
                 return Optional.of(new KeyValueLine(0, "Key", "First"));
             }
@@ -77,7 +80,7 @@ final class PermissiveDocumentTest {
 
         @Override
         public Optional<Line> nextLine() {
-            if(shouldReturn) {
+            if (shouldReturn) {
                 shouldReturn = false;
                 return Optional.of(new KeyValueLine(0, "Key", "Second"));
             }
@@ -349,11 +352,123 @@ final class PermissiveDocumentTest {
         );
     }
 
+    @Nested
+    final class SubKeys {
+
+        @Test
+        @DisplayName("Subkeys assertions")
+        void assertions() throws IOException {
+            var permissiveDocument = PermissiveDocument.from(new EmptyLineProvider());
+            assertThrows(NullPointerException.class, () -> permissiveDocument.subKeysOf(null));
+        }
+
+        @Test
+        @DisplayName("Simple subkeys are found")
+        void simpleSubkeysAreFound() throws IOException {
+            var document = PermissiveDocument.from(StringLineProvider.of("""
+                endpoints:
+                    startup:
+                        endpoint: /startup
+                    readiness:
+                        endpoint: /readiness
+                    liveness:
+                        endpoint: /liveness
+                        not:
+                            aSubkey: no
+                not:
+                    aSubkey: no
+                """));
+            var subKeys = document.subKeysOf("endpoints");
+            assertAll(
+                () -> assertEquals(3, subKeys.size()),
+                () -> assertEquals(Set.of("endpoints.startup", "endpoints.readiness", "endpoints.liveness"), subKeys)
+            );
+        }
+
+        @Test
+        @DisplayName("Simple subkeys are found")
+        void NoSubkeysAreFound() throws IOException {
+            var document = PermissiveDocument.from(StringLineProvider.of("""
+                endpoints:
+                    startup:
+                        endpoint: /startup
+                    readiness:
+                        endpoint: /readiness
+                    liveness:
+                        endpoint: /liveness
+                        not:
+                            aSubkey: no
+                not:
+                    aSubkey: no
+                """));
+            assertAll(
+                () -> assertEquals(0, document.subKeysOf("endpoints.startup").size()),
+                () -> assertEquals(0, document.subKeysOf("unknown").size())
+            );
+        }
+
+        @Test
+        @DisplayName("Far subkeys are found")
+        void farSubkeysAreFound() throws IOException {
+            var document = PermissiveDocument.from(StringLineProvider.of("""
+                endpoints:
+                    enumeration:
+                        startup:
+                            endpoint: /startup
+                        readiness:
+                            endpoint: /readiness
+                        liveness:
+                            endpoint: /liveness
+                            not:
+                                aSubkey: no
+                not:
+                    aSubkey: no
+                """));
+            var subKeys = document.subKeysOf("endpoints.enumeration");
+            assertAll(
+                () -> assertEquals(3, subKeys.size()),
+                () -> assertEquals(
+                    Set.of(
+                        "endpoints.enumeration.startup",
+                        "endpoints.enumeration.readiness",
+                        "endpoints.enumeration.liveness"
+                    ),
+                    subKeys
+                )
+            );
+        }
+
+        @Test
+        @DisplayName("Composed subkeys are found")
+        void composedSubKeysAreFound() throws IOException {
+            var document = PermissiveDocument.from(StringLineProvider.of("""
+                endpoints:
+                    startup.endpoint: /startup
+                    readiness.endpoint: /readiness
+                    readiness:
+                        not:
+                            aSubkey: no
+                    liveness.endpoint: /liveness
+                    liveness.not:
+                        aSubkey: no
+                not:
+                    aSubkey: no
+                """));
+            var subKeys = document.subKeysOf("endpoints");
+            assertAll(
+                () -> assertEquals(3, subKeys.size()),
+                () -> assertEquals(Set.of("endpoints.startup", "endpoints.readiness", "endpoints.liveness"), subKeys)
+            );
+        }
+
+    }
+
+
     @Test
     @DisplayName("Property iterator")
     void propertyIterator() {
         var iterator = regularTestDocument.iterator();
-        for (int i = 0; i < RegularTestDocument.KEY_VALUE_LINE_COUNT + RegularTestDocument.KEY_LINE_COUNT; i++){
+        for (int i = 0; i < RegularTestDocument.KEY_VALUE_LINE_COUNT + RegularTestDocument.KEY_LINE_COUNT; i++) {
             assertTrue(iterator.hasNext());
             assertDoesNotThrow(iterator::hasNext);
             assertDoesNotThrow(iterator::next);

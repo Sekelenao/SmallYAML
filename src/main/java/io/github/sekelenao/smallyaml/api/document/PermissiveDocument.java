@@ -13,7 +13,9 @@ import io.github.sekelenao.smallyaml.internal.parsing.SmallYAMLParser;
 import io.github.sekelenao.smallyaml.internal.parsing.parser.StrictBooleanParser;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +25,7 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
+import java.util.Set;
 
 public final class PermissiveDocument implements Iterable<Property>, Document {
 
@@ -222,6 +225,22 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
             return Optional.of(valueList.asListView(mapper));
         }
         throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
+    }
+
+    public Set<String> subKeysOf(String key){
+        Objects.requireNonNull(key);
+        var expectedStart = key + ".";
+        var expectedSize = expectedStart.length();
+        var setOfSubkeys = new HashSet<String>();
+        for(var currentKey : properties.keySet()){
+            if(currentKey.length() >= expectedSize && currentKey.startsWith(expectedStart)){
+                var nextDotIndex = currentKey.indexOf(".", expectedSize);
+                if(nextDotIndex != -1){
+                    setOfSubkeys.add(currentKey.substring(0, nextDotIndex));
+                }
+            }
+        }
+        return Collections.unmodifiableSet(setOfSubkeys);
     }
 
     @Override
