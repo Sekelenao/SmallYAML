@@ -60,10 +60,13 @@ jobs:
 
       - name: Deploy badges to badges branch
         run: |
+          mkdir -p /tmp/badges
+          cp Coverage.svg Branches.svg /tmp/badges/
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin badges
           git checkout badges
+          cp /tmp/badges/Coverage.svg /tmp/badges/Branches.svg .
           git add Coverage.svg Branches.svg
           git diff --staged --quiet || git commit -m "Update coverage badges"
           git push origin badges
