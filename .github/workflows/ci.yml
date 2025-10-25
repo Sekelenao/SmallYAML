@@ -26,6 +26,14 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
+      - name: Upload JaCoCo report
+        uses: actions/upload-artifact@v4
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/
+          retention-days: 1
+
   badges:
     name: Update Coverage Badges
     needs: test
@@ -37,15 +45,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
+      - name: Download JaCoCo report
+        uses: actions/download-artifact@v4
         with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: maven
-
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
+          name: jacoco-report
+          path: target/site/jacoco/
 
       - name: Generate JaCoCo Badges
         uses: cicirello/jacoco-badge-generator@v2
