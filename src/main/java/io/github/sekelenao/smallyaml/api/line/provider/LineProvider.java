@@ -5,7 +5,7 @@ import io.github.sekelenao.smallyaml.internal.parsing.line.Line;
 import java.io.IOException;
 import java.util.Optional;
 
-public interface LineProvider extends AutoCloseable {
+public interface LineProvider {
 
     Optional<Line> nextLine() throws IOException;
 

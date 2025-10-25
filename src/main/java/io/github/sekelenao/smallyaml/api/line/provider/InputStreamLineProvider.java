@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Optional;
 
-public final class InputStreamLineProvider implements LineProvider {
+public final class InputStreamLineProvider implements LineProvider, AutoCloseable {
 
     private final LineParser parser = new LineParser();
 
