@@ -25,7 +25,7 @@ final class BufferedReaderLineProviderTest {
     @DisplayName("Assertions")
     void assertions() {
         assertThrows(NullPointerException.class, () -> {
-            try(var ignored = new BufferedReaderLineProvider(null)) {
+            try(var ignored = BufferedReaderLineProvider.with(null)) {
                 fail("Should not reach here");
             }
         });
@@ -35,7 +35,7 @@ final class BufferedReaderLineProviderTest {
     @DisplayName("Complete config parsing")
     void completeConfigParsing() throws IOException, URISyntaxException {
         var bufferedReader = Files.newBufferedReader(TestResource.find(RegularTestDocument.TEST_DOCUMENT));
-        try (var provider = new BufferedReaderLineProvider(bufferedReader)){
+        try (var provider = BufferedReaderLineProvider.with(bufferedReader)){
             var lineProviderTester = LineProviderTester.forFollowing(provider);
             assertAll(
                 () -> lineProviderTester.ensureEmptyLinesAmount(RegularTestDocument.EMPTY_LINE_COUNT),

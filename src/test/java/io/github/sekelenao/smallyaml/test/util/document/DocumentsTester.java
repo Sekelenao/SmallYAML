@@ -64,7 +64,7 @@ public final class DocumentsTester<D extends Document> {
             var csvPath = TestResource.find(documentResource.csvResourcePath());
             var expectedRecordsCsv = SkCsv.from(csvPath);
             var inputStream = TestResource.asInputStream(documentResource);
-            try(var bufferedReaderLineProvider = new InputStreamLineProvider(inputStream)) {
+            try(var bufferedReaderLineProvider = InputStreamLineProvider.with(inputStream)) {
                 var document = documentProvider.from(bufferedReaderLineProvider);
                 var propertyTypeInCsvCounter = new  PropertyTypeCounter();
                 for (var line : expectedRecordsCsv){
@@ -96,7 +96,7 @@ public final class DocumentsTester<D extends Document> {
             var inputStream = TestResource.asInputStream(documentResource);
             var csvPath = TestResource.find(documentResource.csvResourcePath());
             var expectedExceptionCsv = SkCsv.from(csvPath);
-            try (var bufferedReaderLineProvider = new InputStreamLineProvider(inputStream)) {
+            try (var bufferedReaderLineProvider = InputStreamLineProvider.with(inputStream)) {
                 var expectedExceptionRow = expectedExceptionCsv.getFirst();
                 var expectedExceptionType = Class.forName(expectedExceptionRow.getFirst());
                 var expectedExceptionMessage = expectedExceptionRow.get(1);
