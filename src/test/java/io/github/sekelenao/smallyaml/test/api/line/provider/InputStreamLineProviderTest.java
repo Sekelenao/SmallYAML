@@ -31,12 +31,12 @@ final class InputStreamLineProviderTest {
         var emptyInputStream = new ByteArrayInputStream(new byte[0]);
         assertAll(
             () -> assertThrows(NullPointerException.class, () -> {
-                try (var ignored = new InputStreamLineProvider(null)) {
+                try (var ignored = InputStreamLineProvider.with(null)) {
                     fail("Should not reach here");
                 }
             }),
             () -> assertThrows(NullPointerException.class, () -> {
-                try (var ignored = new InputStreamLineProvider(emptyInputStream, null)) {
+                try (var ignored = InputStreamLineProvider.with(emptyInputStream, null)) {
                     fail("Should not reach here");
                 }
             })
@@ -47,7 +47,7 @@ final class InputStreamLineProviderTest {
     @DisplayName("Complete config parsing")
     void completeConfigParsing() throws IOException {
         var inputStream = TestResource.asInputStream(RegularTestDocument.TEST_DOCUMENT);
-        try (var provider = new InputStreamLineProvider(inputStream)) {
+        try (var provider = InputStreamLineProvider.with(inputStream)) {
             var lineProviderTester = LineProviderTester.forFollowing(provider);
             assertAll(
                 () -> lineProviderTester.ensureEmptyLinesAmount(RegularTestDocument.EMPTY_LINE_COUNT),
@@ -70,7 +70,7 @@ final class InputStreamLineProviderTest {
         var targetCharset = Charset.forName(charset);
         var bytes = Files.readString(test).getBytes(targetCharset);
         var inputStream = new ByteArrayInputStream(bytes);
-        try (var provider = new InputStreamLineProvider(inputStream)) {
+        try (var provider = InputStreamLineProvider.with(inputStream)) {
             var lineProviderTester = LineProviderTester.forFollowing(provider);
             assertAll(
                 () -> lineProviderTester.ensureEmptyLinesAmount(RegularTestDocument.EMPTY_LINE_COUNT),

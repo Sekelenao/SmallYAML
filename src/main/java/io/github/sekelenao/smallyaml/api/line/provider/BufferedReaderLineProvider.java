@@ -14,8 +14,13 @@ public final class BufferedReaderLineProvider implements LineProvider, AutoClose
 
     private final BufferedReader bufferedReader;
 
-    public BufferedReaderLineProvider(BufferedReader bufferedReader){
-        this.bufferedReader = Objects.requireNonNull(bufferedReader);
+    private BufferedReaderLineProvider(BufferedReader bufferedReader){
+        this.bufferedReader = bufferedReader;
+    }
+
+    public static BufferedReaderLineProvider with(BufferedReader bufferedReader){
+        Objects.requireNonNull(bufferedReader);
+        return new BufferedReaderLineProvider(bufferedReader);
     }
 
     @Override

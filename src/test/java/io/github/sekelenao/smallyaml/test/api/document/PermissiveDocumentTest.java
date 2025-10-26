@@ -49,7 +49,7 @@ final class PermissiveDocumentTest {
 
     public PermissiveDocumentTest() throws URISyntaxException, IOException {
         var file = TestResource.find(RegularTestDocument.TEST_DOCUMENT);
-        try (var bufferedReaderLineProvider = new BufferedReaderLineProvider(Files.newBufferedReader(file))) {
+        try (var bufferedReaderLineProvider = BufferedReaderLineProvider.with(Files.newBufferedReader(file))) {
             this.regularTestDocument = PermissiveDocument.from(bufferedReaderLineProvider);
         }
     }
@@ -502,7 +502,7 @@ final class PermissiveDocumentTest {
             var otherEmptyDocument2 = PermissiveDocument.empty();
             var firstDocument = PermissiveDocument.from(StringLineProvider.of("Key: First"));
             var secondDocument = PermissiveDocument.from(StringLineProvider.of("Key: Second"));
-            try (var bufferedReaderLineProvider = new BufferedReaderLineProvider(Files.newBufferedReader(file))) {
+            try (var bufferedReaderLineProvider = BufferedReaderLineProvider.with(Files.newBufferedReader(file))) {
                 var sameDocument = PermissiveDocument.from(bufferedReaderLineProvider);
                 assertAll(
                     () -> assertEquals(regularTestDocument, sameDocument),
@@ -520,7 +520,7 @@ final class PermissiveDocumentTest {
         @DisplayName("Hashcode is working")
         void hashcodeIsWorking() throws URISyntaxException, IOException {
             var file = TestResource.find(RegularTestDocument.TEST_DOCUMENT);
-            try (var bufferedReaderLineProvider = new BufferedReaderLineProvider(Files.newBufferedReader(file))) {
+            try (var bufferedReaderLineProvider = BufferedReaderLineProvider.with(Files.newBufferedReader(file))) {
                 var sameDocument = PermissiveDocument.from(bufferedReaderLineProvider);
                 var emptyDocument = PermissiveDocument.empty();
                 var firstDocument = PermissiveDocument.from(StringLineProvider.of("Key: First"));

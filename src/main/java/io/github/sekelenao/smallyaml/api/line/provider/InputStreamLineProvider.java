@@ -18,15 +18,19 @@ public final class InputStreamLineProvider implements LineProvider, AutoCloseabl
 
     private final BufferedReader bufferedReader;
 
-    public InputStreamLineProvider(InputStream inputStream) {
-        this(inputStream, StandardCharsets.UTF_8);
-    }
-
-    public InputStreamLineProvider(InputStream inputStream, Charset charset) {
-        Objects.requireNonNull(inputStream);
-        Objects.requireNonNull(charset);
+    private InputStreamLineProvider(InputStream inputStream, Charset charset) {
         var inputStreamReader = new InputStreamReader(inputStream, charset);
         this.bufferedReader = new BufferedReader(inputStreamReader);
+    }
+
+    public static InputStreamLineProvider with(InputStream inputStream) {
+        return with(inputStream, StandardCharsets.UTF_8);
+    }
+
+    public static InputStreamLineProvider with(InputStream inputStream, Charset charset){
+        Objects.requireNonNull(inputStream);
+        Objects.requireNonNull(charset);
+        return new InputStreamLineProvider(inputStream, charset);
     }
 
     @Override
