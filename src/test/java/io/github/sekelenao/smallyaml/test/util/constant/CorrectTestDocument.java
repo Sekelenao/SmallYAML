@@ -7,7 +7,6 @@ import java.util.Locale;
 public enum CorrectTestDocument implements TestResource {
 
     SINGLE_PROPERTY,
-    GENERIC_DOCUMENT_FOR_TEST,
     DOTS,
     EMPTY,
     EMPTY_WITH_ONLY_KEYS,
