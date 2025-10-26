@@ -508,7 +508,8 @@ final class PermissiveDocumentTest {
                     () -> assertEquals(regularTestDocument, sameDocument),
                     () -> assertNotEquals(otherEmptyDocument1, regularTestDocument),
                     () -> assertEquals(otherEmptyDocument1, otherEmptyDocument2),
-                    () -> assertNotEquals(Collections.emptyMap(), otherEmptyDocument1),
+                    () -> assertFalse(otherEmptyDocument1.equals(Collections.emptyMap())),
+                    () -> assertFalse(regularTestDocument.equals(null)),
                     () -> assertEquals(regularTestDocument, regularTestDocument),
                     () -> assertNotEquals(firstDocument, secondDocument)
                 );
