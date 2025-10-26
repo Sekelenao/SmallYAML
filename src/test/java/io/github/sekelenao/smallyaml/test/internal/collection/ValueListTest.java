@@ -331,6 +331,7 @@ final class ValueListTest {
     final class EqualsHashcodeToString {
 
         @Test
+        @SuppressWarnings("all")
         @DisplayName("Equals is working")
         void equalsIsWorking() {
             var valueList1 = new ValueList("first");

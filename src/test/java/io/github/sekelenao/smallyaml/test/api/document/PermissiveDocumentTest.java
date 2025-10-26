@@ -495,6 +495,7 @@ final class PermissiveDocumentTest {
     final class EqualsHashcodeToString {
 
         @Test
+        @SuppressWarnings("all")
         @DisplayName("Equals is working")
         void equalsIsWorking() throws URISyntaxException, IOException {
             var file = TestResource.find(RegularTestDocument.TEST_DOCUMENT);
