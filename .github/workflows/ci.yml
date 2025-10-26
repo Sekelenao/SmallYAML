@@ -32,8 +32,9 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         id: test-count
         run: |
-          TEST_COUNT=$(find target/surefire-reports -name "TEST-*.xml" -exec grep -h "tests=" {} \; | sed -n 's/.*tests="\([0-9]*\)".*/\1/p' | awk '{s+=$1} END {print s}')
+          TEST_COUNT=$(grep -h '<testcase' target/surefire-reports/*.xml | wc -l)
           echo "count=$TEST_COUNT" >> $GITHUB_OUTPUT
+          echo "Total tests: $TEST_COUNT"
           mkdir -p .github/badges
           curl "https://img.shields.io/badge/Tests-$TEST_COUNT-blue.svg" -o .github/badges/tests.svg
 
