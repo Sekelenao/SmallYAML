@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
 import java.util.stream.IntStream;
@@ -341,10 +342,16 @@ final class ValueListTest {
             var valueList3 = new ValueList("first");
             valueList3.add("second");
             valueList3.add("fourth");
+            var valueList4 = new ValueList("first");
+            valueList4.add("second");
             assertAll(
+                () -> assertFalse(valueList1.equals(null)),
+                () -> assertFalse(valueList1.equals(new Object())),
+                () -> assertFalse(valueList1.equals(Collections.emptyMap())),
                 () -> assertEquals(valueList1, valueList2),
                 () -> assertNotEquals(valueList1, valueList3),
-                () -> assertNotEquals(valueList2, valueList3)
+                () -> assertNotEquals(valueList2, valueList3),
+                () -> assertNotEquals(valueList1, valueList4)
             );
         }
 
