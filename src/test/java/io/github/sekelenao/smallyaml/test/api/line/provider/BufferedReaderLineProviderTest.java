@@ -1,17 +1,15 @@
 package io.github.sekelenao.smallyaml.test.api.line.provider;
 
 import io.github.sekelenao.smallyaml.api.line.provider.BufferedReaderLineProvider;
-import io.github.sekelenao.smallyaml.test.util.constant.RegularTestDocument;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import io.github.sekelenao.smallyaml.test.util.line.provider.LineProviderTester;
-import io.github.sekelenao.smallyaml.test.util.resource.TestResource;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
+import java.io.StringReader;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -33,15 +31,26 @@ final class BufferedReaderLineProviderTest {
 
     @Test
     @DisplayName("Complete config parsing")
-    void completeConfigParsing() throws IOException, URISyntaxException {
-        var bufferedReader = Files.newBufferedReader(TestResource.find(RegularTestDocument.TEST_DOCUMENT));
-        try (var provider = BufferedReaderLineProvider.with(bufferedReader)){
+    void completeConfigParsing() throws IOException {
+        var content = """
+        # Single value
+        single-value: value
+        
+        #Multiple values
+        multiple:
+            values:
+                - 1
+                - 2
+                - 3
+        """;
+        var bufferedReader = new BufferedReader(new StringReader(content));
+        try (var provider = BufferedReaderLineProvider.with(bufferedReader)) {
             var lineProviderTester = LineProviderTester.forFollowing(provider);
             assertAll(
-                () -> lineProviderTester.ensureEmptyLinesAmount(RegularTestDocument.EMPTY_LINE_COUNT),
-                () -> lineProviderTester.ensureKeyLinesAmount(RegularTestDocument.KEY_LINE_COUNT),
-                () -> lineProviderTester.ensureListValueLinesAmount(RegularTestDocument.LIST_VALUE_LINE_COUNT),
-                () -> lineProviderTester.ensureKeyValueLinesAmount(RegularTestDocument.KEY_VALUE_LINE_COUNT)
+                () -> lineProviderTester.ensureEmptyLinesAmount(3),
+                () -> lineProviderTester.ensureKeyLinesAmount(2),
+                () -> lineProviderTester.ensureListValueLinesAmount(3),
+                () -> lineProviderTester.ensureKeyValueLinesAmount(1)
             );
         }
     }

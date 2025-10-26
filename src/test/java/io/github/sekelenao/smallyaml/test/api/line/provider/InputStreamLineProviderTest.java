@@ -1,10 +1,8 @@
 package io.github.sekelenao.smallyaml.test.api.line.provider;
 
 import io.github.sekelenao.smallyaml.api.line.provider.InputStreamLineProvider;
-import io.github.sekelenao.smallyaml.test.util.constant.RegularTestDocument;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import io.github.sekelenao.smallyaml.test.util.line.provider.LineProviderTester;
-import io.github.sekelenao.smallyaml.test.util.resource.TestResource;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -13,9 +11,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -44,16 +41,27 @@ final class InputStreamLineProviderTest {
     }
 
     @Test
-    @DisplayName("Complete config parsing")
+    @DisplayName("Complete config parsing with UTF_8 constructor")
     void completeConfigParsing() throws IOException {
-        var inputStream = TestResource.asInputStream(RegularTestDocument.TEST_DOCUMENT);
+        var content = """
+        # Single value
+        single-value: value
+        
+        #Multiple values
+        multiple:
+            values:
+                - 1
+                - 2
+                - 3
+        """;
+        var inputStream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
         try (var provider = InputStreamLineProvider.with(inputStream)) {
             var lineProviderTester = LineProviderTester.forFollowing(provider);
             assertAll(
-                () -> lineProviderTester.ensureEmptyLinesAmount(RegularTestDocument.EMPTY_LINE_COUNT),
-                () -> lineProviderTester.ensureKeyLinesAmount(RegularTestDocument.KEY_LINE_COUNT),
-                () -> lineProviderTester.ensureListValueLinesAmount(RegularTestDocument.LIST_VALUE_LINE_COUNT),
-                () -> lineProviderTester.ensureKeyValueLinesAmount(RegularTestDocument.KEY_VALUE_LINE_COUNT)
+                () -> lineProviderTester.ensureEmptyLinesAmount(3),
+                () -> lineProviderTester.ensureKeyLinesAmount(2),
+                () -> lineProviderTester.ensureListValueLinesAmount(3),
+                () -> lineProviderTester.ensureKeyValueLinesAmount(1)
             );
         }
     }
@@ -65,18 +73,27 @@ final class InputStreamLineProviderTest {
         "Windows-1252"
     })
     @DisplayName("Complete config parsing with different charsets")
-    void completeConfigParsingWithDifferentCharsets(String charset) throws IOException, URISyntaxException {
-        var test = TestResource.find(RegularTestDocument.TEST_DOCUMENT);
+    void completeConfigParsing(String charset) throws IOException {
+        var content = """
+        # Single value
+        single-value: value
+        
+        #Multiple values
+        multiple:
+            values:
+                - 1
+                - 2
+                - 3
+        """;
         var targetCharset = Charset.forName(charset);
-        var bytes = Files.readString(test).getBytes(targetCharset);
-        var inputStream = new ByteArrayInputStream(bytes);
-        try (var provider = InputStreamLineProvider.with(inputStream)) {
+        var inputStream = new ByteArrayInputStream(content.getBytes(targetCharset));
+        try (var provider = InputStreamLineProvider.with(inputStream, targetCharset)) {
             var lineProviderTester = LineProviderTester.forFollowing(provider);
             assertAll(
-                () -> lineProviderTester.ensureEmptyLinesAmount(RegularTestDocument.EMPTY_LINE_COUNT),
-                () -> lineProviderTester.ensureKeyLinesAmount(RegularTestDocument.KEY_LINE_COUNT),
-                () -> lineProviderTester.ensureListValueLinesAmount(RegularTestDocument.LIST_VALUE_LINE_COUNT),
-                () -> lineProviderTester.ensureKeyValueLinesAmount(RegularTestDocument.KEY_VALUE_LINE_COUNT)
+                () -> lineProviderTester.ensureEmptyLinesAmount(3),
+                () -> lineProviderTester.ensureKeyLinesAmount(2),
+                () -> lineProviderTester.ensureListValueLinesAmount(3),
+                () -> lineProviderTester.ensureKeyValueLinesAmount(1)
             );
         }
     }
