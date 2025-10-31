@@ -12,7 +12,7 @@
     <name>SmallYAML</name>
     <description>
         SmallYAML is a simplified YAML library that prioritizes maintainability and predictability over comprehensive
-        YAML specification coverage. Rather than supporting the full YAML 1.2 specification, SmallYAML intentionally
+        YAML specification coverage. Rather than supporting the full YAML specification, SmallYAML intentionally
         constrains the allowed syntax to a carefully chosen subset that eliminates common sources of configuration
         complexity and parsing ambiguity.
     </description>
@@ -54,20 +54,25 @@
         <dependency.skcsv.version>1.0.1</dependency.skcsv.version>
 
         <!-- Plugins versions -->
-        <plugin.maven.compiler.version>3.14.0</plugin.maven.compiler.version>
+        <plugin.maven.compiler.version>3.14.1</plugin.maven.compiler.version>
+        <plugin.maven.enforcer.version>3.6.2</plugin.maven.enforcer.version>
         <plugin.maven.surefire.version>3.5.4</plugin.maven.surefire.version>
         <plugin.maven.surefire.report.version>3.5.4</plugin.maven.surefire.report.version>
-        <plugin.jacoco.version>0.8.13</plugin.jacoco.version>
+        <plugin.jacoco.version>0.8.14</plugin.jacoco.version>
         <plugin.maven.site.version>4.0.0-M16</plugin.maven.site.version>
         <plugin.maven.project.info.reports.version>3.9.0</plugin.maven.project.info.reports.version>
-        <plugin.maven.javadoc.version>3.11.3</plugin.maven.javadoc.version>
+        <plugin.maven.javadoc.version>3.12.0</plugin.maven.javadoc.version>
+        <plugin.maven.source.version>3.3.1</plugin.maven.source.version>
         <plugin.maven.jxr.version>3.6.0</plugin.maven.jxr.version>
+        <plugin.maven.gpg.version>3.2.8</plugin.maven.gpg.version>
+        <plugin.maven.central.publishing.version>0.9.0</plugin.maven.central.publishing.version>
 
         <!-- Project configs -->
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <test.minimum.coverage>0.90</test.minimum.coverage>
+        <minimum.maven.version>3.6.3</minimum.maven.version>
 
     </properties>
 
@@ -102,6 +107,31 @@
                         <arg>-Xlint:-module</arg>
                     </compilerArgs>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${plugin.maven.enforcer.version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>[${minimum.maven.version},)</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>[${java.version},)</version>
+                                </requireJavaVersion>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -156,20 +186,79 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${plugin.maven.javadoc.version}</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <detectJavaApiLink>true</detectJavaApiLink>
-                    <links>
-                        <link>https://docs.oracle.com/en/java/javase/${java.version}/docs/api/</link>
-                    </links>
-                </configuration>
-            </plugin>
-
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>release-on-maven-central</id>
+            <build>
+                <plugins>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${plugin.maven.javadoc.version}</version>
+                        <configuration>
+                            <source>${java.version}</source>
+                            <detectJavaApiLink>true</detectJavaApiLink>
+                            <links>
+                                <link>https://docs.oracle.com/en/java/javase/${java.version}/docs/api/</link>
+                            </links>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${plugin.maven.source.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${plugin.maven.gpg.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>${plugin.maven.central.publishing.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>true</autoPublish>
+                        </configuration>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
