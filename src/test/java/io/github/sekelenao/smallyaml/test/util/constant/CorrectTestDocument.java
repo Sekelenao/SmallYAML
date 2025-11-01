@@ -12,7 +12,8 @@ public enum CorrectTestDocument implements TestResource {
     EMPTY_WITH_ONLY_KEYS,
     KEY_WITH_BLANK_VALUE,
     APPLICATION_CONFIGURATION,
-    STRANGE_INDENTATION;
+    STRANGE_INDENTATION,
+    HUGE_DOCUMENT;
 
     public String resourcePath() {
         return String.format("document/correct/%s/document.yaml", this.name().toLowerCase(Locale.ROOT));
