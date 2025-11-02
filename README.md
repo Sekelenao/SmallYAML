@@ -17,11 +17,28 @@ Simplified YAML library with limited syntax support and built-in validation
 
 ### Version 1.0.0 (Not released)
 
-- [ ] YAML parsing and loading
+- [x] YAML parsing and loading
+
+### Benchmarks
+
+Benchmarks are run on the following file: `src/test/resources/document/correct/huge_document/document.yaml`
+
+The test is to parse the file and load it into a `PermissiveDocument`
+
+#### Snapshot 1.0.0
+
+| Mode | Cnt | Score   | Error   | Units |
+|------|-----|---------|---------|-------|
+| avgt | 20  | 191,963 | ± 2,617 | ms/op |
+
+#### Snapshot 1.0.1
+
+| Mode | Cnt | Score   | Error   | Units |
+|------|-----|---------|---------|-------|
+| avgt | 20  | 167,980 | ± 2,320 | ms/op |
 
 ### What am I working on right now?
 
-- Thinking about providing default PropertyValueMappers
 - Testing the API in Simple projects and Spring projects
 - Adding javadocs
 - Adding documentation
@@ -39,6 +56,5 @@ ambiguity.
 - Bounded documents
 - Deprecation warnings of properties in bounded documents
 - Merging documents with override policies
-- Automatic casting for bounded documents at the start for safe loading
 - Automatic document template generation for bounded documents
 
