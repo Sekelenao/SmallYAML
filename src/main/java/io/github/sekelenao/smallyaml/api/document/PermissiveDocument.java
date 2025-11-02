@@ -26,6 +26,10 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Represents a permissive document abstraction designed for parsing and accessing
@@ -479,6 +483,63 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
             }
 
         };
+    }
+
+    private static class PropertySpliterator implements Spliterator<Property> {
+
+        private final Spliterator<Map.Entry<String, Object>> wrappedSpliterator;
+
+        PropertySpliterator(Spliterator<Map.Entry<String, Object>> wrappedSpliterator) {
+            this.wrappedSpliterator = Objects.requireNonNull(wrappedSpliterator);
+        }
+
+        @Override
+        public boolean tryAdvance(Consumer<? super Property> action) {
+            Objects.requireNonNull(action);
+            return wrappedSpliterator.tryAdvance(entry -> {
+                Property property = switch (entry.getValue()) {
+                    case String value -> new SingleValueProperty(entry.getKey(), value);
+                    case ValueList valueList -> new MultipleValuesProperty(entry.getKey(), valueList.asListView());
+                    default -> throw new IllegalStateException("Unexpected value: " + entry.getValue());
+                };
+                action.accept(property);
+            });
+        }
+
+        @Override
+        public Spliterator<Property> trySplit() {
+            var splitResult = wrappedSpliterator.trySplit();
+            if (splitResult != null) {
+                return new PropertySpliterator(splitResult);
+            }
+            return null;
+        }
+
+        @Override
+        public long estimateSize() {
+            return wrappedSpliterator.estimateSize();
+        }
+
+        @Override
+        public int characteristics() {
+            return wrappedSpliterator.characteristics() | Spliterator.NONNULL | Spliterator.IMMUTABLE;
+        }
+
+    }
+
+    @Override
+    public Spliterator<Property> spliterator() {
+        return new PropertySpliterator(properties.entrySet().spliterator());
+    }
+
+    /**
+     * Creates a sequential Stream of Property elements from the current object.
+     * The method uses the object's spliterator to construct the Stream.
+     *
+     * @return a sequential Stream of Property elements.
+     */
+    public Stream<Property> stream() {
+        return StreamSupport.stream(spliterator(), false);
     }
 
     @Override

@@ -23,4 +23,11 @@ public sealed interface Property permits SingleValueProperty, MultipleValuesProp
      */
     enum Type { SINGLE, MULTIPLE }
 
+    /**
+     * Retrieves the key associated with the property.
+     *
+     * @return a string representing the key of the property; never null.
+     */
+    String key();
+
 }

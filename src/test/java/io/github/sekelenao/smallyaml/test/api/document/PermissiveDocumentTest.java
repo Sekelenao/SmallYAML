@@ -1,6 +1,7 @@
 package io.github.sekelenao.smallyaml.test.api.document;
 
 import io.github.sekelenao.smallyaml.api.document.PermissiveDocument;
+import io.github.sekelenao.smallyaml.api.document.property.Property;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
 import io.github.sekelenao.smallyaml.api.line.provider.StringLineProvider;
 import io.github.sekelenao.smallyaml.test.util.Exceptions;
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -21,6 +24,8 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -28,8 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @Tag(TestingTag.API)
 @Tag(TestingTag.COLLECTION)
@@ -540,6 +547,83 @@ final class PermissiveDocumentTest {
             assertAll(
                 () -> assertFalse(iterator::hasNext),
                 () -> assertThrows(NoSuchElementException.class, iterator::next)
+            );
+        }
+
+    }
+
+    @Nested
+    @DisplayName("Spliterator and Stream")
+    final class SpliteratorAndStream {
+
+        private static StringLineProvider generateStringLineProvider(int size) {
+            var builder = new StringBuilder();
+            for (int i = 0; i < size - 1; i++) {
+                builder.append(i).append(": value\n");
+            }
+            builder.append(size - 1).append(":").append("\n")
+                .append("- item1").append("\n")
+                .append("- item2").append("\n")
+                .append("- item3");
+            return StringLineProvider.of(builder.toString());
+        }
+
+        @ParameterizedTest(name = "{displayName} ({0})")
+        @MethodSource("io.github.sekelenao.smallyaml.test.util.Randoms#intStreamWithSize5")
+        @DisplayName("PermissiveDocument stream is working sequential and parallel")
+        void streamIsWorking(int size) throws IOException {
+            var document = PermissiveDocument.from(generateStringLineProvider(size));
+            var expectedSet = IntStream.range(0, size)
+                .boxed()
+                .collect(Collectors.toSet());
+            var result = document.stream()
+                .map(Property::key)
+                .map(Integer::parseInt)
+                .collect(Collectors.toSet());
+            var parallelResult = document.stream()
+                .parallel()
+                .map(Property::key)
+                .map(Integer::parseInt)
+                .collect(Collectors.toSet());
+            assertAll(
+                () -> assertEquals(expectedSet, result),
+                () -> assertEquals(expectedSet, parallelResult),
+                () -> assertEquals(size, result.size()),
+                () -> assertEquals(size, parallelResult.size())
+            );
+        }
+
+        @Test
+        @DisplayName("PermissiveDocument parallel stream is really parallel")
+        void streamParallel() throws IOException {
+            var document = PermissiveDocument.from(generateStringLineProvider(100));
+            var thread = Thread.currentThread();
+            var otherThreadCount = document.stream()
+                .parallel()
+                .mapToInt(ignored -> thread != Thread.currentThread() ? 1 : 0)
+                .sum();
+            assertNotEquals(0, otherThreadCount);
+        }
+
+        @Test
+        @DisplayName("Empty document is streamable")
+        void emptyDocumentIsStreamable() {
+            var document = PermissiveDocument.empty();
+            assertAll(
+                () -> assertEquals(0, document.stream().count()),
+                () -> assertEquals(0, document.stream().parallel().count())
+            );
+        }
+
+        @Test
+        @DisplayName("PropertySpliterator trySplit returns null for an empty source")
+        void trySplitReturnsNullForEmptySource() {
+            var emptyDocument = PermissiveDocument.empty();
+            var emptySpliterator = emptyDocument.spliterator();
+            assertAll(
+                () -> assertNull(emptySpliterator.trySplit()),
+                () -> assertFalse(emptySpliterator.tryAdvance(p -> fail("Should not advance on an empty spliterator"))),
+                () -> assertEquals(0, emptySpliterator.estimateSize())
             );
         }
 
