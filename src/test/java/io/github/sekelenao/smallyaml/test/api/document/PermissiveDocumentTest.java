@@ -645,22 +645,10 @@ final class PermissiveDocumentTest {
         void containsAllRecordsForAllDocuments() throws URISyntaxException, IOException {
             var documentTester = new DocumentsTester<>(PermissiveDocument::from, PermissiveDocument.class);
             documentTester.testWithAllCorrectDocuments(
-                (document, key) -> {
-                    try {
-                        return document.getSingleString(key).orElseThrow();
-                    } catch (NoSuchElementException exception){
-                        System.out.println("Following key is absent or empty: " + key);
-                        throw new NoSuchElementException();
-                    }
-                },
-                (document, key) -> {
-                    try {
-                        return document.getMultipleStrings(key).orElseThrow();
-                    } catch (NoSuchElementException exception){
-                        System.out.println("Following key is absent or empty: " + key);
-                        throw new NoSuchElementException();
-                    }
-                }
+                (document, key) -> document.getSingleString(key)
+                    .orElseThrow(() -> new NoSuchElementException("Following key is absent or empty: " + key)),
+                (document, key) -> document.getMultipleStrings(key)
+                    .orElseThrow(() -> new NoSuchElementException("Following key is absent or empty: " + key))
             );
         }
 
