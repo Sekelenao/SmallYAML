@@ -23,12 +23,12 @@ public final class StringLineProvider implements LineProvider {
 
     private final LineParser parser = new LineParser();
 
-    private final String[] lines; // WARNING: Nullable to avoid array allocation
+    private final String text;
 
-    private int currentLine = 0;
+    private int index;
 
-    private StringLineProvider(String[] lines) {
-        this.lines = lines;
+    private StringLineProvider(String text) {
+        this.text = text;
     }
 
     /**
@@ -44,10 +44,7 @@ public final class StringLineProvider implements LineProvider {
      */
     public static StringLineProvider of(String text) {
         Objects.requireNonNull(text);
-        if (text.isEmpty()) {
-            return new StringLineProvider(null);
-        }
-        return new StringLineProvider(text.split("\n"));
+        return new StringLineProvider(text);
     }
 
     /**
@@ -61,10 +58,20 @@ public final class StringLineProvider implements LineProvider {
      */
     @Override
     public Optional<Line> nextLine() {
-        if (lines == null || currentLine >= lines.length) {
+        var textSize = text.length();
+        if(index >= textSize){
             return Optional.empty();
         }
-        var line = parser.parse(lines[currentLine++]);
+        var rawLineBuilder = new StringBuilder();
+        while(index < textSize){
+            var currentChar = text.charAt(index++);
+            if(currentChar == '\n'){
+                var line = parser.parse(rawLineBuilder.toString());
+                return Optional.of(line);
+            }
+            rawLineBuilder.append(currentChar);
+        }
+        var line = parser.parse(rawLineBuilder.toString());
         return Optional.of(line);
     }
 
