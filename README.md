@@ -13,6 +13,13 @@ Simplified YAML library with limited syntax support and built-in validation
 ![Coverage](https://raw.githubusercontent.com/Sekelenao/SmallYAML/badges/Coverage.svg)
 ![Branches](https://raw.githubusercontent.com/Sekelenao/SmallYAML/badges/Branches.svg)
 
+## Overview
+
+SmallYAML is a simplified YAML library that prioritizes maintainability and predictability over comprehensive YAML
+specification coverage. Rather than supporting the full YAML 1.2 specification, SmallYAML intentionally constrains the
+allowed syntax to a carefully chosen subset that eliminates common sources of configuration complexity and parsing
+ambiguity.
+
 ## Versions
 
 ### Version 1.0.0 (Not released)
@@ -21,9 +28,19 @@ Simplified YAML library with limited syntax support and built-in validation
 
 ### Benchmarks
 
-Benchmarks are run on the following file: `src/test/resources/document/correct/huge_document/document.yaml`
+We leverage the Java Microbenchmark Harness (JMH) to ensure the optimal performance of our parsing mechanisms.
 
-The test is to parse the file and load it into a `PermissiveDocument`
+Our benchmarks specifically focus on evaluating the efficiency of loading a large configuration file,
+located at `src/test/resources/document/correct/huge_document/document.yaml`, into a `PermissiveDocument` object.
+
+Each benchmark run is executed in a dedicated JVM instance, configured with an initial heap size of 1GB and a maximum
+heap size of 1GB (`-Xms1g`, `-Xmx1g`), to provide a controlled and consistent environment.
+
+We use a rigorous testing methodology, beginning with five warmup iterations (each lasting 2 seconds) to allow the JVM
+to perform its optimizations, followed by 20 measurement iterations (also 2 seconds each).
+
+Results are then reported as the average time taken per operation, expressed in milliseconds, providing clear and
+actionable performance metrics.
 
 #### Snapshot 1.0.0
 
@@ -43,13 +60,6 @@ The test is to parse the file and load it into a `PermissiveDocument`
 - Adding javadocs
 - Adding documentation
 
-## Overview
-
-SmallYAML is a simplified YAML library that prioritizes maintainability and predictability over comprehensive YAML
-specification coverage. Rather than supporting the full YAML 1.2 specification, SmallYAML intentionally constrains the
-allowed syntax to a carefully chosen subset that eliminates common sources of configuration complexity and parsing
-ambiguity.
-
 ### Futur ideas
 
 - Validator to ensure config is correct before PROD deployment
@@ -57,4 +67,3 @@ ambiguity.
 - Deprecation warnings of properties in bounded documents
 - Merging documents with override policies
 - Automatic document template generation for bounded documents
-
