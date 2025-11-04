@@ -16,6 +16,10 @@ public class ParsingException extends SmallYAMLException {
         super(message);
     }
 
+    private static String generateMessage(String type, String details, String raw){
+        return String.format("Invalid %s: %s for: '%s'", type, details, raw);
+    }
+
     /**
      * Constructs a {@link ParsingException} indicating that a provided value is invalid
      * based on the given details.
@@ -28,7 +32,7 @@ public class ParsingException extends SmallYAMLException {
     public static ParsingException wrongValue(String details, String value){
         Objects.requireNonNull(details);
         Objects.requireNonNull(value);
-        return new ParsingException("Invalid value: " + details + " for: '" + value + "'");
+        return new ParsingException(generateMessage("value", details, value));
     }
 
     /**
@@ -43,7 +47,7 @@ public class ParsingException extends SmallYAMLException {
     public static ParsingException wrongKey(String details, String key){
         Objects.requireNonNull(details);
         Objects.requireNonNull(key);
-        return new ParsingException("Invalid key: " + details + " for: '" + key + "'");
+        return new ParsingException(generateMessage("key", details, key));
     }
 
     /**
@@ -58,7 +62,7 @@ public class ParsingException extends SmallYAMLException {
     public static ParsingException wrongIndentation(String details, String line){
         Objects.requireNonNull(details);
         Objects.requireNonNull(line);
-        return new ParsingException("Invalid indentation: " + details + " for: '" + line + "'");
+        return new ParsingException(generateMessage("indentation", details, line));
     }
 
 }

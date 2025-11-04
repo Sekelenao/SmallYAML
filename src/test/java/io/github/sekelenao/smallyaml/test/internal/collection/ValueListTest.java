@@ -198,6 +198,7 @@ final class ValueListTest {
             for (int i = 1; i < 10_000; i++) {
                 valueList.add(String.valueOf(i));
             }
+            assertEquals(10_000, valueList.size());
             var thread = Thread.currentThread();
             var otherThreadCount = valueList.asListView().stream()
                 .parallel()
