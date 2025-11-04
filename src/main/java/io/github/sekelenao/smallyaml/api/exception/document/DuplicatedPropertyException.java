@@ -13,6 +13,8 @@ import io.github.sekelenao.smallyaml.api.exception.SmallYAMLException;
  * <p>
  * The associated message contains the duplicated property key to facilitate
  * debugging and error handling.
+ *
+ * @since 1.0.0
  */
 public class DuplicatedPropertyException extends SmallYAMLException {
 
@@ -27,6 +29,8 @@ public class DuplicatedPropertyException extends SmallYAMLException {
      * @param key the property key that caused the exception
      * @return a new instance of {@code DuplicatedPropertyException} containing
      *         a message with the duplicated property key
+     *
+     * @since 1.0.0
      */
     public static DuplicatedPropertyException forFollowing(String key){
         return new DuplicatedPropertyException("Duplicated property '" + key + "'");

@@ -39,6 +39,8 @@ import java.util.stream.StreamSupport;
  * and iterability over properties.
  * <p>
  * The class is immutable and final, ensuring thread-safety and preventing inheritance.
+ *
+ * @since 1.0.0
  */
 public final class PermissiveDocument implements Iterable<Property>, Document {
 
@@ -81,14 +83,15 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
     }
 
     /**
-     * Creates a new instance of {@code PermissiveDocument} by parsing the contents
-     * provided by the specified {@code LineProvider}. The method uses a YAML parser
-     * to process the lines and collect the properties into a permissive document structure.
+     * Creates a new instance of PermissiveDocument by parsing the content provided
+     * by the given {@link LineProvider}. The provider must return a non-null stream.
      *
-     * @param lineProvider the source of lines to be parsed; must not be null
-     * @return a new {@code PermissiveDocument} containing the parsed properties
-     * @throws IOException if an I/O error occurs while reading lines from the provider
-     * @throws NullPointerException if {@code lineProvider} is null
+     * @param lineProvider the LineProvider, which supplies lines to be parsed,
+     *                     must not be null
+     * @return a PermissiveDocument instance containing the parsed properties
+     * @throws IOException if an I/O error occurs during parsing
+     *
+     * @since 1.0.0
      */
     public static PermissiveDocument from(LineProvider lineProvider) throws IOException {
         Objects.requireNonNull(lineProvider);
@@ -103,6 +106,8 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
      * The returned document does not contain any properties.
      *
      * @return a new, empty {@code PermissiveDocument} instance
+     *
+     * @since 1.0.0
      */
     public static PermissiveDocument empty(){
         return new PermissiveDocument(new HashMap<>());
@@ -117,6 +122,8 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
      * @param key the key of the property to check for; must not be null
      * @return {@code true} if the property exists in the document, {@code false} otherwise
      * @throws NullPointerException if the specified key is null
+     *
+     * @since 1.0.0
      */
     public boolean hasProperty(String key){
         Objects.requireNonNull(key);
@@ -133,6 +140,8 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
      * @return an {@code Optional} containing the string value if present and valid; otherwise an empty {@code Optional}
      * @throws NullPointerException if the key is null
      * @throws WrongPropertyTypeException if the value associated with the key is not a single string
+     *
+     * @since 1.0.0
      */
     public Optional<String> getSingleString(String key){
         Objects.requireNonNull(key);
@@ -156,6 +165,8 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
      * @return an {@code Optional} containing the list of strings if present and valid; otherwise an empty {@code Optional}
      * @throws NullPointerException if the key is null
      * @throws WrongPropertyTypeException if the value associated with the key is not a list of strings
+     *
+     * @since 1.0.0
      */
     public Optional<List<String>> getMultipleStrings(String key){
         Objects.requireNonNull(key);
@@ -183,6 +194,8 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
      * @return the boolean value associated with the key, or the default value if the key or value does not exist
      * @throws NullPointerException if the key is null
      * @throws WrongPropertyTypeException if the value associated with the key is not a single string
+     *
+     * @since 1.0.0
      */
     public boolean getSingleBooleanOrDefault(String key, boolean defaultValue){
         Objects.requireNonNull(key);
@@ -210,6 +223,8 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
      * @throws NullPointerException if the key is null
      * @throws NoSuchElementException if the key does not exist or the value associated with the key is null
      * @throws WrongPropertyTypeException if the value associated with the key is not a single string
+     *
+     * @since 1.0.0
      */
     public boolean getSingleBooleanOrThrow(String key){
         Objects.requireNonNull(key);
@@ -234,6 +249,8 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
      * @throws NullPointerException if the key is null
      * @throws NumberFormatException if the value cannot be parsed as an integer
      * @throws WrongPropertyTypeException if the value associated with the key is not a single string
+     *
+     * @since 1.0.0
      */
     public OptionalInt getSingleInt(String key){
         Objects.requireNonNull(key);
@@ -258,6 +275,8 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
      * @throws NullPointerException if the key is null
      * @throws NumberFormatException if any value in the list cannot be parsed as an integer
      * @throws WrongPropertyTypeException if the value associated with the key is not a list of strings
+     *
+     * @since 1.0.0
      */
     public Optional<int[]> getMultipleInts(String key){
         Objects.requireNonNull(key);
@@ -282,6 +301,8 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
      * @throws NullPointerException if the key is null
      * @throws NumberFormatException if the value cannot be parsed as a long
      * @throws WrongPropertyTypeException if the value associated with the key is not a single string
+     *
+     * @since 1.0.0
      */
     public OptionalLong getSingleLong(String key){
         Objects.requireNonNull(key);
@@ -306,6 +327,8 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
      * @throws NullPointerException if the key is null
      * @throws NumberFormatException if any value in the list cannot be parsed as a long
      * @throws WrongPropertyTypeException if the value associated with the key is not a list of strings
+     *
+     * @since 1.0.0
      */
     public Optional<long[]> getMultipleLongs(String key){
         Objects.requireNonNull(key);
@@ -330,6 +353,8 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
      * @throws NullPointerException if the key is null
      * @throws NumberFormatException if the value cannot be parsed as a double
      * @throws WrongPropertyTypeException if the value associated with the key is not a single string
+     *
+     * @since 1.0.0
      */
     public OptionalDouble getSingleDouble(String key){
         Objects.requireNonNull(key);
@@ -354,6 +379,8 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
      * @throws NullPointerException if the key is null
      * @throws NumberFormatException if any value in the list cannot be parsed as a double
      * @throws WrongPropertyTypeException if the value associated with the key is not a list of strings
+     *
+     * @since 1.0.0
      */
     public Optional<double[]> getMultipleDoubles(String key){
         Objects.requireNonNull(key);
@@ -380,6 +407,8 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
      * @return an {@code Optional} containing the mapped value if present and valid; otherwise an empty {@code Optional}
      * @throws NullPointerException if the key or mapper is null
      * @throws WrongPropertyTypeException if the value associated with the key is not a single string
+     *
+     * @since 1.0.0
      */
     public <T> Optional<T> getSingle(String key, PropertyValueMapper<? super String, T> mapper){
         Objects.requireNonNull(key);
@@ -408,6 +437,8 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
      * @return an {@code Optional} containing the list of mapped values if present and valid; otherwise an empty {@code Optional}
      * @throws NullPointerException if the key or mapper is null
      * @throws WrongPropertyTypeException if the value associated with the key is not a list of strings
+     *
+     * @since 1.0.0
      */
     public <T> Optional<List<T>> getMultiple(String key, PropertyValueMapper<? super String, T> mapper){
         Objects.requireNonNull(key);
@@ -432,6 +463,8 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
      * @param key the parent key for which immediate subkeys are to be retrieved; must not be null
      * @return an unmodifiable set of subkeys that are immediate children of the specified key
      *         from the properties or an empty set if no subkeys are found
+     *
+     * @since 1.0.0
      */
     public Set<String> subKeysOf(String key){
         Objects.requireNonNull(key);
@@ -457,6 +490,8 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
      * based on the type of the value.
      *
      * @return an {@link Iterator} for iterating over {@link Property} objects
+     *
+     * @since 1.0.0
      */
     @Override
     public Iterator<Property> iterator() {
@@ -527,6 +562,13 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
 
     }
 
+    /**
+     * Creates and returns a {@code Spliterator} for the properties.
+     *
+     * @return a {@code Spliterator} over the {@code Property} elements
+     *
+     * @since 1.0.0
+     */
     @Override
     public Spliterator<Property> spliterator() {
         return new PropertySpliterator(properties.entrySet().spliterator());
@@ -537,11 +579,28 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
      * The method uses the object's spliterator to construct the Stream.
      *
      * @return a sequential Stream of Property elements.
+     *
+     * @since 1.0.0
      */
     public Stream<Property> stream() {
         return StreamSupport.stream(spliterator(), false);
     }
 
+    /**
+     * Compares this {@code PermissiveDocument} to the specified object.
+     * The result is {@code true} if and only if the argument is not {@code null}
+     * and is a {@code PermissiveDocument} object that contains the same number
+     * of properties and all its properties are equal to the corresponding properties
+     * of this document.
+     *
+     * <p>This contract ensures that the equality comparison is reflexive, symmetric,
+     * transitive, consistent, and correctly handles comparisons with {@code null}.
+     *
+     * @param other the object to compare with this {@code PermissiveDocument}
+     * @return {@code true} if the specified object is equal to this {@code PermissiveDocument}, {@code false} otherwise.
+     *
+     * @since 1.0.0
+     */
     @Override
     public boolean equals(Object other) {
         return other instanceof PermissiveDocument otherDocument
@@ -549,11 +608,25 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
             && properties.equals(otherDocument.properties);
     }
 
+    /**
+     * Computes the hash code for this object based on its properties.
+     *
+     * @return the hash code value for this object
+     *
+     * @since 1.0.0
+     */
     @Override
     public int hashCode() {
         return properties.hashCode();
     }
 
+    /**
+     * Returns a string representation of the object.
+     *
+     * @return a string consisting of the string representation of the properties contained in this document
+     *
+     * @since 1.0.0
+     */
     @Override
     public String toString() {
         return properties.toString();

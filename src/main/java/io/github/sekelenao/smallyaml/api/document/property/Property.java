@@ -7,6 +7,8 @@ package io.github.sekelenao.smallyaml.api.document.property;
  * <p>
  * This interface is sealed and only permits implementations explicitly defined
  * as {@code SingleValueProperty} and {@code MultipleValuesProperty}.
+ *
+ * @since 1.0.0
  */
 public sealed interface Property permits SingleValueProperty, MultipleValuesProperty {
 
@@ -20,6 +22,8 @@ public sealed interface Property permits SingleValueProperty, MultipleValuesProp
      * Enum constants:
      * - SINGLE: Indicates a property that holds a single value.
      * - MULTIPLE: Indicates a property that holds multiple values.
+     *
+     * @since 1.0.0
      */
     enum Type { SINGLE, MULTIPLE }
 
@@ -27,6 +31,8 @@ public sealed interface Property permits SingleValueProperty, MultipleValuesProp
      * Retrieves the key associated with the property.
      *
      * @return a string representing the key of the property; never null.
+     *
+     * @since 1.0.0
      */
     String key();
 
