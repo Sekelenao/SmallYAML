@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -198,13 +199,12 @@ final class ValueListTest {
             for (int i = 1; i < 10_000; i++) {
                 valueList.add(String.valueOf(i));
             }
-            assertEquals(10_000, valueList.size());
-            var thread = Thread.currentThread();
-            var otherThreadCount = valueList.asListView().stream()
-                .parallel()
-                .mapToInt(ignored -> thread != Thread.currentThread() ? 1 : 0)
-                .sum();
-            assertNotEquals(0, otherThreadCount);
+            var spliterator = valueList.asListView().spliterator();
+            var otherSpliterator = spliterator.trySplit();
+            assertAll(
+                () -> assertEquals(10_000, valueList.size()),
+                () -> assertNotNull(otherSpliterator)
+            );
         }
 
         @Test
