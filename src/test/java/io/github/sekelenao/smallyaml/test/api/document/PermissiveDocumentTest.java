@@ -3,7 +3,7 @@ package io.github.sekelenao.smallyaml.test.api.document;
 import io.github.sekelenao.smallyaml.api.document.PermissiveDocument;
 import io.github.sekelenao.smallyaml.api.document.property.Property;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
-import io.github.sekelenao.smallyaml.api.line.provider.StringLineProvider;
+import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
 import io.github.sekelenao.smallyaml.test.util.Exceptions;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import io.github.sekelenao.smallyaml.test.util.document.DocumentsTester;
@@ -57,7 +57,7 @@ final class PermissiveDocumentTest {
         void constructionsAreWorking() {
             assertAll(
                 () -> assertThrows(NullPointerException.class, () -> PermissiveDocument.from(null)),
-                () -> assertDoesNotThrow(() -> PermissiveDocument.from(StringLineProvider.of("")))
+                () -> assertDoesNotThrow(() -> PermissiveDocument.from(LineProvider.with("")))
             );
         }
 
@@ -76,7 +76,7 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("Has property")
         void hasProperty() throws IOException {
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 single-value: value
                 multiple-values:
                     - one
@@ -101,7 +101,7 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("Single string getter")
         void singleStringGetterIsWorking() throws IOException {
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 single-value: value
                 multiple-values:
                     - one
@@ -123,7 +123,7 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("Multiple String getter")
         void optionalListGetterIsWorking() throws IOException {
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 single-value: value
                 multiple-values:
                     - one
@@ -153,7 +153,7 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("Mapping single getter")
         void mappingGetterIsWorking() throws IOException {
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 single-value: value
                 multiple-values:
                     - one
@@ -183,7 +183,7 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("Mapping multiple getter")
         void mappingListGetterIsWorking() throws IOException {
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 single-value: value
                 multiple-values:
                     - one
@@ -222,7 +222,7 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("Default boolean single getter")
         void defaultBooleanSingleGetterIsWorking() throws IOException {
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 single-boolean: false
                 multiple-booleans:
                     - true
@@ -247,7 +247,7 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("Boolean single getter or throw")
         void booleanSingleGetterOrThrowIsWorking() throws IOException {
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 single-boolean: false
                 multiple-booleans:
                     - true
@@ -269,7 +269,7 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("Single int getter")
         void singleIntGetterIsWorking() throws IOException {
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 single-int: "-20"
                 multiple-ints:
                     - 1
@@ -291,7 +291,7 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("Multiple ints getter")
         void multipleIntsGetterIsWorking() throws IOException {
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 single-int: 20
                 multiple-ints:
                     - 1
@@ -313,7 +313,7 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("Single long getter")
         void singleLongGetterIsWorking() throws IOException {
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 single-long: 9223372036854775807
                 multiple-longs:
                     - 1
@@ -335,7 +335,7 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("Multiple longs getter")
         void multipleLongsGetterIsWorking() throws IOException {
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 single-long: 9223372036854775807
                 multiple-longs:
                     - 1
@@ -357,7 +357,7 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("Single double getter")
         void singleDoubleGetterIsWorking() throws IOException {
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 single-double: "20.20"
                 multiple-doubles:
                     - "1.1"
@@ -379,7 +379,7 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("Multiple doubles getter")
         void multipleDoublesGetterIsWorking() throws IOException {
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 single-double: "20.20"
                 multiple-doubles:
                     - "1.1"
@@ -417,7 +417,7 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("Simple subkeys are found")
         void simpleSubkeysAreFound() throws IOException {
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 endpoints:
                     startup:
                         endpoint: /startup
@@ -440,7 +440,7 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("Simple subkeys are found")
         void NoSubkeysAreFound() throws IOException {
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 endpoints:
                     startup:
                         endpoint: /startup
@@ -462,7 +462,7 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("Far subkeys are found")
         void farSubkeysAreFound() throws IOException {
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 endpoints:
                     enumeration:
                         startup:
@@ -493,7 +493,7 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("Composed subkeys are found")
         void composedSubKeysAreFound() throws IOException {
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 endpoints:
                     startup.endpoint: /startup
                     readiness.endpoint: /readiness
@@ -522,7 +522,7 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("Property iterator")
         void propertyIterator() throws IOException {
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 single-value: value
                 multiple-values:
                     - one
@@ -556,7 +556,7 @@ final class PermissiveDocumentTest {
     @DisplayName("Spliterator and Stream")
     final class SpliteratorAndStream {
 
-        private static StringLineProvider generateStringLineProvider(int size) {
+        private static LineProvider generateLineProvider(int size) {
             var builder = new StringBuilder();
             for (int i = 0; i < size - 1; i++) {
                 builder.append(i).append(": value\n");
@@ -565,14 +565,14 @@ final class PermissiveDocumentTest {
                 .append("- item1").append("\n")
                 .append("- item2").append("\n")
                 .append("- item3");
-            return StringLineProvider.of(builder.toString());
+            return LineProvider.with(builder.toString());
         }
 
         @ParameterizedTest(name = "{displayName} ({0})")
         @MethodSource("io.github.sekelenao.smallyaml.test.util.Randoms#intStreamWithSize5")
         @DisplayName("PermissiveDocument stream is working sequential and parallel")
         void streamIsWorking(int size) throws IOException {
-            var document = PermissiveDocument.from(generateStringLineProvider(size));
+            var document = PermissiveDocument.from(generateLineProvider(size));
             var expectedSet = IntStream.range(0, size)
                 .boxed()
                 .collect(Collectors.toSet());
@@ -596,7 +596,7 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("PermissiveDocument parallel stream is really parallel")
         void streamParallel() throws IOException {
-            var document = PermissiveDocument.from(generateStringLineProvider(100));
+            var document = PermissiveDocument.from(generateLineProvider(100));
             var thread = Thread.currentThread();
             var otherThreadCount = document.stream()
                 .parallel()
@@ -637,14 +637,14 @@ final class PermissiveDocumentTest {
         @SuppressWarnings("all")
         @DisplayName("Equals is working")
         void equalsIsWorking() throws URISyntaxException, IOException {
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 single-value: value
                 multiple-values:
                     - one
                     - two
                     - three
                 """));
-            var sameDocument = PermissiveDocument.from(StringLineProvider.of("""
+            var sameDocument = PermissiveDocument.from(LineProvider.with("""
                 single-value: value
                 multiple-values:
                     - one
@@ -653,8 +653,8 @@ final class PermissiveDocumentTest {
                 """));
             var emptyDocument = PermissiveDocument.empty();
             var otherEmptyDocument = PermissiveDocument.empty();
-            var firstDocument = PermissiveDocument.from(StringLineProvider.of("Key: First"));
-            var secondDocument = PermissiveDocument.from(StringLineProvider.of("Key: Second"));
+            var firstDocument = PermissiveDocument.from(LineProvider.with("Key: First"));
+            var secondDocument = PermissiveDocument.from(LineProvider.with("Key: Second"));
             assertAll(
                 () -> assertEquals(document, sameDocument),
                 () -> assertNotEquals(emptyDocument, document),
@@ -669,14 +669,14 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("Hashcode is working")
         void hashcodeIsWorking() throws IOException {
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 single-value: value
                 multiple-values:
                     - one
                     - two
                     - three
                 """));
-            var sameDocument = PermissiveDocument.from(StringLineProvider.of("""
+            var sameDocument = PermissiveDocument.from(LineProvider.with("""
                 single-value: value
                 multiple-values:
                     - one
@@ -684,8 +684,8 @@ final class PermissiveDocumentTest {
                     - three
                 """));
             var emptyDocument = PermissiveDocument.empty();
-            var firstDocument = PermissiveDocument.from(StringLineProvider.of("Key: First"));
-            var secondDocument = PermissiveDocument.from(StringLineProvider.of("Key: Second"));
+            var firstDocument = PermissiveDocument.from(LineProvider.with("Key: First"));
+            var secondDocument = PermissiveDocument.from(LineProvider.with("Key: Second"));
             assertAll(
                 () -> assertEquals(document.hashCode(), sameDocument.hashCode()),
                 () -> assertNotEquals(new Object().hashCode(), document.hashCode()),
@@ -699,15 +699,15 @@ final class PermissiveDocumentTest {
         @DisplayName("To string is working")
         void toStringIsWorking() throws IOException {
             var emptyDocument = PermissiveDocument.empty();
-            var document = PermissiveDocument.from(StringLineProvider.of("""
+            var document = PermissiveDocument.from(LineProvider.with("""
                 single-value: value
                 multiple-values:
                     - one
                     - two
                     - three
                 """));
-            var firstDocument = PermissiveDocument.from(StringLineProvider.of("Key: First"));
-            var secondDocument = PermissiveDocument.from(StringLineProvider.of("Key: Second"));
+            var firstDocument = PermissiveDocument.from(LineProvider.with("Key: First"));
+            var secondDocument = PermissiveDocument.from(LineProvider.with("Key: Second"));
             assertAll(
                 () -> assertEquals("{single-value=value, multiple-values=[one, two, three]}", document.toString()),
                 () -> assertEquals("{}", emptyDocument.toString()),

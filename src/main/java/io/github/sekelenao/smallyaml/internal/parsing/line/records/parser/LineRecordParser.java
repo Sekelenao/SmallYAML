@@ -1,16 +1,18 @@
-package io.github.sekelenao.smallyaml.internal.parsing.parser;
+package io.github.sekelenao.smallyaml.internal.parsing.line.records.parser;
 
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
-import io.github.sekelenao.smallyaml.internal.parsing.line.EmptyLine;
-import io.github.sekelenao.smallyaml.internal.parsing.line.KeyLine;
-import io.github.sekelenao.smallyaml.internal.parsing.line.KeyValueLine;
-import io.github.sekelenao.smallyaml.internal.parsing.line.Line;
-import io.github.sekelenao.smallyaml.internal.parsing.line.ListValueLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.records.EmptyLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.records.KeyLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.records.KeyValueLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.records.Line;
+import io.github.sekelenao.smallyaml.internal.parsing.line.records.ListValueLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.records.parser.string.KeyParser;
+import io.github.sekelenao.smallyaml.internal.parsing.line.records.parser.string.ValueParser;
 import io.github.sekelenao.smallyaml.internal.util.Assertions;
 
 import java.util.Objects;
 
-public final class LineParser {
+public final class LineRecordParser {
 
     private static final char COMMENT_SYMBOL = '#';
 

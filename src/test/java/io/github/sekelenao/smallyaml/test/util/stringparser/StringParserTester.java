@@ -1,7 +1,7 @@
 package io.github.sekelenao.smallyaml.test.util.stringparser;
 
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
-import io.github.sekelenao.smallyaml.internal.parsing.parser.StringParser;
+import io.github.sekelenao.smallyaml.internal.parsing.line.records.parser.string.StringParser;
 import io.github.sekelenao.smallyaml.test.util.Exceptions;
 
 import java.util.Objects;

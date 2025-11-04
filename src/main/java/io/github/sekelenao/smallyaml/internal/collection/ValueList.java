@@ -1,6 +1,6 @@
 package io.github.sekelenao.smallyaml.internal.collection;
 
-import io.github.sekelenao.smallyaml.internal.parsing.parser.StrictBooleanParser;
+import io.github.sekelenao.smallyaml.internal.parsing.booleans.StrictBooleanParser;
 
 import java.util.AbstractList;
 import java.util.Arrays;

@@ -1,30 +1,47 @@
 package io.github.sekelenao.smallyaml.api.line.provider;
 
-import io.github.sekelenao.smallyaml.internal.parsing.line.Line;
+import io.github.sekelenao.smallyaml.internal.parsing.line.provider.BufferedReaderLineProvider;
+import io.github.sekelenao.smallyaml.internal.parsing.line.provider.StringLineProvider;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Optional;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
-/**
- * Defines a provider of lines, allowing for sequential access to parsed {@link Line} objects.
- * <p>
- * Implementations provide functionality to retrieve the next line from a source, such as an
- * input stream, buffered reader, or string, and return it as an {@link Optional} of {@link Line}.
- * When no more lines are available, an empty {@link Optional} is returned.
- * <p>
- * This interface is designed to abstract the process of line parsing, enabling
- * different implementations to define the source and method of parsing.
- */
-public interface LineProvider {
+public interface LineProvider extends AutoCloseable {
 
-    /**
-     * Retrieves the next parsed line as an {@link Optional} of {@link Line}.
-     * The method sequentially accesses and parses lines from the underlying source.
-     * If no more lines are available, it returns an empty {@link Optional}.
-     *
-     * @return an {@link Optional} containing the next parsed {@link Line}, or an empty {@link Optional} if there are no more lines available
-     * @throws IOException if an I/O error occurs while retrieving or parsing the next line
-     */
-    Optional<Line> nextLine() throws IOException;
+    static LineProvider with(String text){
+        Objects.requireNonNull(text);
+        return new StringLineProvider(text);
+    }
+
+    static LineProvider with(BufferedReader bufferedReader){
+        Objects.requireNonNull(bufferedReader);
+        return new BufferedReaderLineProvider(bufferedReader);
+    }
+
+    static LineProvider with(InputStream inputStream, Charset charset){
+        Objects.requireNonNull(inputStream);
+        Objects.requireNonNull(charset);
+        var inputStreamReader = new InputStreamReader(inputStream, charset);
+        return new BufferedReaderLineProvider(new BufferedReader(inputStreamReader));
+    }
+
+    static LineProvider with(InputStream inputStream){
+        Objects.requireNonNull(inputStream);
+        return with(inputStream, StandardCharsets.UTF_8);
+    }
+
+    boolean hasNext() throws IOException;
+
+    String next() throws IOException;
+
+    @Override
+    default void close() throws IOException {
+        /* By default, this method does nothing */
+    }
 
 }

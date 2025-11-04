@@ -1,12 +1,12 @@
 package io.github.sekelenao.smallyaml.test.internal.parsing.parser;
 
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
-import io.github.sekelenao.smallyaml.internal.parsing.line.EmptyLine;
-import io.github.sekelenao.smallyaml.internal.parsing.line.KeyLine;
-import io.github.sekelenao.smallyaml.internal.parsing.line.KeyValueLine;
-import io.github.sekelenao.smallyaml.internal.parsing.line.Line;
-import io.github.sekelenao.smallyaml.internal.parsing.line.ListValueLine;
-import io.github.sekelenao.smallyaml.internal.parsing.parser.LineParser;
+import io.github.sekelenao.smallyaml.internal.parsing.line.records.EmptyLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.records.KeyLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.records.KeyValueLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.records.Line;
+import io.github.sekelenao.smallyaml.internal.parsing.line.records.ListValueLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.records.parser.LineRecordParser;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -27,9 +27,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @Tag(TestingTag.INTERNAL)
 @Tag(TestingTag.PARSING)
-final class LineParserTest {
+final class LineRecordParserTest {
 
-    private final LineParser parser = new LineParser();
+    private final LineRecordParser parser = new LineRecordParser();
 
     private static void failBecauseOfWrongLineType(Line line, Class<? extends Line> expectedType) {
         fail("Expected " + expectedType.getSimpleName() + " but was " + line.getClass().getSimpleName());
