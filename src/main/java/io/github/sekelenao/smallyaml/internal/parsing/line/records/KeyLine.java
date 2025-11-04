@@ -1,4 +1,4 @@
-package io.github.sekelenao.smallyaml.internal.parsing.line;
+package io.github.sekelenao.smallyaml.internal.parsing.line.records;
 
 import io.github.sekelenao.smallyaml.internal.util.Assertions;
 

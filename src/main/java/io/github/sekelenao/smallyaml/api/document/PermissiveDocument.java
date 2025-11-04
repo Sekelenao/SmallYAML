@@ -10,7 +10,7 @@ import io.github.sekelenao.smallyaml.api.mapping.PropertyValueMapper;
 import io.github.sekelenao.smallyaml.internal.collection.ValueList;
 import io.github.sekelenao.smallyaml.internal.parsing.ParsingCollector;
 import io.github.sekelenao.smallyaml.internal.parsing.SmallYAMLParser;
-import io.github.sekelenao.smallyaml.internal.parsing.parser.StrictBooleanParser;
+import io.github.sekelenao.smallyaml.internal.parsing.booleans.StrictBooleanParser;
 
 import java.io.IOException;
 import java.util.Collections;

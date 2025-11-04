@@ -4,7 +4,7 @@ import io.github.sekelenao.skcsv.SkCsv;
 import io.github.sekelenao.smallyaml.api.document.Document;
 import io.github.sekelenao.smallyaml.api.document.property.MultipleValuesProperty;
 import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
-import io.github.sekelenao.smallyaml.api.line.provider.InputStreamLineProvider;
+import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
 import io.github.sekelenao.smallyaml.test.util.constant.CorrectTestDocument;
 import io.github.sekelenao.smallyaml.test.util.constant.IncorrectTestDocument;
 import io.github.sekelenao.smallyaml.test.util.document.property.PropertyType;
@@ -64,7 +64,7 @@ public final class DocumentsTester<D extends Document> {
             var csvPath = TestResource.find(documentResource.csvResourcePath());
             var expectedRecordsCsv = SkCsv.from(csvPath);
             var inputStream = TestResource.asInputStream(documentResource);
-            try(var bufferedReaderLineProvider = InputStreamLineProvider.with(inputStream)) {
+            try(var bufferedReaderLineProvider = LineProvider.with(inputStream)) {
                 var document = documentProvider.from(bufferedReaderLineProvider);
                 var propertyTypeInCsvCounter = new  PropertyTypeCounter();
                 for (var line : expectedRecordsCsv){
@@ -96,7 +96,7 @@ public final class DocumentsTester<D extends Document> {
             var inputStream = TestResource.asInputStream(documentResource);
             var csvPath = TestResource.find(documentResource.csvResourcePath());
             var expectedExceptionCsv = SkCsv.from(csvPath);
-            try (var bufferedReaderLineProvider = InputStreamLineProvider.with(inputStream)) {
+            try (var bufferedReaderLineProvider = LineProvider.with(inputStream)) {
                 var expectedExceptionRow = expectedExceptionCsv.getFirst();
                 var expectedExceptionType = Class.forName(expectedExceptionRow.getFirst());
                 var expectedExceptionMessage = expectedExceptionRow.get(1);

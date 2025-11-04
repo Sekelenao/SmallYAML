@@ -2,11 +2,12 @@ package io.github.sekelenao.smallyaml.internal.parsing;
 
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
 import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
-import io.github.sekelenao.smallyaml.internal.parsing.line.EmptyLine;
-import io.github.sekelenao.smallyaml.internal.parsing.line.KeyLine;
-import io.github.sekelenao.smallyaml.internal.parsing.line.KeyValueLine;
-import io.github.sekelenao.smallyaml.internal.parsing.line.Line;
-import io.github.sekelenao.smallyaml.internal.parsing.line.ListValueLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.records.EmptyLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.records.KeyLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.records.KeyValueLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.records.Line;
+import io.github.sekelenao.smallyaml.internal.parsing.line.records.ListValueLine;
+import io.github.sekelenao.smallyaml.internal.parsing.line.records.parser.LineRecordParser;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -17,6 +18,8 @@ import java.util.stream.Stream;
 public final class SmallYAMLParser {
 
     private final LinkedList<KeyLine> previousKeys = new LinkedList<>();
+
+    private final LineRecordParser lineRecordParser = new LineRecordParser();
 
     private Class<? extends Line> previousLineType;
 
@@ -57,9 +60,8 @@ public final class SmallYAMLParser {
     public void parse(LineProvider lineProvider, ParsingCollector collector) throws IOException {
         Objects.requireNonNull(lineProvider);
         Objects.requireNonNull(collector);
-        var nextLine = lineProvider.nextLine();
-        while (nextLine.isPresent()){
-            var line = nextLine.get();
+        while (lineProvider.hasNext()){
+            var line = lineRecordParser.parse(lineProvider.next());
             switch (line){
                 case EmptyLine ignored -> {/* do nothing */}
                 case KeyLine keyLine -> {
@@ -75,7 +77,6 @@ public final class SmallYAMLParser {
                     previousLineType =  KeyValueLine.class;
                 }
             }
-            nextLine = lineProvider.nextLine();
         }
     }
 
