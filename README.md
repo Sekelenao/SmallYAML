@@ -58,7 +58,7 @@ actionable performance metrics.
 
 | Mode | Cnt | Score   | Error   | Units |
 |------|-----|---------|---------|-------|
-| avgt | 20  | 146,915 | ± 2,491 | ms/op |
+| avgt | 20  | 166,171 | ± 3,574 | ms/op |
 
 ### What am I working on right now?
 
