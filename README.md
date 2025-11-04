@@ -54,10 +54,15 @@ actionable performance metrics.
 |------|-----|---------|---------|-------|
 | avgt | 20  | 167,980 | ± 2,320 | ms/op |
 
+#### Snapshot 1.0.2
+
+| Mode | Cnt | Score   | Error   | Units |
+|------|-----|---------|---------|-------|
+| avgt | 20  | 146,915 | ± 2,491 | ms/op |
+
 ### What am I working on right now?
 
 - Testing the API in Simple projects and Spring projects
-- Adding javadocs
 - Adding documentation
 
 ### Futur ideas
