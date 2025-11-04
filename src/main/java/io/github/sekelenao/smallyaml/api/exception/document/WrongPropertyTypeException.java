@@ -13,6 +13,8 @@ import io.github.sekelenao.smallyaml.api.exception.SmallYAMLException;
  * <p>
  * The exception message provides additional context on whether the mismatch was with
  * a single or multiple value property.
+ *
+ * @since 1.0.0
  */
 public class WrongPropertyTypeException extends SmallYAMLException {
 
@@ -28,6 +30,8 @@ public class WrongPropertyTypeException extends SmallYAMLException {
      *                     or {@code Property.Type.MULTIPLE}
      * @return a new instance of {@code WrongPropertyTypeException} containing a message that specifies
      *         the expected property type and the mismatch
+     *
+     * @since 1.0.0
      */
     public static WrongPropertyTypeException withExpected(Property.Type expectedType){
         return new WrongPropertyTypeException(

@@ -9,6 +9,8 @@ import java.util.Objects;
  * within the SmallYAML framework. This exception is designed to provide
  * specific error messages for different types of parsing issues such as
  * invalid values, keys, or indentation.
+ *
+ * @since 1.0.0
  */
 public class ParsingException extends SmallYAMLException {
 
@@ -28,6 +30,8 @@ public class ParsingException extends SmallYAMLException {
      * @param value   the value that caused the parsing error
      * @return a {@link ParsingException} containing the error details and invalid value
      *         to be thrown in parsing operations
+     *
+     * @since 1.0.0
      */
     public static ParsingException wrongValue(String details, String value){
         Objects.requireNonNull(details);
@@ -43,6 +47,8 @@ public class ParsingException extends SmallYAMLException {
      * @param key     the key that caused the parsing error
      * @return a {@link ParsingException} containing details about the invalid key
      *         to be thrown during the parsing operation
+     *
+     * @since 1.0.0
      */
     public static ParsingException wrongKey(String details, String key){
         Objects.requireNonNull(details);
@@ -58,6 +64,8 @@ public class ParsingException extends SmallYAMLException {
      * @param line the line of text where the indentation error occurred
      * @return a {@code ParsingException} containing the error details and the problematic line
      *         to be thrown during parsing operations
+     *
+     * @since 1.0.0
      */
     public static ParsingException wrongIndentation(String details, String line){
         Objects.requireNonNull(details);

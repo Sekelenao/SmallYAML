@@ -9,6 +9,8 @@ package io.github.sekelenao.smallyaml.api.exception;
  * <p>
  * Subclasses of {@code SmallYAMLException} are used to represent specific types
  * of errors, such as duplicate property keys, parsing issues, or type mismatches.
+ *
+ * @since 1.0.0
  */
 public class SmallYAMLException extends RuntimeException {
 
@@ -17,6 +19,8 @@ public class SmallYAMLException extends RuntimeException {
      * This exception serves as the base for all exceptions encountered in the SmallYAML framework.
      *
      * @param message the detail message that provides additional context about the error
+     *
+     * @since 1.0.0
      */
     public SmallYAMLException(String message) {
         super(message);

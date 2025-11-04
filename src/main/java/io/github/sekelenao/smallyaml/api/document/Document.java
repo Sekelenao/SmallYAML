@@ -17,6 +17,8 @@ import java.util.Iterator;
  * The properties within a document are key-value pairs where keys are
  * unique identifiers, and values can encapsulate complex structures
  * using single or multiple values.
+ *
+ * @since 1.0.0
  */
 public interface Document {
 
@@ -26,6 +28,8 @@ public interface Document {
      * and the value may either be a single value or a list of values.
      *
      * @return an {@code Iterator} over the {@code Property} objects in this document
+     *
+     * @since 1.0.0
      */
     Iterator<Property> iterator();
 

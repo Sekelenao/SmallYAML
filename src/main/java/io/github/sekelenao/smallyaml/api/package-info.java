@@ -1,12 +1,23 @@
 /**
- * Public API for SmallYAML library.
+ * SmallYAML public API root package.
  *
- * <p>All classes in this package are part of the
- * stable public API and are safe to use in your applications.
+ * <p>This API focuses on clarity and predictability rather than covering the
+ * full YAML 1.2 specification. It intentionally supports a constrained subset
+ * of YAML so that configuration remains simple and parsing behavior is
+ * straightforward and easy to reason about.</p>
  *
- * <p>This API follows semantic versioning. Breaking changes will only occur
- * in major version updates.
+ * <p>The subpackages expose:
+ * <ul>
+ *   <li><code>document</code> — document and property model</li>
+ *   <li><code>line.provider</code> — pull-based line readers</li>
+ *   <li><code>mapping</code> — helpers for mapping property values</li>
+ *   <li><code>exception</code> — checked/runtime exceptions from parsing and access</li>
+ * </ul>
+ * These packages form the stable, public API surface intended for application use.</p>
  *
- * @since 1.0
+ * <p>Semantic versioning applies: breaking changes are only introduced in major
+ * versions.</p>
+ *
+ * @since 1.0.0
  */
 package io.github.sekelenao.smallyaml.api;
