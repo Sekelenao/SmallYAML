@@ -69,8 +69,9 @@ public final class LineRecordParser {
         if (indexOfColon == line.length() - 1) {
             return new KeyLine(leadingSpaces, key);
         }
-        if (line.charAt(indexOfColon + 1) != ' ' && line.charAt(indexOfColon + 1) != '\t') {
-            throw ParsingException.wrongKey("forbidden character", line);
+        var characterAfterColon = line.charAt(indexOfColon + 1);
+        if (characterAfterColon != ' ' && characterAfterColon != '\t') {
+            throw ParsingException.wrongKey("colon must be followed by whitespace character", line);
         }
         var valuePart = line.substring(indexOfColon + 1);
         var value = valueParser.parse(valuePart);

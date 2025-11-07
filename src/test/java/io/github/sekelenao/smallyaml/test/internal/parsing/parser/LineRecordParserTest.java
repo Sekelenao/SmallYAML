@@ -169,7 +169,7 @@ final class LineRecordParserTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"space :", "first:second:", "@yes:"})
+        @ValueSource(strings = {"space :", "@yes:"})
         @DisplayName("forbidden characters")
         void notPermittedCharacters(String rawKey) {
             checkException(rawKey, "forbidden character");
@@ -234,9 +234,9 @@ final class LineRecordParserTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"key:value", "  key:value", " key:value"})
-        @DisplayName("No space after key")
-        void missingEndingQuote(String rawKey) {
-            checkException(rawKey, "forbidden character");
+        @DisplayName("No space after colon")
+        void noSpaceAfterColon(String rawKey) {
+            checkException(rawKey, "colon must be followed by whitespace character");
         }
 
     }
