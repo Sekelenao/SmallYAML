@@ -13,8 +13,6 @@ Predictability is a Feature. Cut the noise, keep the functionality.
 
 ## Overview
 
----
-
 SmallYAML is a simplified YAML library that prioritizes maintainability and predictability over comprehensive YAML
 specification coverage. Rather than supporting the full YAML specification, SmallYAML intentionally constrains the
 allowed syntax to a carefully chosen subset that eliminates common sources of configuration complexity and parsing
@@ -22,14 +20,11 @@ ambiguity.
 
 ## Table of contents
 
----
-
-#### - [Release notes and compatibility](documentations/user/release_notes.md)
-#### - [Performance metrics](documentations/user/benchmarks.md)
+#### [User guide](documentations/user/user_guide.md)
+#### [Release notes and compatibility](documentations/user/release_notes.md)
+#### [Performance metrics](documentations/user/benchmarks.md)
 
 ## Zero Dependency Strategy
-
----
 
 SmallYAML's philosophy of simplicity extends to its dependency management. 
 The system maintains zero runtime dependencies to ensure:

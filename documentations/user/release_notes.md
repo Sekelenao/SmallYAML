@@ -2,15 +2,11 @@
 
 ## Compatibility matrix
 
----
-
 | Java version | SmallYAML version |
 |--------------|-------------------|
 | 21+          | 1.x.x             |
 
 ## All Versions
-
----
 
 ### 1.0.0 (Not released)
 

@@ -2,8 +2,6 @@
 
 ## How benchmarks are done
 
----
-
 The Java Microbenchmark Harness (JMH) is leveraged to ensure the optimal performance of parsing mechanisms.
 
 Benchmarks specifically focus on evaluating the efficiency of loading a large configuration file, located at
@@ -19,8 +17,6 @@ Results are then reported as the average time taken per operation, expressed in 
 actionable performance metrics.
 
 ## Results ordered by the most recent version
-
----
 
 #### Snapshot 1.0.2
 
