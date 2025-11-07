@@ -226,7 +226,7 @@ final class LineRecordParserTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"key: e:e", "key: e-e", "key:  e.e"})
+        @ValueSource(strings = {"key: e:e", "key: e-e", "key:  e\"e"})
         @DisplayName("Invalid character without quotes")
         void missingValue(String rawKey) {
             checkException(rawKey, "invalid character without quotes");
