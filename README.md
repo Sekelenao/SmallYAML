@@ -25,7 +25,8 @@ To increase the predictability of the library:
 - Keys are case-insensitive and restrained to alphanumeric characters, underscores, and dashes.
 - Nested objects in lists are forbidden.
 - Null safety is enforced.
-- If the version X.X.X is for Java 100, it will be written in Java 100 and not Java 8.
+- Zero dependency strategy.
+- If the version X.X.X is for Java 100+, it will be written in Java 100 and not Java 8.
 - The library is fully tested.
 
 ## Table of contents
