@@ -2,100 +2,73 @@
 
 ## What is YAML?
 
-YAML is a document format used to store properties. Think of it as a settings file organized hierarchically, 
-similar to a .properties file but with more structure.
+YAML is a document format used to store properties. Think of it as a settings file organized hierarchically.
 
-For more information, please check: https://yaml.org/
+The goal is to access the value of these properties using a path.
 
-SmallYAML is a simplified Java library that only supports a subset of the complete YAML syntax to ensure predictability 
-and simplicity.
+> [!IMPORTANT]  
+> SmallYAML is an opinionated and simplified Java library that only supports a subset of the complete YAML syntax to
+> ensure predictability and simplicity.
+
+> [!NOTE]  
+> For more information, please check: https://yaml.org/
 
 ## Writing a SmallYAML document
 
+### Defining properties
 
-1. Simple Properties (Key-Value)
+You can define properties using a simple key-value format.
 
-The simplest form is a key followed by a colon and a value BufferedReaderLineProviderTest.java:37 :
+> [!IMPORTANT]
+> Keys are composed of alphanumeric characters, underscores, and dashes. A key cannot start or end with a dash/underscore.
 
-application.name: MyApp  
-server.port: 8080  
-database.host: localhost
+> [!CAUTION]  
+> A path leading to a value must be unique. All keys are case-insensitive.
 
-Each line defines a property. The key is on the left of the colon, the value on the right.
-2. Hierarchy with Indentation
+To define a child property, indent the key with more spaces than the parent key. You can choose the number of spaces
+you want to use.
 
-You can organize properties hierarchically using indentation (spaces, not tabs) InputStreamLineProviderTest.java:46-56 :
+> [!CAUTION]  
+> Idents must be spaces (U+0020).
 
-application:  
-name: MyApp  
-version: 1.0.0  
-database:  
-host: localhost  
-port: 5432
+```yaml
+parent:
+  child: value
+```
 
-This is equivalent to application.name, application.version, database.host, and database.port.
-3. Value Lists
 
-To define multiple values for a single key, use the dash - InputStreamLineProviderTest.java:53-55 :
 
-servers:  
-- production.example.com  
-- staging.example.com  
-- development.example.com
+> [!IMPORTANT]  
+> A value must be quoted if it contains one of the following characters: `:` `-` `"`.
+> You must escape quotes using the following notation `\"`.
+> A single backslash not preceding quotes does not require escaping.
 
-Each line with a dash represents a list element.
-4. Comments
+```yaml
+special-value1: ":"
+special_value2: "-"
+special-value3: "\""
+```
 
-Lines starting with # are comments and are ignored BufferedReaderLineProviderTest.java:36-39 :
+> [!TIP]
+> You can inline a path using the dot `.` operator.
+> For example, you can access the two following values using the same path `parent.child`
 
-# Application configuration
-application:  
-name: MyApp  # Application name
+```yaml
+parent.child: value
+```
 
-Complete Example
+> [!TIP]
+> You can mix the two formats in the same path.
 
-# Application configuration
-application:  
-name: ConfigService  
-version: 2.1.0
+```yaml
+one:
+  two.three: value
+```
 
-# Server configuration
-server:  
-host: 0.0.0.0  
-port: 8080  
-ssl-enabled: true
+You can attach multiple values to a single key using the dash `-` operator. Each value must have its own line.
 
-# Database configuration
-database:  
-urls:  
-- jdbc:postgresql://db1:5432/config  
-- jdbc:postgresql://db2:5432/config  
-connection-pool:  
-min-size: 5  
-max-size: 20
-
-# List of enabled features
-features:  
-- authentication  
-- authorization  
-- logging
-
-Important Rules
-
-    Indentation: Always use spaces (not tabs) for indentation
-    Colons: There must be a space after the colon in key: value
-    Dashes for lists: Each list item starts with - (dash followed by a space)
-    No quotes needed: Text values generally don't need quotes
-    Unique keys: Each key can only appear once
-
-Supported Value Types
-
-    Text: name: MyApp
-    Integers: port: 8080 PermissiveDocumentTest.java:263-269
-    Decimals: threshold: 20.20 PermissiveDocumentTest.java:354
-    Booleans: enabled: true or enabled: false (case-sensitive)
-
-Notes
-
-SmallYAML is a simplified Java library that only supports a subset of the complete YAML syntax README.md:31-34 . It prioritizes simplicity and predictability over complete YAML 1.2 specification coverage. Advanced YAML features (anchors, aliases, complex types) are not supported.
-
+```yaml
+key:
+  - value1
+  - value2
+```
