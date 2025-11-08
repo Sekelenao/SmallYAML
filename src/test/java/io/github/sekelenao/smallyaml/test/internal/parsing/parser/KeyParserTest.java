@@ -37,10 +37,19 @@ final class KeyParserTest {
     @DisplayName("Key parsing for valid complex values")
     void keyParsingForValidComplexValues() {
         assertAll(
-                () -> parsingTester.checkValid("  \tone.Two.three:    \t ", "one.Two.three"),
+                () -> parsingTester.checkValid("  \tone.Two.three:    \t ", "one.two.three"),
                 () -> parsingTester.checkValid("under_score:", "under_score"),
                 () -> parsingTester.checkValid(" da-sh: ", "da-sh"),
                 () -> parsingTester.checkValid(" 1__2: ", "1__2")
+        );
+    }
+
+    @Test
+    @DisplayName("Key parsing is case-insensitive (LowerCase)")
+    void keyParsingIsCaseInsensitive() {
+        assertAll(
+                () -> parsingTester.checkValid("KEY: ", "key"),
+                () -> parsingTester.checkValid("Key: ", "key")
         );
     }
 

@@ -2,6 +2,7 @@ package io.github.sekelenao.smallyaml.internal.parsing.line.records.parser.strin
 
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
 
+import java.util.Locale;
 import java.util.Objects;
 
 public final class KeyParser implements StringParser {
@@ -53,7 +54,7 @@ public final class KeyParser implements StringParser {
             }
         }
         state = State.START;
-        return keyValue;
+        return keyValue.toLowerCase(Locale.ROOT);
     }
 
 }
