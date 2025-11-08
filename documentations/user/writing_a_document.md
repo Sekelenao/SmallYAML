@@ -1,4 +1,4 @@
-<h1 align="center">User guide</h1>
+<h1 align="center">Writing a SmallYAML document</h1>
 
 ## What is YAML?
 
@@ -12,9 +12,7 @@ For more information, please check: https://yaml.org/
 > SmallYAML is an opinionated and simplified Java library that only supports a subset of the complete YAML syntax to
 > ensure predictability and simplicity.
 
-## Writing a SmallYAML document
-
-### Defining properties
+## SmallYAML syntax
 
 You can define properties using a simple key-value format. You must follow these rules:
 

@@ -13,14 +13,15 @@ Predictability is a Feature. Cut the noise, keep the functionality.
 
 ## Overview
 
-SmallYAML is a simplified YAML library that prioritizes maintainability and predictability over comprehensive YAML
-specification coverage. Rather than supporting the full YAML specification, SmallYAML intentionally constrains the
-allowed syntax to a carefully chosen subset that eliminates common sources of configuration complexity and parsing
-ambiguity.
+SmallYAML is a simplified and opinionated YAML library that prioritizes maintainability and predictability over 
+comprehensive YAML specification coverage. Rather than supporting the full YAML specification, SmallYAML intentionally 
+constrains the allowed syntax to a carefully chosen subset that eliminates common sources of configuration complexity 
+and parsing ambiguity.
 
 ## Table of contents
 
-#### [User guide](documentations/user/user_guide.md)
+#### [How to write a SmallYAML document](documentations/user/writing_a_document.md)
+#### [How to use the Java API](documentations/user/using_the_java_api.md)
 #### [Release notes and compatibility](documentations/user/release_notes.md)
 #### [Performance metrics](documentations/user/benchmarks.md)
 
@@ -32,3 +33,11 @@ The system maintains zero runtime dependencies to ensure:
 - Deployment simplicity
 - Maintenance isolation
 - Security
+
+## Hello user!
+
+If you have any questions, please feel free to [open an issue](https://github.com/Sekelenao/SmallYAML/issues/new).
+
+I love providing stuff that makes your life easier, so please consider supporting me by starring the project.
+
+Thank you for using SmallYAML!
