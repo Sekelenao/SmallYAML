@@ -6,10 +6,10 @@ import java.util.Objects;
 
 public record KeyValueLine(int depth, String key, String value) implements Line {
 
-      public KeyValueLine {
-         Assertions.isPositiveOrZero(depth);
-         Objects.requireNonNull(key);
-         Objects.requireNonNull(value);
-      }
+    public KeyValueLine {
+        Assertions.isPositiveOrZero(depth);
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(value);
+    }
 
-   }
+}

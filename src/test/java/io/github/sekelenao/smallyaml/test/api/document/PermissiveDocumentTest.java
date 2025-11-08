@@ -711,8 +711,8 @@ final class PermissiveDocumentTest {
             assertAll(
                 () -> assertEquals("{single-value=value, multiple-values=[one, two, three]}", document.toString()),
                 () -> assertEquals("{}", emptyDocument.toString()),
-                () -> assertEquals("{Key=First}", firstDocument.toString()),
-                () -> assertEquals("{Key=Second}", secondDocument.toString())
+                () -> assertEquals("{key=First}", firstDocument.toString()),
+                () -> assertEquals("{key=Second}", secondDocument.toString())
             );
         }
 
