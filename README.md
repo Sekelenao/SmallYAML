@@ -36,15 +36,6 @@ To increase the predictability of the library:
 #### [Release notes and compatibility](documentations/user/release_notes.md)
 #### [Performance metrics](documentations/user/benchmarks.md)
 
-## Zero Dependency Strategy
-
-SmallYAML's philosophy of simplicity extends to its dependency management. 
-The system maintains zero runtime dependencies to ensure:
-
-- Deployment simplicity
-- Maintenance isolation
-- Security
-
 ## Hello user!
 
 If you have any questions, please feel free to [open an issue](https://github.com/Sekelenao/SmallYAML/issues/new).
