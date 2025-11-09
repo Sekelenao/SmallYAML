@@ -10,7 +10,7 @@ package io.github.sekelenao.smallyaml.api.document.property;
  *
  * @since 1.0.0
  */
-public sealed interface Property permits SingleValueProperty, MultipleValuesProperty {
+public sealed interface Property<T> permits SingleValueProperty, MultipleValuesProperty {
 
     /**
      * Represents the type of property. A property can either hold a single value
@@ -35,5 +35,14 @@ public sealed interface Property permits SingleValueProperty, MultipleValuesProp
      * @since 1.0.0
      */
     String key();
+
+    /**
+     * Retrieves the value associated with the property.
+     *
+     * @return the value of the property.
+     *
+     * @since 1.0.0
+     */
+    T value();
 
 }

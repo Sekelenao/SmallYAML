@@ -31,6 +31,7 @@ public interface Document {
      *
      * @since 1.0.0
      */
-    Iterator<Property> iterator();
+    @SuppressWarnings("java:S1452")
+    Iterator<Property<?>> iterator();
 
 }

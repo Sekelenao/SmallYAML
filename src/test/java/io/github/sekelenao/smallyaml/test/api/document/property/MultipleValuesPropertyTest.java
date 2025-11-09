@@ -33,9 +33,9 @@ final class MultipleValuesPropertyTest {
         var multipleValuesProperty = new MultipleValuesProperty("key", List.of("1", "2", "3"));
         assertAll(
             () -> assertEquals("key", multipleValuesProperty.key()),
-            () -> assertEquals("1", multipleValuesProperty.valueList().getFirst()),
-            () -> assertEquals("2", multipleValuesProperty.valueList().get(1)),
-            () -> assertEquals("3", multipleValuesProperty.valueList().getLast())
+            () -> assertEquals("1", multipleValuesProperty.value().getFirst()),
+            () -> assertEquals("2", multipleValuesProperty.value().get(1)),
+            () -> assertEquals("3", multipleValuesProperty.value().getLast())
         );
     }
 

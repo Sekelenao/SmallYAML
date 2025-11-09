@@ -70,7 +70,7 @@ final class PermissiveDocumentTest {
     }
 
     @Nested
-    @DisplayName("Has property")
+    @DisplayName("Has property and type of")
     final class HasProperty {
 
         @Test
@@ -89,6 +89,24 @@ final class PermissiveDocumentTest {
                 () -> assertFalse(document.hasProperty("no-value")),
                 () -> assertTrue(document.hasProperty("single-value")),
                 () -> assertTrue(document.hasProperty("multiple-values"))
+            );
+        }
+
+        @Test
+        @DisplayName("Type of is working")
+        void typeOf() throws IOException {
+            var document = PermissiveDocument.from(LineProvider.with("""
+                single-value: value
+                multiple-values:
+                    - one
+                    - two
+                    - three
+                """));
+            assertAll(
+                () -> assertThrows(NullPointerException.class, () -> document.typeOf(null)),
+                () -> assertThrows(NoSuchElementException.class, () -> document.typeOf(UNKNOWN_KEY)),
+                () -> assertEquals(Property.Type.SINGLE, document.typeOf("single-value")),
+                () -> assertEquals(Property.Type.MULTIPLE, document.typeOf("multiple-values"))
             );
         }
 

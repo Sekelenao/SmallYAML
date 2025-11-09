@@ -42,7 +42,7 @@ import java.util.stream.StreamSupport;
  *
  * @since 1.0.0
  */
-public final class PermissiveDocument implements Iterable<Property>, Document {
+public final class PermissiveDocument implements Iterable<Property<?>>, Document {
 
     private final Map<String, Object> properties;
 
@@ -128,6 +128,30 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
     public boolean hasProperty(String key){
         Objects.requireNonNull(key);
         return properties.containsKey(key);
+    }
+
+    /**
+     * Determines the type of the property associated with the given key.
+     *
+     * @param key the key of the property whose type is to be determined.
+     * @return the type of the property, either {@link Property.Type#SINGLE} for single values or
+     * {@link Property.Type#MULTIPLE} for lists.
+     *
+     * @throws NullPointerException if the provided key is null.
+     * @throws NoSuchElementException if no property exists for the given key.
+     * @throws IllegalStateException if the value type of the property is unexpected.
+     */
+    public Property.Type typeOf(String key){
+        Objects.requireNonNull(key);
+        if(!properties.containsKey(key)){
+            throw new NoSuchElementException();
+        }
+        var value = properties.get(key);
+        return switch (value){
+            case String ignored -> Property.Type.SINGLE;
+            case ValueList ignored -> Property.Type.MULTIPLE;
+            default -> throw new IllegalStateException("Unexpected type: " + value.getClass());
+        };
     }
 
     /**
@@ -490,11 +514,10 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
      * based on the type of the value.
      *
      * @return an {@link Iterator} for iterating over {@link Property} objects
-     *
      * @since 1.0.0
      */
     @Override
-    public Iterator<Property> iterator() {
+    public Iterator<Property<?>> iterator() {
         return new Iterator<>() {
 
             private final Iterator<Map.Entry<String, Object>> iterator = properties.entrySet().iterator();
@@ -505,7 +528,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
             }
 
             @Override
-            public Property next() {
+            public Property<?> next() {
                 if (!hasNext()){
                     throw new NoSuchElementException();
                 }
@@ -520,7 +543,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         };
     }
 
-    private static class PropertySpliterator implements Spliterator<Property> {
+    private static class PropertySpliterator implements Spliterator<Property<?>> {
 
         private final Spliterator<Map.Entry<String, Object>> wrappedSpliterator;
 
@@ -529,10 +552,10 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         }
 
         @Override
-        public boolean tryAdvance(Consumer<? super Property> action) {
+        public boolean tryAdvance(Consumer<? super Property<?>> action) {
             Objects.requireNonNull(action);
             return wrappedSpliterator.tryAdvance(entry -> {
-                Property property = switch (entry.getValue()) {
+                Property<?> property = switch (entry.getValue()) {
                     case String value -> new SingleValueProperty(entry.getKey(), value);
                     case ValueList valueList -> new MultipleValuesProperty(entry.getKey(), valueList.asListView());
                     default -> throw new IllegalStateException("Unexpected value: " + entry.getValue());
@@ -542,7 +565,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
         }
 
         @Override
-        public Spliterator<Property> trySplit() {
+        public Spliterator<Property<?>> trySplit() {
             var splitResult = wrappedSpliterator.trySplit();
             if (splitResult != null) {
                 return new PropertySpliterator(splitResult);
@@ -570,7 +593,7 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
      * @since 1.0.0
      */
     @Override
-    public Spliterator<Property> spliterator() {
+    public Spliterator<Property<?>> spliterator() {
         return new PropertySpliterator(properties.entrySet().spliterator());
     }
 
@@ -582,7 +605,8 @@ public final class PermissiveDocument implements Iterable<Property>, Document {
      *
      * @since 1.0.0
      */
-    public Stream<Property> stream() {
+    @SuppressWarnings("java:S1452")
+    public Stream<Property<?>> stream() {
         return StreamSupport.stream(spliterator(), false);
     }
 

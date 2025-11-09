@@ -9,20 +9,20 @@ import java.util.Objects;
  *
  * @since 1.0.0
  */
-public record MultipleValuesProperty(String key, List<String> valueList) implements Property {
+public record MultipleValuesProperty(String key, List<String> value) implements Property<List<String>> {
 
     /**
      * Constructs a {@code MultipleValuesProperty} instance, ensuring that both the key and value list are non-null.
      *
      * @param key       a non-null string representing the key of the property
-     * @param valueList a non-null list of strings representing the values associated with the key
-     * @throws NullPointerException if {@code key} or {@code valueList} is null
+     * @param value a non-null list of strings representing the values associated with the key
+     * @throws NullPointerException if {@code key} or {@code value} is null
      *
      * @since 1.0.0
      */
     public MultipleValuesProperty {
         Objects.requireNonNull(key);
-        Objects.requireNonNull(valueList);
+        Objects.requireNonNull(value);
     }
 
 }
