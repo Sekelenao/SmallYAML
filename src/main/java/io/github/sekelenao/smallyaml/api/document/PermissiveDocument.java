@@ -555,7 +555,7 @@ public final class PermissiveDocument implements Iterable<Property<?>>, Document
         public boolean tryAdvance(Consumer<? super Property<?>> action) {
             Objects.requireNonNull(action);
             return wrappedSpliterator.tryAdvance(entry -> {
-                Property<?> property = switch (entry.getValue()) {
+                var property = switch (entry.getValue()) {
                     case String value -> new SingleValueProperty(entry.getKey(), value);
                     case ValueList valueList -> new MultipleValuesProperty(entry.getKey(), valueList.asListView());
                     default -> throw new IllegalStateException("Unexpected value: " + entry.getValue());
