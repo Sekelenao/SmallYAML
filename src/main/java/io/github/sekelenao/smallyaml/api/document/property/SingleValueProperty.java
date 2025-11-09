@@ -9,7 +9,7 @@ import java.util.Objects;
  *
  * @since 1.0.0
  */
-public record SingleValueProperty(String key, String value) implements Property {
+public record SingleValueProperty(String key, String value) implements Property<String> {
 
     /**
      * Constructs a {@code SingleValueProperty} instance, ensuring that both the key and value are non-null.
