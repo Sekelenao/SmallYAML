@@ -3,14 +3,13 @@ package io.github.sekelenao.smallyaml.api.document;
 import io.github.sekelenao.smallyaml.api.document.property.MultipleValuesProperty;
 import io.github.sekelenao.smallyaml.api.document.property.Property;
 import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
-import io.github.sekelenao.smallyaml.api.exception.document.DuplicatedPropertyException;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
 import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
 import io.github.sekelenao.smallyaml.api.mapping.PropertyValueMapper;
 import io.github.sekelenao.smallyaml.internal.collection.ValueList;
-import io.github.sekelenao.smallyaml.internal.parsing.ParsingCollector;
 import io.github.sekelenao.smallyaml.internal.parsing.SmallYAMLParser;
 import io.github.sekelenao.smallyaml.internal.parsing.booleans.StrictBooleanParser;
+import io.github.sekelenao.smallyaml.internal.parsing.collector.MapParsingCollector;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -46,44 +45,8 @@ public final class PermissiveDocument implements Iterable<Property<?>>, Document
 
     private final Map<String, Object> properties;
 
-    private static final class PermissiveDocumentCollector implements ParsingCollector {
-
-        private final Map<String, Object> collectedProperties;
-
-        private PermissiveDocumentCollector() {
-            this.collectedProperties = new HashMap<>();
-        }
-
-        @Override
-        public void collectSingleValue(String key, String value) {
-            Objects.requireNonNull(key);
-            Objects.requireNonNull(value);
-            if(collectedProperties.containsKey(key)){
-                throw DuplicatedPropertyException.forFollowing(key);
-            }
-            collectedProperties.put(key, value);
-        }
-
-        @Override
-        public void collectListValue(String key, String value, boolean isNewList) {
-            Objects.requireNonNull(key);
-            Objects.requireNonNull(value);
-            collectedProperties.merge(key, new ValueList(value), (existing, newValue) -> {
-                if(isNewList){
-                    throw DuplicatedPropertyException.forFollowing(key);
-                }
-                if (existing instanceof ValueList existingList) {
-                    existingList.add(value);
-                    return existingList;
-                }
-                throw new IllegalStateException("Unexpected type: " + existing.getClass());
-            });
-        }
-
-    }
-
     private PermissiveDocument(Map<String, Object> properties){
-        this.properties = Objects.requireNonNull(properties);
+        this.properties = properties;
     }
 
     /**
@@ -99,10 +62,10 @@ public final class PermissiveDocument implements Iterable<Property<?>>, Document
      */
     public static PermissiveDocument from(LineProvider lineProvider) throws IOException {
         Objects.requireNonNull(lineProvider);
+        var collector = new MapParsingCollector();
         var parser = new SmallYAMLParser();
-        var collector = new PermissiveDocumentCollector();
         parser.parse(lineProvider, collector);
-        return new PermissiveDocument(collector.collectedProperties);
+        return new PermissiveDocument(collector.underlyingMapAsView());
     }
 
     /**
@@ -547,7 +510,7 @@ public final class PermissiveDocument implements Iterable<Property<?>>, Document
         };
     }
 
-    private static class PropertySpliterator implements Spliterator<Property<?>> {
+    private static final class PropertySpliterator implements Spliterator<Property<?>> {
 
         private final Spliterator<Map.Entry<String, Object>> wrappedSpliterator;
 

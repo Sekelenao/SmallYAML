@@ -1,4 +1,4 @@
-package io.github.sekelenao.smallyaml.internal.parsing;
+package io.github.sekelenao.smallyaml.internal.parsing.collector;
 
 public interface ParsingCollector {
 
