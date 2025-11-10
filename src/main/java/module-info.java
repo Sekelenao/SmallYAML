@@ -26,5 +26,5 @@ module SmallYAML {
 
     // Opens for tests
     opens io.github.sekelenao.smallyaml.internal.util to SmallYAML.test;
-
+    opens io.github.sekelenao.smallyaml.api.document to SmallYAML.test;
 }
