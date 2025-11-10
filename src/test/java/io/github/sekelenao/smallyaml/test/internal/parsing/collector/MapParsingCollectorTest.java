@@ -46,7 +46,8 @@ final class MapParsingCollectorTest {
                 () -> assertThrows(NullPointerException.class, () -> collector.collectListValue(null, "value", true)),
                 () -> assertThrows(NullPointerException.class, () -> collector.collectListValue("key", null, true)),
                 () -> assertDoesNotThrow(() -> collector.collectListValue("one", "1", true)),
-                () -> assertDoesNotThrow(() -> collector.collectListValue("two", "1", false)),
+                () -> assertDoesNotThrow(() -> collector.collectListValue("two", "1", true)),
+                () -> assertThrows(IllegalStateException.class, () -> collector.collectListValue("new", "1", false)),
                 () -> assertDoesNotThrow(() -> collector.collectListValue("one", "1", false)),
                 () -> assertThrows(DuplicatedPropertyException.class, () -> collector.collectListValue("one", "1", true)),
                 () -> assertEquals(Map.of("one", firstValueList, "two", secondValueList), collector.underlyingMapAsView())
