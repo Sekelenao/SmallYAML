@@ -50,6 +50,35 @@ final class PermissiveDocumentTest {
 
     private static final String UNKNOWN_KEY = "UNKNOWN";
 
+
+
+    @Nested
+    @DisplayName("Internal ParsingCollector")
+    final class ParsingCollectorDefensiveProgrammingAssertion {
+
+        @Test
+        @SuppressWarnings("unchecked")
+        @DisplayName("ParsingCollector defensive programming assertion")
+        void collectListValueThrowsIllegalStateExceptionForUnexpectedExistingType() throws ReflectiveOperationException {
+            var type = Class.forName("io.github.sekelenao.smallyaml.api.document.PermissiveDocument$PermissiveDocumentCollector");
+            var collectorInstance = Reflections.instantiateByPrivateConstructor(type);
+            var collectedProperties = (Map<String, Object>) Reflections.retrievePrivateFieldValue(collectorInstance, "collectedProperties");
+            collectedProperties.put("key", 0);
+            var collectListValueMethod = type.getDeclaredMethod("collectListValue", String.class, String.class, boolean.class);
+            assertThrows(
+                    IllegalStateException.class,
+                    () -> Reflections.secureInvokePrivateMethod(
+                            collectorInstance,
+                            collectListValueMethod,
+                            "key",
+                            "value",
+                            false
+                    )
+            );
+        }
+
+    }
+
     @Nested
     @DisplayName("Static factories methods")
     final class Factories {
@@ -113,7 +142,7 @@ final class PermissiveDocumentTest {
         }
 
         @Test
-        @DisplayName("Defensive programming assertion")
+        @DisplayName("TypeOf defensive programming assertion")
         void defensiveProgrammingAssertion() throws ReflectiveOperationException {
             var malformedInternalMap = Map.of("key", 0);
             var constructorArgument = new Reflections.ConstructorArgument<>(Map.class, malformedInternalMap);

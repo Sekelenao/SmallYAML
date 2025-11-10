@@ -1,6 +1,8 @@
 package io.github.sekelenao.smallyaml.test.util;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -46,6 +48,35 @@ public final class Reflections {
         constructor.setAccessible(true);
         var argumentsValues = Arrays.stream(arguments).map(ConstructorArgument::value).toArray();
         return constructor.newInstance(argumentsValues);
+    }
+
+    public static Object retrievePrivateFieldValue(Object instance, String fieldName) throws ReflectiveOperationException {
+        Objects.requireNonNull(instance);
+        Objects.requireNonNull(fieldName);
+        var field = instance.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        return field.get(instance);
+    }
+
+    public static void secureInvokePrivateMethod(Object instance, Method method, Object... args) {
+        Objects.requireNonNull(instance);
+        Objects.requireNonNull(method);
+        Objects.requireNonNull(args);
+        try {
+            method.setAccessible(true);
+            method.invoke(instance, args);
+        } catch (IllegalAccessException e) {
+            throw new IllegalAccessError();
+        } catch (InvocationTargetException e) {
+            var cause = e.getCause();
+            if (cause instanceof RuntimeException exception) {
+                throw exception;
+            }
+            if (cause instanceof Error error) {
+                throw error;
+            }
+            throw new UndeclaredThrowableException(e);
+        }
     }
 
 }

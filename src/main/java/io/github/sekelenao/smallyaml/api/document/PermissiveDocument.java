@@ -48,7 +48,11 @@ public final class PermissiveDocument implements Iterable<Property<?>>, Document
 
     private static final class PermissiveDocumentCollector implements ParsingCollector {
 
-        private final Map<String, Object> collectedProperties = new HashMap<>();
+        private final Map<String, Object> collectedProperties;
+
+        private PermissiveDocumentCollector() {
+            this.collectedProperties = new HashMap<>();
+        }
 
         @Override
         public void collectSingleValue(String key, String value) {
