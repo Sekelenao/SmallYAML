@@ -56,7 +56,13 @@ public final class LineRecordParser {
         var leadingSpaces = lineStructure.amountOfLeadingSpaces();
         var line = rawLine.substring(leadingSpaces);
         if (line.startsWith("-")) {
-            var valueGroup = line.substring(1);
+            if(line.length() == 1){
+                throw ParsingException.wrongValue("empty value", line);
+            }
+            if(!Character.isWhitespace(line.charAt(1))){
+                throw ParsingException.wrongValue("list value should have a whitespace after dash", line);
+            }
+            var valueGroup = line.substring(2);
             return new ListValueLine(leadingSpaces, valueParser.parse(valueGroup));
         }
         var indexOfColon = line.indexOf(':');

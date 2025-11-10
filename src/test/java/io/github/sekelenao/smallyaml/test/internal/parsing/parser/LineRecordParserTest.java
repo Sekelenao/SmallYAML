@@ -88,7 +88,7 @@ final class LineRecordParserTest {
         @DisplayName("Valid list value")
         void validListValue() {
             assertAll(
-                    () -> checkValidListValueParsing("-test", 0, "test"),
+                    () -> checkValidListValueParsing("-\ttest", 0, "test"),
                     () -> checkValidListValueParsing("- test", 0, "test"),
                     () -> checkValidListValueParsing("  - test", 2, "test"),
                     () -> checkValidListValueParsing("    - \":1:2:3:\"", 4, ":1:2:3:"),
@@ -98,10 +98,17 @@ final class LineRecordParserTest {
             );
         }
 
-        @ParameterizedTest
+        @ParameterizedTest(name = "{0}")
+        @ValueSource(strings = {"-test", "-test ", "-test  \t", "   -test    ", "--- test", "-1"})
+        @DisplayName("ListValue should have a whitespace after dash")
+        void listValueShouldHaveWhitespaceAfterDash(String listValue) {
+            checkException(listValue, "list value should have a whitespace after dash");
+        }
+
+        @ParameterizedTest(name = "{displayName} ({0})")
         @ValueSource(strings = {"-", "- ", "-  \t", "   -    "})
-        @DisplayName("Wrong list value")
-        void wrongListValue(String listValue) {
+        @DisplayName("Empty list value")
+        void emptyListValue(String listValue) {
             checkException(listValue, "empty value");
         }
 
