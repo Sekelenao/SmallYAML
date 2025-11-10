@@ -1,4 +1,4 @@
-package io.github.sekelenao.smallyaml.test.util.constant;
+package io.github.sekelenao.smallyaml.test;
 
 import io.github.sekelenao.smallyaml.test.util.resource.TestResource;
 

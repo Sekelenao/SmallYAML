@@ -4,9 +4,9 @@ import io.github.sekelenao.smallyaml.api.document.PermissiveDocument;
 import io.github.sekelenao.smallyaml.api.document.property.Property;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
 import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
-import io.github.sekelenao.smallyaml.test.util.Exceptions;
+import io.github.sekelenao.smallyaml.test.TestingTag;
+import io.github.sekelenao.smallyaml.test.util.TestExceptions;
 import io.github.sekelenao.smallyaml.test.util.Reflections;
-import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import io.github.sekelenao.smallyaml.test.util.document.DocumentsTester;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -40,8 +40,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@Tag(TestingTag.API)
-@Tag(TestingTag.COLLECTION)
 final class PermissiveDocumentTest {
 
     private static final String EXPECTED_SINGLE_MESSAGE = "Expected single value but was multiple values";
@@ -66,7 +64,10 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("Empty permissive document")
         void emptyPermissiveDocument() {
-            assertEquals("{}", PermissiveDocument.empty().toString());
+            assertAll(
+                    () -> assertEquals(0, PermissiveDocument.empty().stream().count()),
+                    () -> assertEquals("{}", PermissiveDocument.empty().toString())
+            );
         }
 
     }
@@ -143,7 +144,7 @@ final class PermissiveDocumentTest {
             assertAll(
                 () -> assertThrows(NullPointerException.class, () -> document.getSingleString(null)),
                 () -> assertEquals(Optional.empty(), document.getSingleString(UNKNOWN_KEY)),
-                () -> Exceptions.isThrownAndContains(
+                () -> TestExceptions.isThrownAndContains(
                     WrongPropertyTypeException.class,
                     () -> document.getSingleString("multiple-values"),
                     EXPECTED_SINGLE_MESSAGE
@@ -165,7 +166,7 @@ final class PermissiveDocumentTest {
             assertAll(
                 () -> assertThrows(NullPointerException.class, () -> document.getMultipleStrings(null)),
                 () -> assertEquals(Optional.empty(), document.getMultipleStrings(UNKNOWN_KEY)),
-                () -> Exceptions.isThrownAndContains(
+                () -> TestExceptions.isThrownAndContains(
                     WrongPropertyTypeException.class,
                     () -> document.getMultipleStrings("single-value"),
                     EXPECTED_MULTIPLE_MESSAGE
@@ -196,7 +197,7 @@ final class PermissiveDocumentTest {
                 () -> assertThrows(NullPointerException.class, () -> document.getSingle(null, String::trim)),
                 () -> assertThrows(NullPointerException.class, () -> document.getSingle(UNKNOWN_KEY, null)),
                 () -> assertEquals(Optional.empty(), document.getSingle(UNKNOWN_KEY, String::trim)),
-                () -> Exceptions.isThrownAndContains(
+                () -> TestExceptions.isThrownAndContains(
                     WrongPropertyTypeException.class,
                     () -> document.getSingle("multiple-values", String::trim),
                     EXPECTED_SINGLE_MESSAGE
@@ -226,7 +227,7 @@ final class PermissiveDocumentTest {
                 () -> assertThrows(NullPointerException.class, () -> document.getMultiple(null, String::trim)),
                 () -> assertThrows(NullPointerException.class, () -> document.getMultiple(UNKNOWN_KEY, null)),
                 () -> assertEquals(Optional.empty(), document.getMultiple(UNKNOWN_KEY, String::trim)),
-                () -> Exceptions.isThrownAndContains(
+                () -> TestExceptions.isThrownAndContains(
                     WrongPropertyTypeException.class,
                     () -> document.getMultiple("single-value", String::trim),
                     EXPECTED_MULTIPLE_MESSAGE
@@ -266,7 +267,7 @@ final class PermissiveDocumentTest {
                     NullPointerException.class,
                     () -> document.getSingleBooleanOrDefault(null, true)
                 ),
-                () -> Exceptions.isThrownAndContains(
+                () -> TestExceptions.isThrownAndContains(
                     WrongPropertyTypeException.class,
                     () -> document.getSingleBooleanOrDefault("multiple-booleans", false),
                     EXPECTED_SINGLE_MESSAGE
@@ -289,7 +290,7 @@ final class PermissiveDocumentTest {
             assertAll(
                 () -> assertThrows(NullPointerException.class, () -> document.getSingleBooleanOrThrow(null)),
                 () -> assertThrows(NoSuchElementException.class, () -> document.getSingleBooleanOrThrow(UNKNOWN_KEY)),
-                () -> Exceptions.isThrownAndContains(
+                () -> TestExceptions.isThrownAndContains(
                     WrongPropertyTypeException.class,
                     () -> document.getSingleBooleanOrThrow("multiple-booleans"),
                     EXPECTED_SINGLE_MESSAGE
@@ -311,7 +312,7 @@ final class PermissiveDocumentTest {
             assertAll(
                 () -> assertThrows(NullPointerException.class, () -> document.getSingleInt(null)),
                 () -> assertEquals(OptionalInt.empty(), document.getSingleInt(UNKNOWN_KEY)),
-                () -> Exceptions.isThrownAndContains(
+                () -> TestExceptions.isThrownAndContains(
                     WrongPropertyTypeException.class,
                     () -> document.getSingleInt("multiple-ints"),
                     EXPECTED_SINGLE_MESSAGE
@@ -333,7 +334,7 @@ final class PermissiveDocumentTest {
             assertAll(
                 () -> assertThrows(NullPointerException.class, () -> document.getMultipleInts(null)),
                 () -> assertEquals(Optional.empty(), document.getMultipleInts(UNKNOWN_KEY)),
-                () -> Exceptions.isThrownAndContains(
+                () -> TestExceptions.isThrownAndContains(
                     WrongPropertyTypeException.class,
                     () -> document.getMultipleInts("single-int"),
                     EXPECTED_MULTIPLE_MESSAGE
@@ -355,7 +356,7 @@ final class PermissiveDocumentTest {
             assertAll(
                 () -> assertThrows(NullPointerException.class, () -> document.getSingleLong(null)),
                 () -> assertEquals(OptionalLong.empty(), document.getSingleLong(UNKNOWN_KEY)),
-                () -> Exceptions.isThrownAndContains(
+                () -> TestExceptions.isThrownAndContains(
                     WrongPropertyTypeException.class,
                     () -> document.getSingleLong("multiple-longs"),
                     EXPECTED_SINGLE_MESSAGE
@@ -377,7 +378,7 @@ final class PermissiveDocumentTest {
             assertAll(
                 () -> assertThrows(NullPointerException.class, () -> document.getMultipleLongs(null)),
                 () -> assertEquals(Optional.empty(), document.getMultipleLongs(UNKNOWN_KEY)),
-                () -> Exceptions.isThrownAndContains(
+                () -> TestExceptions.isThrownAndContains(
                     WrongPropertyTypeException.class,
                     () -> document.getMultipleLongs("single-long"),
                     EXPECTED_MULTIPLE_MESSAGE
@@ -399,7 +400,7 @@ final class PermissiveDocumentTest {
             assertAll(
                 () -> assertThrows(NullPointerException.class, () -> document.getSingleDouble(null)),
                 () -> assertEquals(OptionalDouble.empty(), document.getSingleDouble(UNKNOWN_KEY)),
-                () -> Exceptions.isThrownAndContains(
+                () -> TestExceptions.isThrownAndContains(
                     WrongPropertyTypeException.class,
                     () -> document.getSingleDouble("multiple-doubles"),
                     EXPECTED_SINGLE_MESSAGE
@@ -421,7 +422,7 @@ final class PermissiveDocumentTest {
             assertAll(
                 () -> assertThrows(NullPointerException.class, () -> document.getMultipleDoubles(null)),
                 () -> assertEquals(Optional.empty(), document.getMultipleDoubles(UNKNOWN_KEY)),
-                () -> Exceptions.isThrownAndContains(
+                () -> TestExceptions.isThrownAndContains(
                     WrongPropertyTypeException.class,
                     () -> document.getMultipleDoubles("single-double"),
                     EXPECTED_MULTIPLE_MESSAGE
@@ -774,11 +775,12 @@ final class PermissiveDocumentTest {
 
 
     @Nested
+    @Tag(TestingTag.RUNTIME)
+    @Tag(TestingTag.POSSIBLY_LONG)
     @DisplayName("Templates testing at runtime")
     final class TemplatesAtRuntime {
 
         @Test
-        @Tag(TestingTag.PARSING)
         @DisplayName("Contains all records for all documents")
         void containsAllRecordsForAllDocuments() throws URISyntaxException, IOException {
             var documentTester = new DocumentsTester<>(PermissiveDocument::from, PermissiveDocument.class);
@@ -791,7 +793,6 @@ final class PermissiveDocumentTest {
         }
 
         @Test
-        @Tag(TestingTag.PARSING)
         @DisplayName("Failing on all wrong documents")
         void failingOnAllWrongDocuments() throws Exception {
             var documentTester = new DocumentsTester<>(PermissiveDocument::from, PermissiveDocument.class);
