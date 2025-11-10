@@ -30,6 +30,9 @@ public final class MapParsingCollector implements ParsingCollector {
         public void collectListValue(String key, String value, boolean isNewList) {
             Objects.requireNonNull(key);
             Objects.requireNonNull(value);
+            if(!isNewList && !map.containsKey(key)){
+                throw new IllegalStateException("Expected existing list for: " + key);
+            }
             map.merge(key, new ValueList(value), (existing, newValue) -> {
                 if(isNewList){
                     throw DuplicatedPropertyException.forFollowing(key);

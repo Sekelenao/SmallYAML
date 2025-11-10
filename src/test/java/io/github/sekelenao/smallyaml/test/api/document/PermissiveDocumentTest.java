@@ -115,10 +115,13 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("TypeOf defensive programming assertion")
         void defensiveProgrammingAssertion() throws ReflectiveOperationException {
-            var malformedInternalMap = Map.of("key", 0);
+            var malformedInternalMap = Map.of("key", 0, "key2", new Object());
             var constructorArgument = new Reflections.ConstructorArgument<>(Map.class, malformedInternalMap);
             var document = Reflections.instantiateByPrivateConstructor(PermissiveDocument.class, constructorArgument);
-            assertThrows(IllegalStateException.class, () -> document.typeOf("key"));
+            assertAll(
+                    () -> assertThrows(IllegalStateException.class, () -> document.typeOf("key")),
+                    () -> assertThrows(IllegalStateException.class, () -> document.typeOf("key2"))
+            );
         }
 
     }
