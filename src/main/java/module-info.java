@@ -26,7 +26,8 @@ module SmallYAML {
     exports io.github.sekelenao.smallyaml.internal.parsing.collector to SmallYAML.test;
 
     // Opens for tests
-    opens io.github.sekelenao.smallyaml.internal.util to SmallYAML.test;
     opens io.github.sekelenao.smallyaml.api.document to SmallYAML.test;
+    opens io.github.sekelenao.smallyaml.internal.util to SmallYAML.test;
+    opens io.github.sekelenao.smallyaml.internal.parsing.booleans to SmallYAML.test;
     opens io.github.sekelenao.smallyaml.internal.parsing.collector to SmallYAML.test;
 }
