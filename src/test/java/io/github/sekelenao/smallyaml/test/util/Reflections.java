@@ -1,6 +1,7 @@
 package io.github.sekelenao.smallyaml.test.util;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
@@ -26,6 +27,25 @@ public final class Reflections {
         constructor.setAccessible(true);
         var exception = assertThrows(InvocationTargetException.class, constructor::newInstance);
         assertInstanceOf(AssertionError.class, exception.getCause());
+    }
+
+    public record ConstructorArgument<T>(Class<? super T> type, T value){
+
+        public ConstructorArgument {
+            Objects.requireNonNull(type);
+            Objects.requireNonNull(value);
+        }
+
+    }
+
+    public static <T> T instantiateByPrivateConstructor(Class<T> type, ConstructorArgument<?>... arguments) throws ReflectiveOperationException {
+        Objects.requireNonNull(type);
+        Objects.requireNonNull(arguments);
+        var argumentsClasses = Arrays.stream(arguments).map(ConstructorArgument::type).toArray(Class<?>[]::new);
+        var constructor = type.getDeclaredConstructor(argumentsClasses);
+        constructor.setAccessible(true);
+        var argumentsValues = Arrays.stream(arguments).map(ConstructorArgument::value).toArray();
+        return constructor.newInstance(argumentsValues);
     }
 
 }

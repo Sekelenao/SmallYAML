@@ -5,6 +5,7 @@ import io.github.sekelenao.smallyaml.api.document.property.Property;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
 import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
 import io.github.sekelenao.smallyaml.test.util.Exceptions;
+import io.github.sekelenao.smallyaml.test.util.Reflections;
 import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import io.github.sekelenao.smallyaml.test.util.document.DocumentsTester;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.OptionalDouble;
@@ -108,6 +110,15 @@ final class PermissiveDocumentTest {
                 () -> assertEquals(Property.Type.SINGLE, document.typeOf("single-value")),
                 () -> assertEquals(Property.Type.MULTIPLE, document.typeOf("multiple-values"))
             );
+        }
+
+        @Test
+        @DisplayName("Defensive programming assertion")
+        void defensiveProgrammingAssertion() throws ReflectiveOperationException {
+            var malformedInternalMap = Map.of("key", 0);
+            var constructorArgument = new Reflections.ConstructorArgument<>(Map.class, malformedInternalMap);
+            var document = Reflections.instantiateByPrivateConstructor(PermissiveDocument.class, constructorArgument);
+            assertThrows(IllegalStateException.class, () -> document.typeOf("key"));
         }
 
     }
@@ -568,6 +579,19 @@ final class PermissiveDocumentTest {
             );
         }
 
+        @Test
+        @DisplayName("Defensive programming assertion")
+        void defensiveProgrammingAssertion() throws ReflectiveOperationException {
+            var malformedInternalMap = Map.of("key", 0);
+            var constructorArgument = new Reflections.ConstructorArgument<>(Map.class, malformedInternalMap);
+            var document = Reflections.instantiateByPrivateConstructor(PermissiveDocument.class, constructorArgument);
+            var iterator = document.iterator();
+            assertAll(
+                    () -> assertTrue(iterator::hasNext),
+                    () -> assertThrows(IllegalStateException.class, iterator::next)
+            );
+        }
+
     }
 
     @Nested
@@ -643,6 +667,15 @@ final class PermissiveDocumentTest {
                 () -> assertFalse(emptySpliterator.tryAdvance(p -> fail("Should not advance on an empty spliterator"))),
                 () -> assertEquals(0, emptySpliterator.estimateSize())
             );
+        }
+
+        @Test
+        @DisplayName("Defensive programming assertion")
+        void defensiveProgrammingAssertion() throws ReflectiveOperationException {
+            var malformedInternalMap = Map.of("key", 0);
+            var constructorArgument = new Reflections.ConstructorArgument<>(Map.class, malformedInternalMap);
+            var document = Reflections.instantiateByPrivateConstructor(PermissiveDocument.class, constructorArgument);
+            assertThrows(IllegalStateException.class, document.stream()::toList);
         }
 
     }
