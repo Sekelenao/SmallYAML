@@ -7,13 +7,13 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public final class TestExceptions {
+public final class ExceptionsTester {
 
-    private TestExceptions(){
+    private ExceptionsTester(){
         throw new AssertionError("You cannot instantiate this class");
     }
 
-    public static void isThrownAndContains(Class<?extends Exception> type, Executable executable, String message){
+    public static void assertIsThrownAndContains(Class<?extends Exception> type, Executable executable, String message){
         Objects.requireNonNull(type);
         Objects.requireNonNull(message);
         var exception = assertThrows(type, executable);

@@ -2,7 +2,7 @@ package io.github.sekelenao.smallyaml.test.util.stringparser;
 
 import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
 import io.github.sekelenao.smallyaml.internal.parsing.line.records.parser.string.StringParser;
-import io.github.sekelenao.smallyaml.test.util.TestExceptions;
+import io.github.sekelenao.smallyaml.test.util.ExceptionsTester;
 
 import java.util.Objects;
 
@@ -25,7 +25,7 @@ public final class StringParserTester {
     public void checkException(String rawLine, String expectedExceptionDetails) {
         Objects.requireNonNull(rawLine);
         Objects.requireNonNull(expectedExceptionDetails);
-        TestExceptions.isThrownAndContains(
+        ExceptionsTester.assertIsThrownAndContains(
             ParsingException.class,
             () -> parser.parse(rawLine),
             expectedExceptionDetails
