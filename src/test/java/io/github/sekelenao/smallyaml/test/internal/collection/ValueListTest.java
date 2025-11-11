@@ -2,10 +2,8 @@ package io.github.sekelenao.smallyaml.test.internal.collection;
 
 import io.github.sekelenao.smallyaml.api.exception.parsing.BooleanFormatException;
 import io.github.sekelenao.smallyaml.internal.collection.ValueList;
-import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -25,8 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Tag(TestingTag.INTERNAL)
-@Tag(TestingTag.COLLECTION)
 final class ValueListTest {
 
     @Test

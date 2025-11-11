@@ -16,11 +16,6 @@ public interface TestResource {
         return Path.of(url.toURI());
     }
 
-    static Path find(TestResource testResource) throws URISyntaxException {
-        Objects.requireNonNull(testResource);
-        return find(testResource.resourcePath());
-    }
-
     static InputStream asInputStream(TestResource testResource) {
         return TestResource.class.getClassLoader().getResourceAsStream(testResource.resourcePath());
     }

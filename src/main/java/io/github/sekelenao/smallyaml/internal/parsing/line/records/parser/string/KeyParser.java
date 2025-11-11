@@ -5,7 +5,7 @@ import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
 import java.util.Locale;
 import java.util.Objects;
 
-public final class KeyParser implements StringParser {
+public final class KeyParser {
 
     private enum State { START, ENCOUNTERED_NORMAL_CHAR, ENCOUNTERED_DOT, ENCOUNTERED_SPECIAL_CHAR, END }
 

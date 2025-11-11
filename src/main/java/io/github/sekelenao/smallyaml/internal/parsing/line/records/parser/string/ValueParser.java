@@ -6,7 +6,7 @@ import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public final class ValueParser implements StringParser {
+public final class ValueParser {
 
     private final Pattern forbiddenCharactersPattern = Pattern.compile("[\":-]");
 

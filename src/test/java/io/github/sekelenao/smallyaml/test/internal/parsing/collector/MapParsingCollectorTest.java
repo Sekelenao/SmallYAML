@@ -4,9 +4,7 @@ import io.github.sekelenao.smallyaml.api.exception.document.DuplicatedPropertyEx
 import io.github.sekelenao.smallyaml.internal.collection.ValueList;
 import io.github.sekelenao.smallyaml.internal.parsing.collector.MapParsingCollector;
 import io.github.sekelenao.smallyaml.test.util.Reflections;
-import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -17,8 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@Tag(TestingTag.PARSING)
-@Tag(TestingTag.INTERNAL)
 final class MapParsingCollectorTest {
 
     @Test

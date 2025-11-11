@@ -1,10 +1,8 @@
 package io.github.sekelenao.smallyaml.test.api.line.provider;
 
 import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
-import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -25,8 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-@Tag(TestingTag.API)
-@Tag(TestingTag.PARSING)
 final class LineProviderTest {
 
     @Nested

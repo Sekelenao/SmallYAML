@@ -3,9 +3,7 @@ package io.github.sekelenao.smallyaml.test.internal.parsing.booleans;
 import io.github.sekelenao.smallyaml.api.exception.parsing.BooleanFormatException;
 import io.github.sekelenao.smallyaml.internal.parsing.booleans.StrictBooleanParser;
 import io.github.sekelenao.smallyaml.test.util.Reflections;
-import io.github.sekelenao.smallyaml.test.util.constant.TestingTag;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -16,8 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-@Tag(TestingTag.PARSING)
-@Tag(TestingTag.INTERNAL)
 final class StrictBooleanParserTest {
 
     @Test
