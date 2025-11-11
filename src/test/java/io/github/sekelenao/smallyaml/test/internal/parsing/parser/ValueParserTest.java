@@ -1,6 +1,8 @@
 package io.github.sekelenao.smallyaml.test.internal.parsing.parser;
 
+import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
 import io.github.sekelenao.smallyaml.internal.parsing.line.records.parser.string.ValueParser;
+import io.github.sekelenao.smallyaml.test.util.ExceptionsTester;
 import io.github.sekelenao.smallyaml.test.util.stringparser.StringParserTester;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 final class ValueParserTest {
@@ -29,27 +32,35 @@ final class ValueParserTest {
         assertThrows(NullPointerException.class, () -> parser.parse(null));
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{0}")
     @ValueSource(strings = {"  test  ", "\ttest\t", "  test  \t  ", "   \t\t test  \t"})
     @DisplayName("Values are trimmed")
     void valuesAreTrimmed(String rawValue) {
-        parsingTester.checkValid(rawValue, "test");
+        assertEquals("test", parser.parse(rawValue));
     }
 
     @Test
     @DisplayName("Quoted values keep their spaces")
     void quotedValuesKeepTheirSpaces() {
-        parsingTester.checkValid("  \"   test  \"  ", "   test  ");
+        assertAll(
+                () -> assertEquals("   test  ", parser.parse("  \"   test  \"  ")),
+                () -> assertEquals(" More spaces ", parser.parse("\" More spaces \""))
+        );
     }
 
-    @Test
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {"\"te\"st\"", "\"te\\s\"t\"", "\"t\"e\\st\"", "\"te\"\\st\""})
     @DisplayName("Unescaped quote inside quoted value")
-    void unescapedQuoteInsideQuotedValue() {
-        parsingTester.checkException("\"te\"st\"", "unescaped quote");
+    void unescapedQuoteInsideQuotedValue(String rawValue) {
+        ExceptionsTester.assertIsThrownAndContains(
+                ParsingException.class,
+                () -> parser.parse(rawValue),
+                "unescaped quote"
+        );
     }
 
     @Test
-    @DisplayName("Backslash is handled correctly")
+    @DisplayName("Backslashes are handled correctly")
     void backslashIsHandledCorrectly() {
         assertAll(
             () -> parsingTester.checkValid("\"te\\st\"", "te\\st"),
