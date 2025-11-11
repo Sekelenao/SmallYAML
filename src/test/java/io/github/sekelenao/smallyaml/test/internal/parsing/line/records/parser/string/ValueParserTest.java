@@ -67,7 +67,7 @@ final class ValueParserTest {
     }
 
     @ParameterizedTest(name = "{0}")
-    @ValueSource(strings = {"\"value", "\"val\"ue"})
+    @ValueSource(strings = {"\"value", "\"val\"ue", "\""})
     @DisplayName("Missing ending quote")
     void missingEndingQuote(String rawValue) {
         ExceptionsTester.assertIsThrownAndContains(
