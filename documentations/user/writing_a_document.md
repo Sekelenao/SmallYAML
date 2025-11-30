@@ -18,8 +18,9 @@ You can define properties using a simple key-value format. You must follow these
 
 - Keys are composed of alphanumeric characters, underscores, and dashes. A key cannot start or end with a dash/underscore.
 - A path leading to a value must be unique. All keys are case-insensitive.
-- Values must be quoted if they contain one of the following characters: `:` `-` `"`.
-- You must escape quotes inside quotes using the following notation `\"`.
+- Keys must have space(s) after the colon `:`.
+- A list value must have space(s) after the dash `-`.
+- You don't need to escape quotes inside quotes.
 - Idents must be spaces (U+0020).
 
 To define a child property, indent the key with more spaces than the parent key. You can choose the number of spaces
@@ -36,15 +37,6 @@ You can attach multiple values to a single key using the dash `-` operator. Each
 parent:
   child: value
 ```
-
-#### Values containing special characters
-
-```yaml
-special-value1: ":"
-special_value2: "-"
-special-value3: "\""
-```
-
 #### Inline path
 
 ```yaml
