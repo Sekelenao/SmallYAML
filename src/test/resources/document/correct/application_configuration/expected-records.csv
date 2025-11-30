@@ -33,3 +33,4 @@ features;login;registration;metrics;email-verification;hello
 custom.maintenance-mode;false
 custom.welcome-message;Welcome to MyJavaApp!
 custom.retry-count;3
+custom.allowed-symbols;-;:;""""

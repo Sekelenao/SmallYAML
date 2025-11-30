@@ -1,8 +1,6 @@
 package io.github.sekelenao.smallyaml.test.internal.parsing.line.records.parser.string;
 
-import io.github.sekelenao.smallyaml.api.exception.parsing.ParsingException;
 import io.github.sekelenao.smallyaml.internal.parsing.line.records.parser.string.ValueParser;
-import io.github.sekelenao.smallyaml.test.util.ExceptionsTester;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,6 +34,15 @@ final class ValueParserTest {
     }
 
     @Test
+    @DisplayName("Starting quote without ending quote")
+    void startingQuoteWithoutEndingQuote() {
+        assertAll(
+            () -> assertEquals("\"", parser.parse("\"")),
+            () -> assertEquals("\"starting_quote", parser.parse("\"starting_quote"))
+        );
+    }
+
+    @Test
     @DisplayName("Quoted values keep their spaces")
     void quotedValuesKeepTheirSpaces() {
         assertAll(
@@ -44,70 +51,24 @@ final class ValueParserTest {
         );
     }
 
-    @ParameterizedTest(name = "{0}")
-    @ValueSource(strings = {"\"va\"lue\"", "\"va\\l\"ue\"", "\"v\"a\\lue\"", "\"va\"\\lue\"", "\"value\"\""})
-    @DisplayName("Unescaped quote inside quoted value")
-    void unescapedQuoteInsideQuotedValue(String rawValue) {
-        ExceptionsTester.assertIsThrownAndContains(
-                ParsingException.class,
-                () -> parser.parse(rawValue),
-                "unescaped quote"
-        );
-    }
-
     @Test
-    @DisplayName("Backslashes are handled correctly")
-    void backslashIsHandledCorrectly() {
-        assertAll(
-            () -> assertEquals("va\\lue", parser.parse("\"va\\lue\"")),
-            () -> assertEquals("va\\lue", parser.parse("va\\lue")),
-            () -> assertEquals("value\\", parser.parse("value\\")),
-            () -> assertEquals("value\\", parser.parse("\"value\\\""))
-        );
-    }
-
-    @ParameterizedTest(name = "{0}")
-    @ValueSource(strings = {"\"value", "\"val\"ue", "\""})
-    @DisplayName("Missing ending quote")
-    void missingEndingQuote(String rawValue) {
-        ExceptionsTester.assertIsThrownAndContains(
-            ParsingException.class,
-            () -> parser.parse(rawValue),
-            "missing ending quote"
-        );
-    }
-
-    @ParameterizedTest(name = "{0}")
-    @ValueSource(strings = {"value\"", "val:ue", "value:", "-value", "value-", "val-ue", ":value"})
-    @DisplayName("Not permitted characters without quotes are throwing")
-    void notPermittedCharactersWithoutQuotesAreThrowing(String rawValue) {
-        ExceptionsTester.assertIsThrownAndContains(
-                ParsingException.class,
-                () -> parser.parse(rawValue),
-                "invalid character without quotes"
-        );
-    }
-
-    @Test
-    @DisplayName("Quoted not permitted character are working")
-    void quotedNotPermittedCharacterAreWorking() {
-        assertAll(
-            () -> assertEquals(":value", parser.parse("\":value\"")),
-            () -> assertEquals("va:lue", parser.parse("\"va:lue\"")),
-            () -> assertEquals("value:", parser.parse("\"value:\"")),
-            () -> assertEquals("-value", parser.parse("\"-value\"")),
-            () -> assertEquals("value-", parser.parse("\"value-\"")),
-            () -> assertEquals("val-ue", parser.parse("\"val-ue\""))
-        );
-    }
-
-    @Test
-    @DisplayName("Escaped quotes are working")
+    @DisplayName("Quotes inside quotes are working")
     void escapedQuotesAreWorking() {
         assertAll(
-            () -> assertEquals("va\"lue", parser.parse("\"va\\\"lue\"")),
-            () -> assertEquals("\"", parser.parse("\"\\\"\"")),
-            () -> assertEquals("\"\"", parser.parse("\"\\\"\\\"\""))
+            () -> assertEquals("va\"lue", parser.parse("\"va\"lue\"")),
+            () -> assertEquals("\"", parser.parse("\"\"\"")),
+            () -> assertEquals("\"\"", parser.parse("\"\"\"\""))
+        );
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @ValueSource(strings = {"test:", "-test", "test-2:\""})
+    @DisplayName("Special characters are well handled")
+    void specialCharactersAreWellHandled(){
+        assertAll(
+            () -> assertEquals("test:", parser.parse("test:")),
+            () -> assertEquals("-test", parser.parse("-test")),
+            () -> assertEquals("test-2:\"", parser.parse("test-2:\""))
         );
     }
 
