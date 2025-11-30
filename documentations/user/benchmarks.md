@@ -18,6 +18,12 @@ actionable performance metrics.
 
 ## Results ordered by the most recent version
 
+#### Snapshot 1.0.5
+
+| Mode | Cnt | Score     | Error   | Units |
+|------|-----|-----------|---------|-------|
+| avgt | 20  | 164,526 ± | ± 3,347 | ms/op |
+
 #### Snapshot 1.0.4
 
 | Mode | Cnt | Score   | Error   | Units |
