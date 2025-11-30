@@ -4,7 +4,7 @@ app:
   version: "1.2.0"
   environment: production
   debug: false
-  base-url: "https://api.myjavaapp.com"
+  base-url: https://api.myjavaapp.com
 
 # HTTP server config
 server:
@@ -29,7 +29,7 @@ security:
       - PUT
       - DELETE
   jwt:
-    secret: "super-secret-key"
+    secret: super-secret-key
     expiration-minutes: 60
 
 # Database config
@@ -57,7 +57,7 @@ integrations:
     api-key: sk_test_abc123
     enabled: true
   sendgrid:
-    api-key: "SG.xxxxx"
+    api-key: SG.xxxxx
     enabled: false
 
 # List of features
@@ -73,3 +73,7 @@ custom:
   maintenance-mode: false
   welcome-message: "Welcome to MyJavaApp!"
   retry-count: 3
+  allowed-symbols:
+    - -
+    - :
+    - "

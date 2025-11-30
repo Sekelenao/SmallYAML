@@ -95,8 +95,8 @@ final class LineRecordParserTest {
         }
 
         @ParameterizedTest(name = "{0}")
-        @ValueSource(strings = {"-test", "-test ", "-test  \t", "   -test    ", "--- test", "-1"})
-        @DisplayName("ListValue should have a whitespace after dash")
+        @ValueSource(strings = {"-test", "-test ", "-test  \t", "   -test    ", "--- test", "-1", "--"})
+        @DisplayName("List value should have a whitespace after dash")
         void listValueShouldHaveWhitespaceAfterDash(String listValue) {
             checkException(listValue, "list value should have a whitespace after dash");
         }
@@ -229,17 +229,21 @@ final class LineRecordParserTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"key: e:e", "key: e-e", "key:  e\"e"})
-        @DisplayName("Invalid character without quotes")
-        void missingValue(String rawKey) {
-            checkException(rawKey, "invalid character without quotes");
-        }
-
-        @ParameterizedTest
-        @ValueSource(strings = {"key:value", "  key:value", " key:value"})
+        @ValueSource(strings = {"key:value", "  key:value", " key:value", "key::value", "key:-value", "key:\"value"})
         @DisplayName("No space after colon")
         void noSpaceAfterColon(String rawKey) {
             checkException(rawKey, "colon must be followed by whitespace character");
+        }
+
+        @Test
+        @DisplayName("Value with special character")
+        void valueWithSpecialCharacter() {
+            assertAll(
+                () -> checkValidKeyValueParsing("key: :colon", 0, "key", ":colon"),
+                () -> checkValidKeyValueParsing("key: -dash", 0, "key", "-dash"),
+                () -> checkValidKeyValueParsing("key: \"quote", 0, "key", "\"quote"),
+                () -> checkValidKeyValueParsing("key: quote \"after\"", 0, "key", "quote \"after\"")
+            );
         }
 
     }
@@ -250,7 +254,7 @@ final class LineRecordParserTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"", " ", "    \t# Comment", "#Comment", "          ", "     ##", "##", "\t \t"})
-        @DisplayName("Empty line")
+        @DisplayName("Empty line/Commented lines")
         void emptyLine(String rawLine) {
             var line = parser.parse(rawLine);
             assertInstanceOf(EmptyLine.class, line);
