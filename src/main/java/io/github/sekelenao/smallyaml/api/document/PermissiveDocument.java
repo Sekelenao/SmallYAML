@@ -13,7 +13,6 @@ import io.github.sekelenao.smallyaml.internal.parsing.collector.MapParsingCollec
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -77,7 +76,7 @@ public final class PermissiveDocument implements Iterable<Property<?>>, Document
      * @since 1.0.0
      */
     public static PermissiveDocument empty(){
-        return new PermissiveDocument(new HashMap<>());
+        return new PermissiveDocument(Collections.emptyMap());
     }
 
     /**
