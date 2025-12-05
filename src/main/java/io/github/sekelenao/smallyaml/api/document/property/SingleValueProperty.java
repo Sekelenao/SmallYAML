@@ -7,7 +7,7 @@ import java.util.Objects;
  * Implements the {@code Property} interface. This class is used to represent
  * properties containing a single string value.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public record SingleValueProperty(String key, String value) implements Property<String> {
 
@@ -18,7 +18,7 @@ public record SingleValueProperty(String key, String value) implements Property<
      * @param value a non-null string representing the value associated with the key
      * @throws NullPointerException if {@code key} or {@code value} is null
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public SingleValueProperty {
         Objects.requireNonNull(key);

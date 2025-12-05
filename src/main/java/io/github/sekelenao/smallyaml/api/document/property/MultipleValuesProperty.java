@@ -7,7 +7,7 @@ import java.util.Objects;
  * A record that represents a property with a key and a list of values. Implements the {@code Property} interface.
  * This class is used to handle properties that can have multiple associated values.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public record MultipleValuesProperty(String key, List<String> value) implements Property<List<String>> {
 
@@ -18,7 +18,7 @@ public record MultipleValuesProperty(String key, List<String> value) implements 
      * @param value a non-null list of strings representing the values associated with the key
      * @throws NullPointerException if {@code key} or {@code value} is null
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public MultipleValuesProperty {
         Objects.requireNonNull(key);

@@ -6,6 +6,6 @@
  * the constrained subset of YAML supported by SmallYAML and do not claim to
  * cover the entire YAML 1.2 specification.</p>
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 package io.github.sekelenao.smallyaml.api.exception.parsing;

@@ -10,6 +10,6 @@
  * parsing predictable and the API easy to reason about. The behavior and
  * guarantees described here apply to that subset.</p>
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 package io.github.sekelenao.smallyaml.api.document;

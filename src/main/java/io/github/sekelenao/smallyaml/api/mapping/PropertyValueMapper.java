@@ -9,7 +9,7 @@ import java.util.function.Function;
  * <p>
  * Primarily designed to be used for property value mappings
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 @FunctionalInterface
 public interface PropertyValueMapper<S, T> extends Function<S, T> {
