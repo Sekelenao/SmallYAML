@@ -18,7 +18,7 @@ import java.util.Iterator;
  * unique identifiers, and values can encapsulate complex structures
  * using single or multiple values.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public interface Document {
 
@@ -29,7 +29,7 @@ public interface Document {
      *
      * @return an {@code Iterator} over the {@code Property} objects in this document
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     @SuppressWarnings("java:S1452")
     Iterator<Property<?>> iterator();

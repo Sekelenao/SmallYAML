@@ -8,7 +8,7 @@ import io.github.sekelenao.smallyaml.api.exception.SmallYAMLException;
  * This exception is typically used when the system encounters a malformed or invalid
  * boolean representation within a YAML parsing process.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public class BooleanFormatException extends SmallYAMLException {
 
@@ -20,7 +20,7 @@ public class BooleanFormatException extends SmallYAMLException {
      * @param message the detail message to describe the error, providing context about
      *                the invalid boolean string that caused this exception to be thrown
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     public BooleanFormatException(String message) {
         super(message);

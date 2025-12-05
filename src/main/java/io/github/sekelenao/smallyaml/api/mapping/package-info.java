@@ -9,6 +9,6 @@
  * helpers operate within that subset and avoid YAML features that introduce
  * ambiguity or complexity.</p>
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 package io.github.sekelenao.smallyaml.api.mapping;

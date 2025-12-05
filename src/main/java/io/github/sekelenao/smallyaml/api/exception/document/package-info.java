@@ -7,6 +7,6 @@
  * <p>As SmallYAML targets a constrained subset of YAML, error conditions and
  * messages focus on that subset rather than the full YAML 1.2 spec.</p>
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 package io.github.sekelenao.smallyaml.api.exception.document;

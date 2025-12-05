@@ -25,7 +25,7 @@ import java.util.Objects;
  *   automatically when reading completes; callers remain responsible for closing
  *   them when appropriate. The default {@link #close()} is a no-op.
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 public interface LineProvider extends AutoCloseable {
 
@@ -38,7 +38,7 @@ public interface LineProvider extends AutoCloseable {
      * @return a line provider backed by the provided text
      * @throws NullPointerException if {@code text} is null
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     static LineProvider with(String text){
         Objects.requireNonNull(text);
@@ -54,7 +54,7 @@ public interface LineProvider extends AutoCloseable {
      * @return a line provider backed by the provided reader
      * @throws NullPointerException if {@code bufferedReader} is null
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     static LineProvider with(BufferedReader bufferedReader){
         Objects.requireNonNull(bufferedReader);
@@ -71,7 +71,7 @@ public interface LineProvider extends AutoCloseable {
      * @return a line provider backed by the provided stream and charset
      * @throws NullPointerException if {@code inputStream} or {@code charset} is null
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     static LineProvider with(InputStream inputStream, Charset charset){
         Objects.requireNonNull(inputStream);
@@ -90,7 +90,7 @@ public interface LineProvider extends AutoCloseable {
      * @return a line provider backed by the provided stream using UTF-8 decoding
      * @throws NullPointerException if {@code inputStream} is null
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     static LineProvider with(InputStream inputStream){
         Objects.requireNonNull(inputStream);
@@ -103,7 +103,7 @@ public interface LineProvider extends AutoCloseable {
      * @return {@code true} if a later call to {@link #next()} would return a line; {@code false} otherwise
      * @throws IOException if an I/O error occurs while checking availability
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     boolean hasNext() throws IOException;
 
@@ -117,7 +117,7 @@ public interface LineProvider extends AutoCloseable {
      * @throws IOException if an I/O error occurs while reading the next line
      * @throws java.util.NoSuchElementException if no more lines are available
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     String next() throws IOException;
 
@@ -131,7 +131,7 @@ public interface LineProvider extends AutoCloseable {
      *
      * @throws IOException if an I/O error occurs while closing the resource
      *
-     * @since 1.0.0
+     * @since 0.1.0
      */
     @Override
     default void close() throws IOException {

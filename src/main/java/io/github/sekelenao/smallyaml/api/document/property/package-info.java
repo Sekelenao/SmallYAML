@@ -9,6 +9,6 @@
  * model is intentionally simple: keys are unique, and values are exposed as
  * strings that client code can further map to domain types as needed.</p>
  *
- * @since 1.0.0
+ * @since 0.1.0
  */
 package io.github.sekelenao.smallyaml.api.document.property;
