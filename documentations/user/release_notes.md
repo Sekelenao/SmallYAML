@@ -4,14 +4,16 @@
 
 | Java version | SmallYAML version |
 |--------------|-------------------|
-| 21+          | 1.x.x             |
+| 21+          | 0.x.x             |
 
 ## All Versions
 
-### 1.0.0 (Not released)
+### 0.1.0
 
 #### Added
 
-- Key features
+- SmallYAML parsing
+- LineProvider API can read from files, strings, or network streams
+- PermissiveDocument abstraction with primitive support and strong typing
 - Java 21+ support
 - Maven Central availability
