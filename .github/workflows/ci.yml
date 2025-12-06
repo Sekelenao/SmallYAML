@@ -36,7 +36,7 @@ jobs:
           echo "count=$TEST_COUNT" >> $GITHUB_OUTPUT
           echo "Total tests: $TEST_COUNT"
           mkdir -p .github/badges
-          curl "https://img.shields.io/badge/Tests-$TEST_COUNT-blue.svg" -o .github/badges/tests.svg
+          curl "https://img.shields.io/badge/Test%20count-$TEST_COUNT-blue.svg?logo=junit5&color=25A162" -o .github/badges/tests.svg
 
       - name: Generate JaCoCo Badge
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
