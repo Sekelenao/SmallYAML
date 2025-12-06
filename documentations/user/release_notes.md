@@ -1,5 +1,23 @@
 <h1 align="center">Release Notes</h1>
 
+## Installation
+
+### Maven
+
+```xml
+<dependency>
+    <groupId>io.github.sekelenao</groupId>
+    <artifactId>small-yaml</artifactId>
+    <version>x.x.x</version>
+</dependency>
+```
+
+### Gradle
+
+```groovy
+implementation("io.github.sekelenao:small-yaml:x.x.x")
+```
+
 ## Compatibility matrix
 
 | Java version | SmallYAML version |

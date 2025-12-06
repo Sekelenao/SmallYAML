@@ -7,6 +7,7 @@ Predictability is a Feature. Cut the noise, keep the functionality.
 </h2>
 
 [![Java](https://img.shields.io/badge/Java_21%2B-%23ED8B00.svg?logo=openjdk&logoColor=white)](https://docs.oracle.com/en/java/javase/21/docs/api/index.html)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.sekelenao/small-yaml?label=Maven%20central&logo=apachemaven&logoColor=white&color=C71A36&labelColor=C71A36)](https://central.sonatype.com/artifact/io.github.sekelenao/small-yaml)
 ![Tests](https://raw.githubusercontent.com/Sekelenao/SmallYAML/badges/Tests.svg)
 ![Coverage](https://raw.githubusercontent.com/Sekelenao/SmallYAML/badges/Coverage.svg)
 ![Branches](https://raw.githubusercontent.com/Sekelenao/SmallYAML/badges/Branches.svg)
