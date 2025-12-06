@@ -45,6 +45,10 @@ jobs:
         with:
           generate-branches-badge: true
           jacoco-csv-file: target/site/jacoco/jacoco.csv
+          coverage-label: 'Coverage'
+          branches-label: 'Branches'
+          colors: '#25A162 #25A162 #dfb317 #dfb317 #fe7d37 #e05d44'
+          intervals: '100 90 80 70 60 0'
 
       - name: Log coverage percentage
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
