@@ -6,4 +6,6 @@ public interface PropertyIdentifier {
 
     Property.Type type();
 
+    Property.Presence presence();
+
 }

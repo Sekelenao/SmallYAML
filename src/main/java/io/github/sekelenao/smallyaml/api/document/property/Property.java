@@ -27,6 +27,8 @@ public sealed interface Property<T> permits SingleValueProperty, MultipleValuesP
      */
     enum Type { SINGLE, MULTIPLE }
 
+    enum Presence { OPTIONAL, MANDATORY }
+
     /**
      * Retrieves the key associated with the property.
      *

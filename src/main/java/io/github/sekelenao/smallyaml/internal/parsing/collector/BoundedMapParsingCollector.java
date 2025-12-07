@@ -4,6 +4,7 @@ import io.github.sekelenao.smallyaml.api.document.property.Property;
 import io.github.sekelenao.smallyaml.api.document.property.PropertyIdentifier;
 import io.github.sekelenao.smallyaml.api.document.property.UnknownPropertyConsumer;
 import io.github.sekelenao.smallyaml.api.exception.document.DuplicatedPropertyException;
+import io.github.sekelenao.smallyaml.api.exception.document.MissingPropertyException;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
 import io.github.sekelenao.smallyaml.internal.collection.ValueList;
 
@@ -29,6 +30,9 @@ public final class BoundedMapParsingCollector implements ParsingCollector {
                 throw new IllegalArgumentException("Expected enum type: " + targetIdentifier);
             }
             for (var identifier : targetIdentifier.getEnumConstants()){
+                Objects.requireNonNull(identifier.key());
+                Objects.requireNonNull(identifier.type());
+                Objects.requireNonNull(identifier.presence());
                 identifiers.put(identifier.key(), identifier);
             }
         }
@@ -82,6 +86,11 @@ public final class BoundedMapParsingCollector implements ParsingCollector {
     }
 
     public Map<PropertyIdentifier, Object> underlyingMapAsView(){
+        for (var identifier : identifiers.values()){
+            if(identifier.presence() == Property.Presence.MANDATORY && !map.containsKey(identifier)){
+                throw MissingPropertyException.forFollowing(identifier.key());
+            }
+        }
         return Collections.unmodifiableMap(map);
     }
 
