@@ -1,13 +1,15 @@
 package io.github.sekelenao.smallyaml.test.util.document.property;
 
+import io.github.sekelenao.smallyaml.api.document.property.Property;
+
 public final class PropertyTypeCounter {
 
     private int amountOfSingleValueProperties;
 
     private int amountOfMultipleValuesProperties;
 
-    public void encountered(PropertyType propertyType) {
-        switch (propertyType){
+    public void encountered(Property.Type type) {
+        switch (type){
             case SINGLE -> amountOfSingleValueProperties++;
             case MULTIPLE ->  amountOfMultipleValuesProperties++;
         }

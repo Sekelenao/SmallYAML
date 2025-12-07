@@ -126,6 +126,18 @@ public class BoundedDocument implements Document {
         throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
     }
 
+    public Optional<List<String>> getMultipleOptionalStrings(PropertyIdentifier identifier){
+        Objects.requireNonNull(identifier);
+        var value = properties.get(identifier);
+        if(value == null){
+            return Optional.empty();
+        }
+        if(value instanceof ValueList valueList){
+            return Optional.of(valueList.asListView());
+        }
+        throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
+    }
+
     @Override
     public Iterator<Property<?>> iterator() {
         return new Iterator<>() {

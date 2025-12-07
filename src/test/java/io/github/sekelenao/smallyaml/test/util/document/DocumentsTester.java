@@ -3,11 +3,11 @@ package io.github.sekelenao.smallyaml.test.util.document;
 import io.github.sekelenao.skcsv.SkCsv;
 import io.github.sekelenao.smallyaml.api.document.Document;
 import io.github.sekelenao.smallyaml.api.document.property.MultipleValuesProperty;
+import io.github.sekelenao.smallyaml.api.document.property.Property;
 import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
 import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
 import io.github.sekelenao.smallyaml.test.CorrectTestDocument;
 import io.github.sekelenao.smallyaml.test.IncorrectTestDocument;
-import io.github.sekelenao.smallyaml.test.util.document.property.PropertyType;
 import io.github.sekelenao.smallyaml.test.util.document.property.PropertyTypeCounter;
 import io.github.sekelenao.smallyaml.test.util.resource.TestResource;
 
@@ -45,8 +45,8 @@ public final class DocumentsTester<D extends Document> {
         for (var iterator = document.iterator(); iterator.hasNext(); ) {
             var property = iterator.next();
             switch (property){
-                case SingleValueProperty ignored -> propertyTypeCounter.encountered(PropertyType.SINGLE);
-                case MultipleValuesProperty ignored -> propertyTypeCounter.encountered(PropertyType.MULTIPLE);
+                case SingleValueProperty ignored -> propertyTypeCounter.encountered(Property.Type.SINGLE);
+                case MultipleValuesProperty ignored -> propertyTypeCounter.encountered(Property.Type.MULTIPLE);
                 default -> throw new IllegalStateException("Unexpected value: " + property);
             }
         }
@@ -73,11 +73,11 @@ public final class DocumentsTester<D extends Document> {
                     if (size < 2) {
                         throw new IllegalArgumentException("Expected records CSV is invalid: " + csvPath.toAbsolutePath());
                     } else if (size == 2) {
-                        propertyTypeInCsvCounter.encountered(PropertyType.SINGLE);
+                        propertyTypeInCsvCounter.encountered(Property.Type.SINGLE);
                         var expectedValue = line.get(1);
                         assertEquals(expectedValue, documentSingleStringGetter.get(document, key));
                     } else {
-                        propertyTypeInCsvCounter.encountered(PropertyType.MULTIPLE);
+                        propertyTypeInCsvCounter.encountered(Property.Type.MULTIPLE);
                         var expectedValue = line.stream().skip(1).toList();
                         assertEquals(expectedValue, documentStringListGetter.get(document, key));
                     }
