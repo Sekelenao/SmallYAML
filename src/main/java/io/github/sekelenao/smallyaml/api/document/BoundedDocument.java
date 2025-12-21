@@ -44,7 +44,7 @@ public class BoundedDocument implements Document {
             return this;
         }
 
-        public BoundedDocument thenConstructFrom(LineProvider lineProvider, UnknownPropertyConsumer consumer) throws IOException {
+        public BoundedDocument thenFillFrom(LineProvider lineProvider, UnknownPropertyConsumer consumer) throws IOException {
             Objects.requireNonNull(lineProvider);
             Objects.requireNonNull(consumer);
             var collector = new BoundedMapParsingCollector(types, consumer);
@@ -53,9 +53,9 @@ public class BoundedDocument implements Document {
             return new BoundedDocument(collector.underlyingMapAsView(), types);
         }
 
-        public BoundedDocument thenConstructFrom(LineProvider lineProvider) throws IOException {
+        public BoundedDocument thenFillFrom(LineProvider lineProvider) throws IOException {
             Objects.requireNonNull(lineProvider);
-            return thenConstructFrom(lineProvider, UnknownPropertyConsumer.NOOP);
+            return thenFillFrom(lineProvider, UnknownPropertyConsumer.NOOP);
         }
 
     }
@@ -92,7 +92,7 @@ public class BoundedDocument implements Document {
 
     public String getSingleString(PropertyIdentifier identifier){
         Objects.requireNonNull(identifier);
-        if(identifier.presence() == Property.Presence.MANDATORY){
+        if(identifier.presence() != Property.Presence.MANDATORY){
             throw new IllegalArgumentException("Expected mandatory property: " + identifier);
         }
         var value = properties.get(identifier);
