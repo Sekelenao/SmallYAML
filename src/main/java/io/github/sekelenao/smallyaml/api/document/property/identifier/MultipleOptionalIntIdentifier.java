@@ -5,7 +5,8 @@ import io.github.sekelenao.smallyaml.api.document.property.Property;
 import java.util.Objects;
 import java.util.function.ToIntFunction;
 
-public record MultipleOptionalIntIdentifier(String key, ToIntFunction<? super String> mapper) implements PropertyIdentifier {
+public record MultipleOptionalIntIdentifier(String key, ToIntFunction<? super String> mapper)
+    implements PropertyIdentifier, IntIdentifier {
 
     public MultipleOptionalIntIdentifier {
         Objects.requireNonNull(key);

@@ -5,7 +5,8 @@ import io.github.sekelenao.smallyaml.api.document.property.Property;
 import java.util.Objects;
 import java.util.function.ToLongFunction;
 
-public record MultipleMandatoryLongIdentifier(String key, ToLongFunction<? super String> mapper) implements PropertyIdentifier {
+public record MultipleMandatoryLongIdentifier(String key, ToLongFunction<? super String> mapper)
+    implements PropertyIdentifier, LongIdentifier {
 
     public MultipleMandatoryLongIdentifier {
         Objects.requireNonNull(key);

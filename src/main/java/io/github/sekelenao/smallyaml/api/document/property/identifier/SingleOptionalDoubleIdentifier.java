@@ -5,7 +5,8 @@ import io.github.sekelenao.smallyaml.api.document.property.Property;
 import java.util.Objects;
 import java.util.function.ToDoubleFunction;
 
-public record SingleOptionalDoubleIdentifier(String key, ToDoubleFunction<? super String> mapper) implements PropertyIdentifier {
+public record SingleOptionalDoubleIdentifier(String key, ToDoubleFunction<? super String> mapper)
+    implements PropertyIdentifier, DoubleIdentifier {
 
     public SingleOptionalDoubleIdentifier {
         Objects.requireNonNull(key);

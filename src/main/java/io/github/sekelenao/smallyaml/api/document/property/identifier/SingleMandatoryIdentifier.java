@@ -5,7 +5,8 @@ import io.github.sekelenao.smallyaml.api.document.property.Property;
 import java.util.Objects;
 import java.util.function.Function;
 
-public record SingleMandatoryIdentifier<T>(String key, Function<? super String, T> mapper) implements PropertyIdentifier {
+public record SingleMandatoryIdentifier<T>(String key, Function<? super String, T> mapper)
+    implements PropertyIdentifier, GenericIdentifier<T> {
 
     public SingleMandatoryIdentifier {
         Objects.requireNonNull(key);

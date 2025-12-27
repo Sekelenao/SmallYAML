@@ -3,7 +3,16 @@ package io.github.sekelenao.smallyaml.api.document.property.identifier;
 
 import io.github.sekelenao.smallyaml.api.document.property.Property;
 
-public interface PropertyIdentifier {
+public sealed interface PropertyIdentifier permits
+    MultipleMandatoryDoubleIdentifier, MultipleMandatoryIdentifier,
+    MultipleMandatoryIntIdentifier, MultipleMandatoryLongIdentifier,
+    MultipleOptionalDoubleIdentifier, MultipleOptionalIdentifier,
+    MultipleOptionalIntIdentifier, MultipleOptionalLongIdentifier,
+    SingleMandatoryBooleanIdentifier, SingleMandatoryDoubleIdentifier,
+    SingleMandatoryIdentifier, SingleMandatoryIntIdentifier,
+    SingleMandatoryLongIdentifier, SingleOptionalBooleanIdentifier,
+    SingleOptionalDoubleIdentifier, SingleOptionalIdentifier,
+    SingleOptionalIntIdentifier, SingleOptionalLongIdentifier {
 
     /**
      * Retrieves the key associated with the property identifier.

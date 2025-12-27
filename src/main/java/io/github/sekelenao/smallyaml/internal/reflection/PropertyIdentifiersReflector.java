@@ -1,7 +1,6 @@
 package io.github.sekelenao.smallyaml.internal.reflection;
 
 import io.github.sekelenao.smallyaml.api.document.property.identifier.PropertyIdentifier;
-import io.github.sekelenao.smallyaml.api.document.property.identifier.SmallYAMLPropertyIdentifier;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -17,8 +16,7 @@ public final class PropertyIdentifiersReflector {
         return Modifier.isStatic(modifiers)
             && Modifier.isPublic(modifiers)
             && Modifier.isFinal(modifiers)
-            && PropertyIdentifier.class.isAssignableFrom(field.getType())
-            && field.isAnnotationPresent(SmallYAMLPropertyIdentifier.class);
+            && PropertyIdentifier.class.isAssignableFrom(field.getType());
     }
 
     private static final ClassValue<Set<PropertyIdentifier>> CACHE = new ClassValue<>() {
@@ -34,7 +32,7 @@ public final class PropertyIdentifiersReflector {
                         var identifier = (PropertyIdentifier) field.get(null);
                         Objects.requireNonNull(identifier);
                         if(set.contains(identifier)){
-                            throw new IllegalArgumentException("Duplicated identifier: " + identifier.key());
+                            throw new IllegalArgumentException("Duplicated identifier definition: " + identifier.key());
                         }
                         set.add(identifier);
                     } catch (IllegalAccessException exception) {

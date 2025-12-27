@@ -2,11 +2,17 @@ package io.github.sekelenao.smallyaml.internal.parsing.collector;
 
 import io.github.sekelenao.smallyaml.api.document.property.Property;
 import io.github.sekelenao.smallyaml.api.document.property.UnknownPropertyConsumer;
+import io.github.sekelenao.smallyaml.api.document.property.identifier.BooleanIdentifier;
+import io.github.sekelenao.smallyaml.api.document.property.identifier.DoubleIdentifier;
+import io.github.sekelenao.smallyaml.api.document.property.identifier.GenericIdentifier;
+import io.github.sekelenao.smallyaml.api.document.property.identifier.IntIdentifier;
+import io.github.sekelenao.smallyaml.api.document.property.identifier.LongIdentifier;
 import io.github.sekelenao.smallyaml.api.document.property.identifier.PropertyIdentifier;
 import io.github.sekelenao.smallyaml.api.exception.document.DuplicatedPropertyException;
 import io.github.sekelenao.smallyaml.api.exception.document.MissingPropertyException;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
 import io.github.sekelenao.smallyaml.internal.collection.ValueList;
+import io.github.sekelenao.smallyaml.internal.parsing.booleans.StrictBooleanParser;
 import io.github.sekelenao.smallyaml.internal.reflection.PropertyIdentifiersReflector;
 
 import java.util.Collections;
@@ -26,8 +32,8 @@ public final class BoundedMapParsingCollector implements ParsingCollector {
     public BoundedMapParsingCollector(Set<Class<?>> types, UnknownPropertyConsumer consumer) {
         Objects.requireNonNull(types);
         this.unknownPropertyConsumer = Objects.requireNonNull(consumer);
-        for (var targetIdentifier : types) {
-            for (var identifier : PropertyIdentifiersReflector.get(targetIdentifier)){
+        for (var type : types) {
+            for (var identifier : PropertyIdentifiersReflector.get(type)){
                 identifiers.put(identifier.key(), identifier);
             }
         }
@@ -44,6 +50,14 @@ public final class BoundedMapParsingCollector implements ParsingCollector {
             }
             if(map.containsKey(identifier)){
                 throw DuplicatedPropertyException.forFollowing(key);
+            }
+            switch (identifier){
+                case GenericIdentifier<?> genericIdentifier -> map.put(identifier, genericIdentifier.mapper().apply(value));
+                case BooleanIdentifier ignored -> map.put(identifier, StrictBooleanParser.parse(value));
+                case DoubleIdentifier doubleIdentifier -> map.put(identifier, doubleIdentifier.mapper().applyAsDouble(value));
+                case IntIdentifier intIdentifier -> map.put(identifier, intIdentifier.mapper().applyAsInt(value));
+                case LongIdentifier longIdentifier -> map.put(identifier, longIdentifier.mapper().applyAsLong(value));
+                default -> throw new IllegalStateException("Unexpected value: " + identifier);
             }
             map.put(identifier, value);
         } else {

@@ -5,7 +5,8 @@ import io.github.sekelenao.smallyaml.api.document.property.Property;
 import java.util.Objects;
 import java.util.function.ToDoubleFunction;
 
-public record MultipleMandatoryDoubleIdentifier(String key, ToDoubleFunction<? super String> mapper) implements PropertyIdentifier {
+public record MultipleMandatoryDoubleIdentifier(String key, ToDoubleFunction<? super String> mapper)
+    implements PropertyIdentifier, DoubleIdentifier {
 
     public MultipleMandatoryDoubleIdentifier {
         Objects.requireNonNull(key);
