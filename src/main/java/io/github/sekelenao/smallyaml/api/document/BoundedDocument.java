@@ -2,9 +2,9 @@ package io.github.sekelenao.smallyaml.api.document;
 
 import io.github.sekelenao.smallyaml.api.document.property.MultipleValuesProperty;
 import io.github.sekelenao.smallyaml.api.document.property.Property;
-import io.github.sekelenao.smallyaml.api.document.property.PropertyIdentifier;
 import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
 import io.github.sekelenao.smallyaml.api.document.property.UnknownPropertyConsumer;
+import io.github.sekelenao.smallyaml.api.document.property.identifier.PropertyIdentifier;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
 import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
 import io.github.sekelenao.smallyaml.internal.collection.ValueList;
@@ -26,19 +26,19 @@ public class BoundedDocument implements Document {
 
     private final Map<PropertyIdentifier, Object> properties;
 
-    private final Set<Class<? extends PropertyIdentifier>> types;
+    private final Set<Class<?>> types;
 
     public static final class BoundedDocumentBuilder {
 
-        private final Set<Class<? extends PropertyIdentifier>> types;
+        private final Set<Class<?>> types;
 
-        private <E extends Enum<E> & PropertyIdentifier> BoundedDocumentBuilder(Class<E> type){
+        private BoundedDocumentBuilder(Class<?> type){
             Objects.requireNonNull(type);
             this.types = new HashSet<>();
             types.add(type);
         }
 
-        public <E extends Enum<E> & PropertyIdentifier> BoundedDocumentBuilder and(Class<E> type){
+        public BoundedDocumentBuilder and(Class<?> type){
             Objects.requireNonNull(type);
             types.add(type);
             return this;
@@ -60,7 +60,7 @@ public class BoundedDocument implements Document {
 
     }
 
-    private BoundedDocument(Map<PropertyIdentifier, Object> properties, Set<Class<? extends PropertyIdentifier>> types) {
+    private BoundedDocument(Map<PropertyIdentifier, Object> properties, Set<Class<?>> types) {
         this.properties = properties;
         this.types = types;
     }

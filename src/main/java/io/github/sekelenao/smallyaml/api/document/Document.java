@@ -20,7 +20,7 @@ import java.util.Iterator;
  *
  * @since 0.1.0
  */
-public interface Document {
+public interface Document extends Iterable<Property<?>> {
 
     /**
      * Returns an iterator over the properties contained in this document.

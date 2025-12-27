@@ -7,12 +7,10 @@ module SmallYAML {
     // Document
     exports io.github.sekelenao.smallyaml.api.document;
     exports io.github.sekelenao.smallyaml.api.document.property;
+    exports io.github.sekelenao.smallyaml.api.document.property.identifier;
 
     // Line provider
     exports io.github.sekelenao.smallyaml.api.line.provider;
-
-    // Mapping
-    exports io.github.sekelenao.smallyaml.api.mapping;
 
     // Exports for tests
     exports io.github.sekelenao.smallyaml.internal.collection to SmallYAML.test;

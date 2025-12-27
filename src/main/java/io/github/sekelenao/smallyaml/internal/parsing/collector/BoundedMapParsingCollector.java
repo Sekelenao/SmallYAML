@@ -1,12 +1,13 @@
 package io.github.sekelenao.smallyaml.internal.parsing.collector;
 
 import io.github.sekelenao.smallyaml.api.document.property.Property;
-import io.github.sekelenao.smallyaml.api.document.property.PropertyIdentifier;
 import io.github.sekelenao.smallyaml.api.document.property.UnknownPropertyConsumer;
+import io.github.sekelenao.smallyaml.api.document.property.identifier.PropertyIdentifier;
 import io.github.sekelenao.smallyaml.api.exception.document.DuplicatedPropertyException;
 import io.github.sekelenao.smallyaml.api.exception.document.MissingPropertyException;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
 import io.github.sekelenao.smallyaml.internal.collection.ValueList;
+import io.github.sekelenao.smallyaml.internal.reflection.PropertyIdentifiersReflector;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,17 +23,11 @@ public final class BoundedMapParsingCollector implements ParsingCollector {
 
     private final Map<PropertyIdentifier, Object> map = new HashMap<>();
 
-    public BoundedMapParsingCollector(Set<Class<? extends PropertyIdentifier>> types, UnknownPropertyConsumer consumer) {
+    public BoundedMapParsingCollector(Set<Class<?>> types, UnknownPropertyConsumer consumer) {
         Objects.requireNonNull(types);
         this.unknownPropertyConsumer = Objects.requireNonNull(consumer);
         for (var targetIdentifier : types) {
-            if(!targetIdentifier.isEnum()){
-                throw new IllegalArgumentException("Expected enum type: " + targetIdentifier);
-            }
-            for (var identifier : targetIdentifier.getEnumConstants()){
-                Objects.requireNonNull(identifier.key());
-                Objects.requireNonNull(identifier.type());
-                Objects.requireNonNull(identifier.presence());
+            for (var identifier : PropertyIdentifiersReflector.get(targetIdentifier)){
                 identifiers.put(identifier.key(), identifier);
             }
         }
