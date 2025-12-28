@@ -2,9 +2,9 @@ package io.github.sekelenao.smallyaml.api.document;
 
 import io.github.sekelenao.smallyaml.api.document.property.MultipleValuesProperty;
 import io.github.sekelenao.smallyaml.api.document.property.Property;
+import io.github.sekelenao.smallyaml.api.document.property.PropertyIdentifier;
 import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
 import io.github.sekelenao.smallyaml.api.document.property.UnknownPropertyConsumer;
-import io.github.sekelenao.smallyaml.api.document.property.identifier.PropertyIdentifier;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
 import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
 import io.github.sekelenao.smallyaml.internal.collection.ValueList;

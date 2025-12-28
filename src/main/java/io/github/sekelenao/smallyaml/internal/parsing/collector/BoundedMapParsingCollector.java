@@ -1,18 +1,13 @@
 package io.github.sekelenao.smallyaml.internal.parsing.collector;
 
+import io.github.sekelenao.smallyaml.api.document.property.MultipleMandatoryIdentifier;
 import io.github.sekelenao.smallyaml.api.document.property.Property;
+import io.github.sekelenao.smallyaml.api.document.property.PropertyIdentifier;
 import io.github.sekelenao.smallyaml.api.document.property.UnknownPropertyConsumer;
-import io.github.sekelenao.smallyaml.api.document.property.identifier.BooleanIdentifier;
-import io.github.sekelenao.smallyaml.api.document.property.identifier.DoubleIdentifier;
-import io.github.sekelenao.smallyaml.api.document.property.identifier.GenericIdentifier;
-import io.github.sekelenao.smallyaml.api.document.property.identifier.IntIdentifier;
-import io.github.sekelenao.smallyaml.api.document.property.identifier.LongIdentifier;
-import io.github.sekelenao.smallyaml.api.document.property.identifier.PropertyIdentifier;
 import io.github.sekelenao.smallyaml.api.exception.document.DuplicatedPropertyException;
 import io.github.sekelenao.smallyaml.api.exception.document.MissingPropertyException;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
 import io.github.sekelenao.smallyaml.internal.collection.ValueList;
-import io.github.sekelenao.smallyaml.internal.parsing.booleans.StrictBooleanParser;
 import io.github.sekelenao.smallyaml.internal.reflection.PropertyIdentifiersReflector;
 
 import java.util.Collections;
@@ -22,6 +17,8 @@ import java.util.Objects;
 import java.util.Set;
 
 public final class BoundedMapParsingCollector implements ParsingCollector {
+
+    public static final MultipleMandatoryIdentifier OUF = MultipleMandatoryIdentifier.define("ouf");
 
     private final Map<String, PropertyIdentifier> identifiers = new HashMap<>();
 
@@ -50,14 +47,6 @@ public final class BoundedMapParsingCollector implements ParsingCollector {
             }
             if(map.containsKey(identifier)){
                 throw DuplicatedPropertyException.forFollowing(key);
-            }
-            switch (identifier){
-                case GenericIdentifier<?> genericIdentifier -> map.put(identifier, genericIdentifier.mapper().apply(value));
-                case BooleanIdentifier ignored -> map.put(identifier, StrictBooleanParser.parse(value));
-                case DoubleIdentifier doubleIdentifier -> map.put(identifier, doubleIdentifier.mapper().applyAsDouble(value));
-                case IntIdentifier intIdentifier -> map.put(identifier, intIdentifier.mapper().applyAsInt(value));
-                case LongIdentifier longIdentifier -> map.put(identifier, longIdentifier.mapper().applyAsLong(value));
-                default -> throw new IllegalStateException("Unexpected value: " + identifier);
             }
             map.put(identifier, value);
         } else {

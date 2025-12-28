@@ -1,6 +1,6 @@
 package io.github.sekelenao.smallyaml.internal.reflection;
 
-import io.github.sekelenao.smallyaml.api.document.property.identifier.PropertyIdentifier;
+import io.github.sekelenao.smallyaml.api.document.property.PropertyIdentifier;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
