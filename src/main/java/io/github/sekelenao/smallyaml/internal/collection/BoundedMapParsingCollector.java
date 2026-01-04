@@ -1,14 +1,12 @@
-package io.github.sekelenao.smallyaml.internal.parsing.collector;
+package io.github.sekelenao.smallyaml.internal.collection;
 
-import io.github.sekelenao.smallyaml.api.document.property.MultipleMandatoryIdentifier;
 import io.github.sekelenao.smallyaml.api.document.property.Property;
 import io.github.sekelenao.smallyaml.api.document.property.PropertyIdentifier;
 import io.github.sekelenao.smallyaml.api.document.property.UnknownPropertyConsumer;
 import io.github.sekelenao.smallyaml.api.exception.document.DuplicatedPropertyException;
 import io.github.sekelenao.smallyaml.api.exception.document.MissingPropertyException;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
-import io.github.sekelenao.smallyaml.internal.collection.ValueList;
-import io.github.sekelenao.smallyaml.internal.reflection.PropertyIdentifiersReflector;
+import io.github.sekelenao.smallyaml.internal.reflection.IdentifiersScanner;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,20 +16,22 @@ import java.util.Set;
 
 public final class BoundedMapParsingCollector implements ParsingCollector {
 
-    public static final MultipleMandatoryIdentifier OUF = MultipleMandatoryIdentifier.define("ouf");
+    private final Map<PropertyIdentifier, Object> map = new HashMap<>();
 
-    private final Map<String, PropertyIdentifier> identifiers = new HashMap<>();
+    private final Map<String, PropertyIdentifier> reversedRegistry = new HashMap<>();
 
     private final UnknownPropertyConsumer unknownPropertyConsumer;
 
-    private final Map<PropertyIdentifier, Object> map = new HashMap<>();
-
-    public BoundedMapParsingCollector(Set<Class<?>> types, UnknownPropertyConsumer consumer) {
-        Objects.requireNonNull(types);
+    public BoundedMapParsingCollector(Set<Class<?>> typesToScan, UnknownPropertyConsumer consumer) {
+        Objects.requireNonNull(typesToScan);
         this.unknownPropertyConsumer = Objects.requireNonNull(consumer);
-        for (var type : types) {
-            for (var identifier : PropertyIdentifiersReflector.get(type)){
-                identifiers.put(identifier.key(), identifier);
+        for (var type : typesToScan) {
+            for (var identifier : IdentifiersScanner.get(type)){
+                if(reversedRegistry.containsKey(identifier.key())){
+                    throw new IllegalArgumentException("Duplicated identifier definition: " + identifier.key());
+                }
+                reversedRegistry.put(identifier.key(), identifier);
+                map.put(identifier, EmptyValue.INSTANCE);
             }
         }
     }
@@ -40,12 +40,12 @@ public final class BoundedMapParsingCollector implements ParsingCollector {
     public void collectSingleValue(String key, String value) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
-        var identifier = identifiers.get(key);
+        var identifier = reversedRegistry.get(key);
         if(identifier != null){
             if(identifier.type() != Property.Type.SINGLE){
                 throw WrongPropertyTypeException.withExpected(Property.Type.SINGLE);
             }
-            if(map.containsKey(identifier)){
+            if(map.get(identifier) != EmptyValue.INSTANCE){
                 throw DuplicatedPropertyException.forFollowing(key);
             }
             map.put(identifier, value);
@@ -58,11 +58,9 @@ public final class BoundedMapParsingCollector implements ParsingCollector {
     public void collectListValue(String key, String value, boolean isNewList) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
-        var identifier = identifiers.get(key);
+        var identifier = reversedRegistry.get(key);
         if(identifier == null){
-            if(isNewList){
-                unknownPropertyConsumer.accept(key, value);
-            }
+            unknownPropertyConsumer.accept(key, value);
             return;
         }
         if(!isNewList && !map.containsKey(identifier)){
@@ -71,21 +69,20 @@ public final class BoundedMapParsingCollector implements ParsingCollector {
         if(identifier.type() != Property.Type.MULTIPLE){
             throw WrongPropertyTypeException.withExpected(Property.Type.MULTIPLE);
         }
-        if(map.containsKey(identifier) && isNewList){
+        var actualValue = map.get(identifier);
+        if(actualValue != EmptyValue.INSTANCE && isNewList){
             throw DuplicatedPropertyException.forFollowing(key);
         }
-        map.merge(identifier, new ValueList(value), (existing, newValue) -> {
-            if (existing instanceof ValueList existingList) {
-                existingList.add(value);
-                return existingList;
-            }
-            throw new IllegalStateException("Unexpected type: " + existing.getClass());
-        });
+        switch (actualValue){
+            case EmptyValue ignored -> new ValueList(value);
+            case ValueList valueList -> valueList.add(value);
+            default -> throw new IllegalStateException("Unexpected type: " + actualValue.getClass());
+        }
     }
 
     public Map<PropertyIdentifier, Object> underlyingMapAsView(){
-        for (var identifier : identifiers.values()){
-            if(identifier.presence() == Property.Presence.MANDATORY && !map.containsKey(identifier)){
+        for (var identifier : reversedRegistry.values()){
+            if(identifier.presence() == Property.Presence.MANDATORY && map.get(identifier) == EmptyValue.INSTANCE){
                 throw MissingPropertyException.forFollowing(identifier.key());
             }
         }

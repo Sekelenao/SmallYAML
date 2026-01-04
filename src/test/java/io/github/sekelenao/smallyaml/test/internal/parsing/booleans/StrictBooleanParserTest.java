@@ -1,7 +1,7 @@
 package io.github.sekelenao.smallyaml.test.internal.parsing.booleans;
 
 import io.github.sekelenao.smallyaml.api.exception.parsing.BooleanFormatException;
-import io.github.sekelenao.smallyaml.internal.parsing.booleans.StrictBooleanParser;
+import io.github.sekelenao.smallyaml.internal.parsing.StrictBooleanParser;
 import io.github.sekelenao.smallyaml.test.util.Reflections;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

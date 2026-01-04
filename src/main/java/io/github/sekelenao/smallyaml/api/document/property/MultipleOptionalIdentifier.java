@@ -11,6 +11,7 @@ public final class MultipleOptionalIdentifier implements PropertyIdentifier {
     }
 
     public static MultipleOptionalIdentifier define(String key) {
+        Objects.requireNonNull(key);
         return new MultipleOptionalIdentifier(key);
     }
 

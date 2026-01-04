@@ -7,10 +7,11 @@ public final class SingleMandatoryIdentifier implements PropertyIdentifier {
     private final String key;
 
     private SingleMandatoryIdentifier(String key) {
-        this.key = Objects.requireNonNull(key);
+        this.key = key;
     }
 
     public static SingleMandatoryIdentifier define(String key) {
+        Objects.requireNonNull(key);
         return new SingleMandatoryIdentifier(key);
     }
 

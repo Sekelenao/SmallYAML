@@ -4,11 +4,10 @@ import io.github.sekelenao.smallyaml.api.document.property.MultipleValuesPropert
 import io.github.sekelenao.smallyaml.api.document.property.Property;
 import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
-import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
+import io.github.sekelenao.smallyaml.internal.collection.MapParsingCollector;
 import io.github.sekelenao.smallyaml.internal.collection.ValueList;
 import io.github.sekelenao.smallyaml.internal.parsing.SmallYAMLParser;
-import io.github.sekelenao.smallyaml.internal.parsing.booleans.StrictBooleanParser;
-import io.github.sekelenao.smallyaml.internal.parsing.collector.MapParsingCollector;
+import io.github.sekelenao.smallyaml.internal.parsing.StrictBooleanParser;
 
 import java.io.IOException;
 import java.util.Collections;

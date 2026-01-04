@@ -2,10 +2,10 @@ package io.github.sekelenao.smallyaml.test.util.document;
 
 import io.github.sekelenao.skcsv.SkCsv;
 import io.github.sekelenao.smallyaml.api.document.Document;
+import io.github.sekelenao.smallyaml.api.document.LineProvider;
 import io.github.sekelenao.smallyaml.api.document.property.MultipleValuesProperty;
 import io.github.sekelenao.smallyaml.api.document.property.Property;
 import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
-import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
 import io.github.sekelenao.smallyaml.test.CorrectTestDocument;
 import io.github.sekelenao.smallyaml.test.IncorrectTestDocument;
 import io.github.sekelenao.smallyaml.test.util.document.property.PropertyTypeCounter;
@@ -42,9 +42,8 @@ public final class DocumentsTester<D extends Document> {
     private static PropertyTypeCounter amountOfPropertyTypeFor(Document document){
         Objects.requireNonNull(document);
         var propertyTypeCounter = new PropertyTypeCounter();
-        for (var iterator = document.iterator(); iterator.hasNext(); ) {
-            var property = iterator.next();
-            switch (property){
+        for (var property : document) {
+            switch (property) {
                 case SingleValueProperty ignored -> propertyTypeCounter.encountered(Property.Type.SINGLE);
                 case MultipleValuesProperty ignored -> propertyTypeCounter.encountered(Property.Type.MULTIPLE);
                 default -> throw new IllegalStateException("Unexpected value: " + property);

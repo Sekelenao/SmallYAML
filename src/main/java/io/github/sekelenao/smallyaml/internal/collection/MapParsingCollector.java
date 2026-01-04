@@ -1,7 +1,6 @@
-package io.github.sekelenao.smallyaml.internal.parsing.collector;
+package io.github.sekelenao.smallyaml.internal.collection;
 
 import io.github.sekelenao.smallyaml.api.exception.document.DuplicatedPropertyException;
-import io.github.sekelenao.smallyaml.internal.collection.ValueList;
 
 import java.util.Collections;
 import java.util.HashMap;

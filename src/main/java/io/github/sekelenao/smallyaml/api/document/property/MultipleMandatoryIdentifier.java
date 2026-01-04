@@ -7,10 +7,11 @@ public final class MultipleMandatoryIdentifier implements PropertyIdentifier {
     private final String key;
 
     private MultipleMandatoryIdentifier(String key) {
-        this.key = Objects.requireNonNull(key);
+        this.key = key;
     }
 
     public static MultipleMandatoryIdentifier define(String key) {
+        Objects.requireNonNull(key);
         return new MultipleMandatoryIdentifier(key);
     }
 

@@ -7,10 +7,11 @@ public final class SingleOptionalIdentifier implements PropertyIdentifier {
     private final String key;
 
     private SingleOptionalIdentifier(String key) {
-        this.key = Objects.requireNonNull(key);
+        this.key = key;
     }
 
     public static SingleOptionalIdentifier define(String key) {
+        Objects.requireNonNull(key);
         return new SingleOptionalIdentifier(key);
     }
 

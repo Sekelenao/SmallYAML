@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public final class PropertyIdentifiersReflector {
+public final class IdentifiersScanner {
 
     private static boolean fieldIsRelevant(Field field) {
         var modifiers = field.getModifiers();

@@ -1,6 +1,6 @@
 package io.github.sekelenao.smallyaml.test.api.line.provider;
 
-import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
+import io.github.sekelenao.smallyaml.api.document.LineProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
