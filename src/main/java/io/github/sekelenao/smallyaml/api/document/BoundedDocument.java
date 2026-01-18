@@ -30,12 +30,16 @@ public class BoundedDocument implements Document {
         return new BoundedDocument(Collections.emptyMap());
     }
 
+    public static BoundedDocumentFactoryBuilder factoryBuilder(){
+        return new BoundedDocumentFactoryBuilder();
+    }
+
     public boolean hasRegistered(PropertyIdentifier identifier){
         Objects.requireNonNull(identifier);
         return properties.containsKey(identifier);
     }
 
-    public <T> T getSingle(SingleMandatoryIdentifier identifier, Function<? super String, T> mapper){
+    public <T> T get(SingleMandatoryIdentifier identifier, Function<? super String, T> mapper){
         Objects.requireNonNull(identifier);
         Objects.requireNonNull(mapper);
         if(!properties.containsKey(identifier)){
@@ -44,7 +48,7 @@ public class BoundedDocument implements Document {
         return mapper.apply((String) properties.get(identifier));
     }
 
-    public <T> Optional<T> getSingle(SingleOptionalIdentifier identifier, Function<? super String, T> mapper){
+    public <T> Optional<T> get(SingleOptionalIdentifier identifier, Function<? super String, T> mapper){
         Objects.requireNonNull(identifier);
         Objects.requireNonNull(mapper);
         if(!properties.containsKey(identifier)){
@@ -56,6 +60,26 @@ public class BoundedDocument implements Document {
         }
         var mappedValue = mapper.apply((String) value);
         return Optional.of(mappedValue);
+    }
+
+    public String get(SingleMandatoryIdentifier identifier){
+        Objects.requireNonNull(identifier);
+        if(!properties.containsKey(identifier)){
+            throw NotRegisteredIdentifierException.forFollowing(identifier);
+        }
+        return (String) properties.get(identifier);
+    }
+
+    public Optional<String> get(SingleOptionalIdentifier identifier){
+        Objects.requireNonNull(identifier);
+        if(!properties.containsKey(identifier)){
+            throw NotRegisteredIdentifierException.forFollowing(identifier);
+        }
+        var value = properties.get(identifier);
+        if(value == EmptyValue.INSTANCE){
+            return Optional.empty();
+        }
+        return Optional.of((String) value);
     }
 
     @Override
