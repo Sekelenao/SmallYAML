@@ -1,0 +1,31 @@
+package io.github.sekelenao.smallyaml.api.document;
+
+import io.github.sekelenao.smallyaml.api.document.property.PropertyIdentifier;
+import io.github.sekelenao.smallyaml.api.document.property.UnknownPropertyConsumer;
+import io.github.sekelenao.smallyaml.internal.collection.BoundedMapParsingCollector;
+import io.github.sekelenao.smallyaml.internal.parsing.SmallYAMLParser;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+
+public final class BoundedDocumentFactory {
+
+    private final Map<String, PropertyIdentifier> reversedRegistry;
+
+    private final UnknownPropertyConsumer unknownPropertyConsumer;
+
+    BoundedDocumentFactory(Map<String, PropertyIdentifier> registry, UnknownPropertyConsumer consumer) {
+        this.reversedRegistry = Objects.requireNonNull(registry);
+        this.unknownPropertyConsumer = Objects.requireNonNull(consumer);
+    }
+
+    public BoundedDocument create(LineProvider lineProvider) throws IOException {
+        Objects.requireNonNull(lineProvider);
+        var collector = new BoundedMapParsingCollector(reversedRegistry, unknownPropertyConsumer);
+        var parser = new SmallYAMLParser();
+        parser.parse(lineProvider, collector);
+        return new BoundedDocument(collector.underlyingMapAsView());
+    }
+
+}

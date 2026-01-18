@@ -44,7 +44,8 @@ public final class IdentifiersScanner {
         }
     };
 
-    public static Set<PropertyIdentifier> get(Class<?> type){
+    public static Set<PropertyIdentifier> scan(Class<?> type){
+        Objects.requireNonNull(type);
         return Collections.unmodifiableSet(CACHE.get(type));
     }
 
