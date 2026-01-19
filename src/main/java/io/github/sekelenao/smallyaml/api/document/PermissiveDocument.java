@@ -512,7 +512,7 @@ public final class PermissiveDocument implements Iterable<Property<?>>, Document
 
         private final Spliterator<Map.Entry<String, Object>> wrappedSpliterator;
 
-        PropertySpliterator(Spliterator<Map.Entry<String, Object>> wrappedSpliterator) {
+        private PropertySpliterator(Spliterator<Map.Entry<String, Object>> wrappedSpliterator) {
             this.wrappedSpliterator = Objects.requireNonNull(wrappedSpliterator);
         }
 
