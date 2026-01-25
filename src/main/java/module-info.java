@@ -16,6 +16,7 @@ module SmallYAML {
     exports io.github.sekelenao.smallyaml.internal.parsing.line.records to SmallYAML.test;
     exports io.github.sekelenao.smallyaml.internal.parsing.line.records.parser to SmallYAML.test;
     exports io.github.sekelenao.smallyaml.internal.parsing.line.records.parser.string to SmallYAML.test;
+    exports io.github.sekelenao.smallyaml.internal.reflection to SmallYAML.test;
 
     // Opens for tests
     opens io.github.sekelenao.smallyaml.api.document to SmallYAML.test;

@@ -1,5 +1,6 @@
 package io.github.sekelenao.smallyaml.api.document.property;
 
+import java.util.Locale;
 import java.util.Objects;
 
 public final class SingleOptionalIdentifier implements PropertyIdentifier {
@@ -7,7 +8,7 @@ public final class SingleOptionalIdentifier implements PropertyIdentifier {
     private final String key;
 
     private SingleOptionalIdentifier(String key) {
-        this.key = key;
+        this.key = key.toLowerCase(Locale.ROOT);
     }
 
     public static SingleOptionalIdentifier define(String key) {
@@ -28,5 +29,15 @@ public final class SingleOptionalIdentifier implements PropertyIdentifier {
     @Override
     public Property.Presence presence() {
         return Property.Presence.OPTIONAL;
+    }
+
+    @Override
+    public int hashCode() {
+        return key.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof PropertyIdentifier otherIdentifier && key.equals(otherIdentifier.key());
     }
 }

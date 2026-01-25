@@ -1,4 +1,4 @@
-package io.github.sekelenao.smallyaml.test.api.line.provider;
+package io.github.sekelenao.smallyaml.test.api.document;
 
 import io.github.sekelenao.smallyaml.api.document.LineProvider;
 import org.junit.jupiter.api.DisplayName;
