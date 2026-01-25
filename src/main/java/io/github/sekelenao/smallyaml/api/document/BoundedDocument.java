@@ -14,7 +14,6 @@ import io.github.sekelenao.smallyaml.internal.collection.ValueList;
 import io.github.sekelenao.smallyaml.internal.parsing.StrictBooleanParser;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +24,12 @@ import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class BoundedDocument implements Document {
 
@@ -46,6 +50,10 @@ public class BoundedDocument implements Document {
     public boolean hasRegistered(PropertyIdentifier identifier){
         Objects.requireNonNull(identifier);
         return properties.containsKey(identifier);
+    }
+
+    public Set<PropertyIdentifier> registeredIdentifiers(){
+        return Collections.unmodifiableSet(properties.keySet());
     }
 
     public <T> T get(SingleMandatoryIdentifier identifier, Function<? super String, T> mapper){
@@ -315,21 +323,15 @@ public class BoundedDocument implements Document {
         };
     }
 
-    public Set<String> subKeysOf(PropertyIdentifier propertyIdentifier){
-        Objects.requireNonNull(propertyIdentifier);
-        var expectedStart = propertyIdentifier.key() + ".";
-        var expectedSize = expectedStart.length();
-        var setOfSubkeys = new HashSet<String>();
-        for(var currentIdentifier : properties.keySet()){
-            var currentKey = currentIdentifier.key();
-            if(currentKey.length() >= expectedSize && currentKey.startsWith(expectedStart)){
-                var nextDotIndex = currentKey.indexOf(".", expectedSize);
-                if(nextDotIndex != -1){
-                    setOfSubkeys.add(currentKey.substring(0, nextDotIndex));
-                }
-            }
-        }
-        return Collections.unmodifiableSet(setOfSubkeys);
+    @Override
+    public Spliterator<Property<?>> spliterator() {
+        int characteristics = Spliterator.NONNULL | Spliterator.IMMUTABLE | Spliterator.DISTINCT;
+        return Spliterators.spliteratorUnknownSize(iterator(), characteristics);
+    }
+
+    @SuppressWarnings("java:S1452")
+    public Stream<Property<?>> stream() {
+        return StreamSupport.stream(spliterator(), false);
     }
 
     @Override
@@ -346,7 +348,10 @@ public class BoundedDocument implements Document {
 
     @Override
     public String toString() {
-        return properties.toString();
+        return properties.entrySet().stream()
+            .filter(entry -> entry.getValue() != EmptyValue.INSTANCE)
+            .map(entry -> entry.getKey().key() + ": " + entry.getValue())
+            .collect(Collectors.joining(", ", "{", "}"));
     }
 
 }
