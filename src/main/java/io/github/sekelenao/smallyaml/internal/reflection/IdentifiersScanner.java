@@ -1,6 +1,7 @@
 package io.github.sekelenao.smallyaml.internal.reflection;
 
 import io.github.sekelenao.smallyaml.api.document.property.PropertyIdentifier;
+import io.github.sekelenao.smallyaml.api.exception.document.DuplicatedIdentifierException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -32,7 +33,7 @@ public final class IdentifiersScanner {
                         var identifier = (PropertyIdentifier) field.get(null);
                         Objects.requireNonNull(identifier);
                         if(set.contains(identifier)){
-                            throw new IllegalArgumentException("Duplicated identifier definition: " + identifier.key());
+                            throw DuplicatedIdentifierException.forFollowing(identifier);
                         }
                         set.add(identifier);
                     } catch (IllegalAccessException exception) {
