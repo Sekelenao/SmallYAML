@@ -2,7 +2,8 @@ package io.github.sekelenao.smallyaml.api.document;
 
 import io.github.sekelenao.smallyaml.api.document.property.PropertyIdentifier;
 import io.github.sekelenao.smallyaml.api.document.property.UnknownPropertyConsumer;
-import io.github.sekelenao.smallyaml.internal.reflection.IdentifiersScanner;
+import io.github.sekelenao.smallyaml.api.exception.document.DuplicatedIdentifierException;
+import io.github.sekelenao.smallyaml.internal.reflection.ClassIdentifiersScanner;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,11 +20,11 @@ public final class BoundedDocumentFactoryBuilder {
     }
 
     private void scanAndRegister(Class<?> type){
-        var scannedIdentifiers = IdentifiersScanner.scan(type);
+        var scannedIdentifiers = ClassIdentifiersScanner.scan(type);
         for (var scannedIdentifier : scannedIdentifiers) {
             var key = scannedIdentifier.key();
             if(reversedRegistry.containsKey(key)){
-                throw new IllegalArgumentException("Duplicated identifier definition: " + key);
+                throw DuplicatedIdentifierException.forFollowing(scannedIdentifier);
             }
             reversedRegistry.put(key, scannedIdentifier);
         }
@@ -42,7 +43,7 @@ public final class BoundedDocumentFactoryBuilder {
     private void register(PropertyIdentifier identifier){
         var key = identifier.key();
         if(reversedRegistry.containsKey(key)){
-            throw new IllegalArgumentException("Duplicated identifier definition: " + key);
+            throw DuplicatedIdentifierException.forFollowing(identifier);
         }
         reversedRegistry.put(key, identifier);
     }

@@ -2,6 +2,7 @@ package io.github.sekelenao.smallyaml.internal.reflection;
 
 import io.github.sekelenao.smallyaml.api.document.property.PropertyIdentifier;
 import io.github.sekelenao.smallyaml.api.exception.document.DuplicatedIdentifierException;
+import io.github.sekelenao.smallyaml.api.exception.document.PropertyDiscoveryException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -10,7 +11,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public final class IdentifiersScanner {
+public final class ClassIdentifiersScanner {
 
     private static boolean fieldIsRelevant(Field field) {
         var modifiers = field.getModifiers();
@@ -37,7 +38,7 @@ public final class IdentifiersScanner {
                         }
                         set.add(identifier);
                     } catch (IllegalAccessException exception) {
-                        throw new IllegalStateException("Failed to access to the following field: " + field.getName(), exception);
+                        throw PropertyDiscoveryException.forFollowing(field, exception);
                     }
                 }
             }

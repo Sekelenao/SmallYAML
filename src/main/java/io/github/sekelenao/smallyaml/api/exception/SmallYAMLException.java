@@ -26,4 +26,8 @@ public class SmallYAMLException extends RuntimeException {
         super(message);
     }
 
+    public SmallYAMLException(String message, Throwable cause){
+        super(message, cause);
+    }
+
 }

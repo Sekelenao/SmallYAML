@@ -4,7 +4,9 @@ import io.github.sekelenao.smallyaml.api.document.property.MultipleMandatoryIden
 import io.github.sekelenao.smallyaml.api.document.property.MultipleOptionalIdentifier;
 import io.github.sekelenao.smallyaml.api.document.property.SingleMandatoryIdentifier;
 import io.github.sekelenao.smallyaml.api.document.property.SingleOptionalIdentifier;
-import io.github.sekelenao.smallyaml.internal.reflection.IdentifiersScanner;
+import io.github.sekelenao.smallyaml.api.exception.document.DuplicatedIdentifierException;
+import io.github.sekelenao.smallyaml.api.exception.document.PropertyDiscoveryException;
+import io.github.sekelenao.smallyaml.internal.reflection.ClassIdentifiersScanner;
 import io.github.sekelenao.smallyaml.test.util.ExceptionsTester;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,15 +14,15 @@ import org.junit.jupiter.api.Test;
 import java.util.Collections;
 import java.util.Set;
 
-import static io.github.sekelenao.smallyaml.test.internal.reflection.IdentifiersScannerTest.TestConfiguration.APP_NAME;
-import static io.github.sekelenao.smallyaml.test.internal.reflection.IdentifiersScannerTest.TestConfiguration.HOST;
-import static io.github.sekelenao.smallyaml.test.internal.reflection.IdentifiersScannerTest.TestConfiguration.PORT;
-import static io.github.sekelenao.smallyaml.test.internal.reflection.IdentifiersScannerTest.TestConfiguration.USERS;
+import static io.github.sekelenao.smallyaml.test.internal.reflection.ClassIdentifiersScannerTest.TestConfiguration.APP_NAME;
+import static io.github.sekelenao.smallyaml.test.internal.reflection.ClassIdentifiersScannerTest.TestConfiguration.HOST;
+import static io.github.sekelenao.smallyaml.test.internal.reflection.ClassIdentifiersScannerTest.TestConfiguration.PORT;
+import static io.github.sekelenao.smallyaml.test.internal.reflection.ClassIdentifiersScannerTest.TestConfiguration.USERS;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-final class IdentifiersScannerTest {
+final class ClassIdentifiersScannerTest {
 
     public static final class TestConfiguration {
 
@@ -76,19 +78,19 @@ final class IdentifiersScannerTest {
     @DisplayName("Assertions")
     void assertions(){
         assertAll(
-            () -> assertThrows(NullPointerException.class, () -> IdentifiersScanner.scan(null)),
-            () -> assertThrows(NullPointerException.class, () -> IdentifiersScanner.scan(NullIdentifier.class))
+            () -> assertThrows(NullPointerException.class, () -> ClassIdentifiersScanner.scan(null)),
+            () -> assertThrows(NullPointerException.class, () -> ClassIdentifiersScanner.scan(NullIdentifier.class))
         );
     }
 
     @Test
     @DisplayName("Scanner is working")
     void scannerIsWorking() {
-        var set = IdentifiersScanner.scan(TestConfiguration.class);
+        var set = ClassIdentifiersScanner.scan(TestConfiguration.class);
         assertAll(
             () -> assertEquals(4, set.size()),
             () -> assertEquals(Set.of(HOST, PORT, APP_NAME, USERS), set),
-            () -> assertEquals(Collections.emptySet(), IdentifiersScanner.scan(EmptyClass.class))
+            () -> assertEquals(Collections.emptySet(), ClassIdentifiersScanner.scan(EmptyClass.class))
         );
     }
 
@@ -96,8 +98,8 @@ final class IdentifiersScannerTest {
     @DisplayName("Duplicated identifiers are detected")
     void duplicatedIdentifiersAreDetected(){
         ExceptionsTester.assertIsThrownAndContains(
-            IllegalArgumentException.class,
-            () -> IdentifiersScanner.scan(DuplicatedIdentifier.class),
+            DuplicatedIdentifierException.class,
+            () -> ClassIdentifiersScanner.scan(DuplicatedIdentifier.class),
             "Duplicated identifier definition"
         );
     }
@@ -106,9 +108,9 @@ final class IdentifiersScannerTest {
     @DisplayName("Illegal access is detected")
     void illegalAccessIsDetected(){
         ExceptionsTester.assertIsThrownAndContains(
-            IllegalStateException.class,
-            () -> IdentifiersScanner.scan(IllegalAccess.class),
-            "Failed to access to the following field"
+            PropertyDiscoveryException.class,
+            () -> ClassIdentifiersScanner.scan(IllegalAccess.class),
+            "Could not access following field: 'ACCESS'"
         );
     }
 

@@ -19,8 +19,8 @@ final class BoundedDocumentTest {
             .register(identifier)
             .build();
         assertAll(
-            () -> assertEquals("value", factory.createFrom(yaml).get(identifier)),
-            () -> assertEquals("value", factory.createFrom(yaml).get(identifier))
+            () -> assertEquals("value", factory.createDocument(yaml).get(identifier)),
+            () -> assertEquals("value", factory.createDocument(yaml).get(identifier))
         );
     }
 

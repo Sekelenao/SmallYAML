@@ -22,7 +22,7 @@ public final class BoundedDocumentFactory {
         this.unknownPropertyConsumer = Objects.requireNonNull(consumer);
     }
 
-    public BoundedDocument createFrom(LineProvider lineProvider) throws IOException {
+    public BoundedDocument createDocument(LineProvider lineProvider) throws IOException {
         Objects.requireNonNull(lineProvider);
         var collector = new BoundedMapParsingCollector(reversedRegistry, unknownPropertyConsumer);
         var parser = new SmallYAMLParser();
@@ -30,24 +30,24 @@ public final class BoundedDocumentFactory {
         return new BoundedDocument(collector.underlyingMapAsView());
     }
 
-    public BoundedDocument createFrom(BufferedReader reader) throws IOException {
+    public BoundedDocument createDocument(BufferedReader reader) throws IOException {
         Objects.requireNonNull(reader);
         try (var provider = LineProvider.with(reader)){
-            return createFrom(provider);
+            return createDocument(provider);
         }
     }
 
-    public BoundedDocument createFrom(InputStream inputStream) throws IOException {
+    public BoundedDocument createDocument(InputStream inputStream) throws IOException {
         Objects.requireNonNull(inputStream);
         try (var provider = LineProvider.with(inputStream)){
-            return createFrom(provider);
+            return createDocument(provider);
         }
     }
 
-    public BoundedDocument createFrom(String yaml) throws IOException {
+    public BoundedDocument createDocument(String yaml) throws IOException {
         Objects.requireNonNull(yaml);
         try (var provider = LineProvider.with(yaml)){
-            return createFrom(provider);
+            return createDocument(provider);
         }
     }
 
