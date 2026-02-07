@@ -72,7 +72,7 @@ public final class BoundedDocumentFactoryBuilder {
         return this;
     }
 
-    public BoundedDocumentFactory build(){
+    public BoundedDocumentFactory buildFactory(){
         return new BoundedDocumentFactory(reversedRegistry, consumer);
     }
 

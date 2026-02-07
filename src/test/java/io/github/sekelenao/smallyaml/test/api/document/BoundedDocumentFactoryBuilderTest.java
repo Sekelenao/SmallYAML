@@ -6,6 +6,7 @@ import io.github.sekelenao.smallyaml.api.document.property.MultipleOptionalIdent
 import io.github.sekelenao.smallyaml.api.document.property.PropertyIdentifier;
 import io.github.sekelenao.smallyaml.api.document.property.SingleMandatoryIdentifier;
 import io.github.sekelenao.smallyaml.api.document.property.SingleOptionalIdentifier;
+import io.github.sekelenao.smallyaml.api.document.property.UnknownPropertyConsumer;
 import io.github.sekelenao.smallyaml.api.exception.document.DuplicatedIdentifierException;
 import io.github.sekelenao.smallyaml.api.exception.document.PropertyDiscoveryException;
 import io.github.sekelenao.smallyaml.test.util.ExceptionsTester;
@@ -13,12 +14,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 final class BoundedDocumentFactoryBuilderTest {
 
@@ -144,7 +144,7 @@ final class BoundedDocumentFactoryBuilderTest {
         var document = BoundedDocument.factoryBuilder()
             .register(bar)
             .scan(Foo.class)
-            .build()
+            .buildFactory()
             .createDocument("");
         var baz = SingleMandatoryIdentifier.define("baz");
         assertAll(
@@ -154,4 +154,71 @@ final class BoundedDocumentFactoryBuilderTest {
         );
     }
 
+    @Test
+    @DisplayName("Register iterable")
+    void registerIterable() throws IOException {
+        var builder = BoundedDocument.factoryBuilder();
+        var id1 = SingleMandatoryIdentifier.define("id1");
+        var id2 = SingleMandatoryIdentifier.define("id2");
+        builder.register(List.of(id1, id2));
+        var factory = builder.buildFactory();
+        var document = factory.createDocument("id1: value1\nid2: value2");
+        assertAll(
+            () -> assertTrue(document.hasRegistered(id1)),
+            () -> assertTrue(document.hasRegistered(id2))
+        );
+    }
+
+    @Test
+    @DisplayName("Register iterable assertions")
+    void registerIterableAssertions() {
+        var builder = BoundedDocument.factoryBuilder();
+        assertAll(
+            () -> assertThrows(NullPointerException.class, () -> builder.register(null)),
+            () -> assertThrows(NullPointerException.class, () -> builder.register(Collections.singletonList(null)))
+        );
+    }
+
+    @Test
+    @DisplayName("Unknown property consumer")
+    void unknownPropertyConsumer() throws IOException {
+        var builder = BoundedDocument.factoryBuilder();
+        var id1 = SingleMandatoryIdentifier.define("id1");
+        var unknownKeys = new ArrayList<String>();
+        var unknownValues = new ArrayList<>();
+        UnknownPropertyConsumer consumer = (key, value) -> {
+            unknownKeys.add(key);
+            unknownValues.add(value);
+        };
+        
+        var factory = builder.register(id1)
+            .unknownPropertyConsumer(consumer)
+            .buildFactory();
+        
+        factory.createDocument("id1: value1\nunknown: value2");
+        
+        assertAll(
+            () -> assertFalse(unknownKeys.contains("id1")),
+            () -> assertTrue(unknownKeys.contains("unknown")),
+            () -> assertTrue(unknownValues.contains("value2"))
+        );
+    }
+
+    @Test
+    @DisplayName("Unknown property consumer assertions")
+    void unknownPropertyConsumerAssertions() {
+        var builder = BoundedDocument.factoryBuilder();
+        assertThrows(NullPointerException.class, () -> builder.unknownPropertyConsumer(null).buildFactory());
+    }
+
+    @Test
+    @DisplayName("Default unknown property consumer is NOOP")
+    void defaultUnknownPropertyConsumerIsNoop() {
+        var factory = BoundedDocument.factoryBuilder()
+                .buildFactory();
+        assertDoesNotThrow(() -> factory.createDocument("unknown: value2"));
+    }
+
 }
+
+

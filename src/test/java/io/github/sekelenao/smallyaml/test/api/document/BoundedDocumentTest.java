@@ -17,7 +17,7 @@ final class BoundedDocumentTest {
         var identifier = SingleMandatoryIdentifier.define("test");
         var factory = BoundedDocument.factoryBuilder()
             .register(identifier)
-            .build();
+            .buildFactory();
         assertAll(
             () -> assertEquals("value", factory.createDocument(yaml).get(identifier)),
             () -> assertEquals("value", factory.createDocument(yaml).get(identifier))
