@@ -1,14 +1,10 @@
 package io.github.sekelenao.smallyaml.test.api.document;
 
 import io.github.sekelenao.smallyaml.api.document.BoundedDocument;
-import io.github.sekelenao.smallyaml.api.document.property.MultipleMandatoryIdentifier;
-import io.github.sekelenao.smallyaml.api.document.property.MultipleOptionalIdentifier;
-import io.github.sekelenao.smallyaml.api.document.property.SingleMandatoryIdentifier;
-import io.github.sekelenao.smallyaml.api.document.property.SingleOptionalIdentifier;
+import io.github.sekelenao.smallyaml.api.document.property.*;
 import io.github.sekelenao.smallyaml.api.exception.document.NotRegisteredIdentifierException;
-import io.github.sekelenao.smallyaml.internal.collection.EmptyValue;
-import io.github.sekelenao.smallyaml.internal.collection.ValueList;
 import io.github.sekelenao.smallyaml.test.util.ExceptionsTester;
+import io.github.sekelenao.smallyaml.test.util.Reflections;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -370,26 +366,25 @@ final class BoundedDocumentTest {
 
     }
 
-    /*
-
     @Nested
-    @DisplayName("Iterable and Standard Methods")
+    @DisplayName("Iterable and standard methods")
     final class IterableAndStandard {
 
         @Test
         @DisplayName("Iterator logic")
-        void iterator() {
+        void iterator() throws IOException {
             var id1 = SingleMandatoryIdentifier.define("key1");
             var id2 = MultipleMandatoryIdentifier.define("key2");
-            var id3 = SingleOptionalIdentifier.define("key3"); // EmptyValue
+            var id3 = SingleOptionalIdentifier.define("key3");
 
-            var props = new HashMap<io.github.sekelenao.smallyaml.api.document.property.PropertyIdentifier, Object>();
-            props.put(id1, "val");
-            props.put(id2, new ValueList("a"));
-            props.put(id3, EmptyValue.INSTANCE);
-
-            var doc = createDocument(props);
-
+            var doc = BoundedDocument.factoryBuilder()
+                .register(id1, id2, id3)
+                .buildFactory()
+                .createDocument("""
+                    key1: val
+                    key2:
+                        - a
+                    """);
             var list = doc.stream().toList();
             assertAll(
                 () -> assertEquals(2, list.size()),
@@ -397,44 +392,57 @@ final class BoundedDocumentTest {
                 () -> assertTrue(list.stream().anyMatch(p -> p.key().equals("key2"))),
                 () -> {
                     var it = doc.iterator();
-                    it.next();
-                    it.next();
+                    assertEquals(id1.key(), it.next().key());
+                    assertEquals(id2.key(), it.next().key());
                     assertThrows(NoSuchElementException.class, it::next);
-                },
-                () -> assertNotNull(doc.spliterator()));
+                }
+            );
+        }
+
+        @Test
+        @DisplayName("Spliterator is working")
+        void spliterator() throws IOException {
+            var doc = BoundedDocument.factoryBuilder()
+                .register(SingleMandatoryIdentifier.define("key"))
+                .buildFactory()
+                .createDocument("key: val");
+            var spliterator = doc.spliterator();
+            assertAll(
+                () -> assertTrue(spliterator.tryAdvance(p -> assertEquals("key", p.key())))
+            );
         }
 
         @Test
         @DisplayName("Standard overrides")
-        void standard() {
+        void standard() throws IOException {
             var id = SingleMandatoryIdentifier.define("key");
-            var doc1 = createDocument(Map.of(id, "val"));
-            var doc2 = createDocument(Map.of(id, "val"));
-            var doc3 = createDocument(Map.of(id, "other"));
-
+            var factory = BoundedDocument.factoryBuilder()
+                .register(id)
+                .buildFactory();
+            var doc1 = factory.createDocument("key: val");
+            var doc2 = factory.createDocument("key: val");
+            var doc3 = factory.createDocument("key: other");
             assertAll(
                 () -> assertEquals(doc1, doc2),
                 () -> assertNotEquals(doc1, doc3),
-                () -> assertNotEquals(doc1, null),
-                () -> assertNotEquals(doc1, new Object()),
+                () -> assertNotEquals(null, doc1),
+                () -> assertNotEquals(new Object(), doc1),
                 () -> assertEquals(doc1.hashCode(), doc2.hashCode()),
-                () -> assertTrue(doc1.toString().contains("key: val")));
+                () -> assertNotEquals(doc1.hashCode(), doc3.hashCode()),
+                () -> assertEquals("{key: val}", doc1.toString())
+            );
         }
 
         @Test
         @DisplayName("Defensive programming (IllegalStateException in Iterator)")
-        @SuppressWarnings("unchecked")
-        void iteratorIllegalState() {
-            var props = new HashMap<io.github.sekelenao.smallyaml.api.document.property.PropertyIdentifier, Object>();
-            props.put(SingleMandatoryIdentifier.define("bad"), 123); // Not a String or ValueList
-
-            var doc = createDocument(props);
+        void iteratorIllegalState() throws ReflectiveOperationException, IOException {
+            var map = Map.of(SingleMandatoryIdentifier.define("key"), new Object());
+            var malformedMap = new Reflections.ConstructorArgument<>(Map.class, map);
+            var doc = Reflections.instantiateByPrivateConstructor(BoundedDocument.class, malformedMap);
             var it = doc.iterator();
             assertThrows(IllegalStateException.class, it::next);
         }
 
     }
-
-     */
 
 }
