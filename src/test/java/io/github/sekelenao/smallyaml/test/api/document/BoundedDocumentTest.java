@@ -249,151 +249,128 @@ final class BoundedDocumentTest {
 
     }
 
-    /*
-
     @Nested
-    @DisplayName("Primitive Accessors (Int, Long, Double)")
+    @DisplayName("Primitive Accessors (int, long, double)")
     final class PrimitiveAccessors {
 
         @Test
         @DisplayName("Ints")
-        void ints() {
+        void ints() throws IOException {
             var sm = SingleMandatoryIdentifier.define("sm");
             var so = SingleOptionalIdentifier.define("so");
             var mm = MultipleMandatoryIdentifier.define("mm");
             var mo = MultipleOptionalIdentifier.define("mo");
 
-            var props = new HashMap<io.github.sekelenao.smallyaml.api.document.property.PropertyIdentifier, Object>();
-            props.put(sm, "1");
-            props.put(so, "2");
-            props.put(mm, new ValueList("3").add("4"));
-            props.put(mo, new ValueList("5").add("6"));
-
-            var doc = createDocument(props);
-
+            var doc = BoundedDocument.factoryBuilder()
+                .register(sm, so, mm, mo)
+                .buildFactory()
+                .createDocument("""
+                    sm: 1
+                    so: 2
+                    mm:
+                        - 3
+                        - 4
+                    mo:
+                        - 5
+                        - 6
+                    """);
             assertAll(
                 () -> assertEquals(1, doc.getInt(sm)),
-                () -> assertEquals(2, doc.getInt(so).getAsInt()),
+                () -> assertEquals(2, doc.getInt(so).orElseThrow()),
                 () -> assertArrayEquals(new int[]{3, 4}, doc.getInts(mm)),
                 () -> assertArrayEquals(new int[]{5, 6}, doc.getInts(mo).orElseThrow()),
-                () -> {
-                    assertThrows(NullPointerException.class,
-                        () -> doc.getInt((SingleMandatoryIdentifier) null));
-                },
-                () -> {
-                    assertThrows(NullPointerException.class,
-                        () -> doc.getInt((SingleOptionalIdentifier) null));
-                },
-                () -> {
-                    assertThrows(NullPointerException.class,
-                        () -> doc.getInts((MultipleMandatoryIdentifier) null));
-                },
-                () -> {
-                    assertThrows(NullPointerException.class,
-                        () -> doc.getInts((MultipleOptionalIdentifier) null));
-                });
+                () -> assertThrows(NullPointerException.class, () -> doc.getInt((SingleMandatoryIdentifier) null)),
+                () -> assertThrows(NullPointerException.class, () -> doc.getInt((SingleOptionalIdentifier) null)),
+                () -> assertThrows(NullPointerException.class, () -> doc.getInts((MultipleMandatoryIdentifier) null)),
+                () -> assertThrows(NullPointerException.class, () -> doc.getInts((MultipleOptionalIdentifier) null))
+            );
         }
 
         @Test
         @DisplayName("Longs")
-        void longs() {
+        void longs() throws IOException {
             var sm = SingleMandatoryIdentifier.define("sm");
             var so = SingleOptionalIdentifier.define("so");
             var mm = MultipleMandatoryIdentifier.define("mm");
             var mo = MultipleOptionalIdentifier.define("mo");
 
-            var props = new HashMap<io.github.sekelenao.smallyaml.api.document.property.PropertyIdentifier, Object>();
-            props.put(sm, "1");
-            props.put(so, "2");
-            props.put(mm, new ValueList("3").add("4"));
-            props.put(mo, new ValueList("5").add("6"));
-
-            var doc = createDocument(props);
-
+            var doc = BoundedDocument.factoryBuilder()
+                .register(sm, so, mm, mo)
+                .buildFactory()
+                .createDocument("""
+                    sm: 1
+                    so: 2
+                    mm:
+                        - 3
+                        - 4
+                    mo:
+                        - 5
+                        - 6
+                    """);
             assertAll(
                 () -> assertEquals(1L, doc.getLong(sm)),
-                () -> assertEquals(2L, doc.getLong(so).getAsLong()),
+                () -> assertEquals(2L, doc.getLong(so).orElseThrow()),
                 () -> assertArrayEquals(new long[]{3L, 4L}, doc.getLongs(mm)),
                 () -> assertArrayEquals(new long[]{5L, 6L}, doc.getLongs(mo).orElseThrow()),
-                () -> {
-                    assertThrows(NullPointerException.class,
-                        () -> doc.getLong((SingleMandatoryIdentifier) null));
-                },
-                () -> {
-                    assertThrows(NullPointerException.class,
-                        () -> doc.getLong((SingleOptionalIdentifier) null));
-                },
-                () -> {
-                    assertThrows(NullPointerException.class,
-                        () -> doc.getLongs((MultipleMandatoryIdentifier) null));
-                },
-                () -> {
-                    assertThrows(NullPointerException.class,
-                        () -> doc.getLongs((MultipleOptionalIdentifier) null));
-                });
+                () -> assertThrows(NullPointerException.class, () -> doc.getLong((SingleMandatoryIdentifier) null)),
+                () -> assertThrows(NullPointerException.class, () -> doc.getLong((SingleOptionalIdentifier) null)),
+                () -> assertThrows(NullPointerException.class, () -> doc.getLongs((MultipleMandatoryIdentifier) null)),
+                () -> assertThrows(NullPointerException.class, () -> doc.getLongs((MultipleOptionalIdentifier) null)));
         }
 
         @Test
         @DisplayName("Doubles")
-        void doubles() {
+        void doubles() throws IOException {
             var sm = SingleMandatoryIdentifier.define("sm");
             var so = SingleOptionalIdentifier.define("so");
             var mm = MultipleMandatoryIdentifier.define("mm");
             var mo = MultipleOptionalIdentifier.define("mo");
 
-            var props = new HashMap<io.github.sekelenao.smallyaml.api.document.property.PropertyIdentifier, Object>();
-            props.put(sm, "1.1");
-            props.put(so, "2.2");
-            props.put(mm, new ValueList("3.3").add("4.4"));
-            props.put(mo, new ValueList("5.5").add("6.6"));
-
-            var doc = createDocument(props);
-
+            var doc = BoundedDocument.factoryBuilder()
+                .register(sm, so, mm, mo)
+                .buildFactory()
+                .createDocument("""
+                    sm: 1.1
+                    so: 2.2
+                    mm:
+                        - 3.3
+                        - 4.4
+                    mo:
+                        - 5.5
+                        - 6.6
+                    """);
             assertAll(
                 () -> assertEquals(1.1, doc.getDouble(sm)),
-                () -> assertEquals(2.2, doc.getDouble(so).getAsDouble()),
+                () -> assertEquals(2.2, doc.getDouble(so).orElseThrow()),
                 () -> assertArrayEquals(new double[]{3.3, 4.4}, doc.getDoubles(mm)),
-                () -> assertArrayEquals(new double[]{5.5, 6.6},
-                    doc.getDoubles(mo).orElseThrow()),
-                () -> {
-                    assertThrows(NullPointerException.class,
-                        () -> doc.getDouble((SingleMandatoryIdentifier) null));
-                },
-                () -> {
-                    assertThrows(NullPointerException.class,
-                        () -> doc.getDouble((SingleOptionalIdentifier) null));
-                },
-                () -> {
-                    assertThrows(NullPointerException.class, () -> doc
-                        .getDoubles((MultipleMandatoryIdentifier) null));
-                },
-                () -> {
-                    assertThrows(NullPointerException.class, () -> doc
-                        .getDoubles((MultipleOptionalIdentifier) null));
-                });
+                () -> assertArrayEquals(new double[]{5.5, 6.6}, doc.getDoubles(mo).orElseThrow()),
+                () -> assertThrows(NullPointerException.class, () -> doc.getDouble((SingleMandatoryIdentifier) null)),
+                () -> assertThrows(NullPointerException.class, () -> doc.getDouble((SingleOptionalIdentifier) null)),
+                () -> assertThrows(NullPointerException.class, () -> doc.getDoubles((MultipleMandatoryIdentifier) null)),
+                () -> assertThrows(NullPointerException.class, () -> doc.getDoubles((MultipleOptionalIdentifier) null))
+            );
         }
 
         @Test
         @DisplayName("Optional primitives (empty)")
-        void primitivesEmpty() {
-            var doc = createDocument(Map.of(
-                SingleOptionalIdentifier.define("so"), EmptyValue.INSTANCE,
-                MultipleOptionalIdentifier.define("mo"), EmptyValue.INSTANCE));
-
+        void primitivesEmpty() throws IOException {
+            var doc = BoundedDocument.factoryBuilder()
+                .register(SingleOptionalIdentifier.define("so"))
+                .register(MultipleOptionalIdentifier.define("mo"))
+                .buildFactory()
+                .createDocument("");
             assertAll(
                 () -> assertTrue(doc.getInt(SingleOptionalIdentifier.define("so")).isEmpty()),
-                () -> assertTrue(
-                    doc.getInts(MultipleOptionalIdentifier.define("mo")).isEmpty()),
+                () -> assertTrue(doc.getInts(MultipleOptionalIdentifier.define("mo")).isEmpty()),
                 () -> assertTrue(doc.getLong(SingleOptionalIdentifier.define("so")).isEmpty()),
-                () -> assertTrue(doc.getLongs(MultipleOptionalIdentifier.define("mo"))
-                    .isEmpty()),
-                () -> assertTrue(
-                    doc.getDouble(SingleOptionalIdentifier.define("so")).isEmpty()),
-                () -> assertTrue(doc.getDoubles(MultipleOptionalIdentifier.define("mo"))
-                    .isEmpty()));
+                () -> assertTrue(doc.getLongs(MultipleOptionalIdentifier.define("mo")).isEmpty()),
+                () -> assertTrue(doc.getDouble(SingleOptionalIdentifier.define("so")).isEmpty()),
+                () -> assertTrue(doc.getDoubles(MultipleOptionalIdentifier.define("mo")).isEmpty()));
         }
 
     }
+
+    /*
 
     @Nested
     @DisplayName("Iterable and Standard Methods")
