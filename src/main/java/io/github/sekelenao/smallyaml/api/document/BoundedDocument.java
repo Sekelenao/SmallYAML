@@ -151,7 +151,7 @@ public class BoundedDocument implements Document {
         return StrictBooleanParser.parse((String) properties.get(identifier));
     }
 
-    public boolean getBooleanOrDefault(SingleMandatoryIdentifier identifier, boolean defaultValue){
+    public boolean getBooleanOrDefault(SingleOptionalIdentifier identifier, boolean defaultValue){
         Objects.requireNonNull(identifier);
         if(!properties.containsKey(identifier)){
             throw NotRegisteredIdentifierException.forFollowing(identifier);

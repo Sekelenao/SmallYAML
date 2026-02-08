@@ -170,15 +170,13 @@ final class BoundedDocumentTest {
 
     }
 
-    /*
-
     @Nested
     @DisplayName("String Accessors")
     final class StringAccessors {
 
         @Test
         @DisplayName("All types")
-        void strings() {
+        void strings() throws IOException {
             var s = SingleMandatoryIdentifier.define("s");
             var so = SingleOptionalIdentifier.define("so");
             var soe = SingleOptionalIdentifier.define("soe");
@@ -186,22 +184,26 @@ final class BoundedDocumentTest {
             var mo = MultipleOptionalIdentifier.define("mo");
             var moe = MultipleOptionalIdentifier.define("moe");
 
-            var props = new HashMap<io.github.sekelenao.smallyaml.api.document.property.PropertyIdentifier, Object>();
-            props.put(s, "val");
-            props.put(so, "valOpt");
-            props.put(soe, EmptyValue.INSTANCE);
-            props.put(m, new ValueList("a").add("b"));
-            props.put(mo, new ValueList("c").add("d"));
-            props.put(moe, EmptyValue.INSTANCE);
-
-            var doc = createDocument(props);
-
+            var doc = BoundedDocument.factoryBuilder()
+                .register(s, so, soe)
+                .register(m, mo, moe)
+                .buildFactory()
+                .createDocument("""
+                    s: val
+                    so: valOpt
+                    m:
+                        - a
+                        - b
+                    mo:
+                        - c
+                        - d
+                    """);
             assertAll(
                 () -> assertEquals("val", doc.get(s)),
-                () -> assertEquals(Optional.of("valOpt"), doc.get(so)),
+                () -> assertEquals("valOpt", doc.get(so).orElseThrow()),
                 () -> assertEquals(Optional.empty(), doc.get(soe)),
                 () -> assertEquals(List.of("a", "b"), doc.get(m)),
-                () -> assertEquals(Optional.of(List.of("c", "d")), doc.get(mo)),
+                () -> assertEquals(List.of("c", "d"), doc.get(mo).orElseThrow()),
                 () -> assertEquals(Optional.empty(), doc.get(moe)));
         }
 
@@ -213,36 +215,41 @@ final class BoundedDocumentTest {
 
         @Test
         @DisplayName("Mandatory boolean")
-        void booleans() {
+        void booleans() throws IOException {
             var b1 = SingleMandatoryIdentifier.define("b1");
             var b2 = SingleMandatoryIdentifier.define("b2");
-            var doc = createDocument(Map.of(b1, "true", b2, "FALSE"));
-
+            var doc = BoundedDocument.factoryBuilder()
+                .register(b1, b2)
+                .buildFactory()
+                .createDocument("""
+                    b1: true
+                    b2: false
+                    """);
             assertAll(
                 () -> assertTrue(doc.getBoolean(b1)),
                 () -> assertFalse(doc.getBoolean(b2)),
-                () -> assertTrue(doc.getBooleanOrDefault(b1, false)),
-                () -> {
-                    assertThrows(NullPointerException.class, () -> doc.getBoolean(null));
-                },
-                () -> {
-                    assertThrows(NullPointerException.class,
-                        () -> doc.getBooleanOrDefault(null, true));
-                });
+                () -> assertThrows(NullPointerException.class, () -> doc.getBoolean(null))
+            );
         }
 
         @Test
         @DisplayName("Boolean or default (empty value)")
-        void booleanOrDefault() {
-            var id = SingleMandatoryIdentifier.define("key");
-            var doc = createDocument(Map.of(id, EmptyValue.INSTANCE));
-
+        void booleanOrDefault() throws IOException {
+            var id = SingleOptionalIdentifier.define("key");
+            var doc = BoundedDocument.factoryBuilder()
+                .register(id)
+                .buildFactory()
+                .createDocument("");
             assertAll(
                 () -> assertTrue(doc.getBooleanOrDefault(id, true)),
-                () -> assertFalse(doc.getBooleanOrDefault(id, false)));
+                () -> assertFalse(doc.getBooleanOrDefault(id, false)),
+                () -> assertThrows(NullPointerException.class, () -> doc.getBooleanOrDefault(null, true))
+            );
         }
 
     }
+
+    /*
 
     @Nested
     @DisplayName("Primitive Accessors (Int, Long, Double)")
