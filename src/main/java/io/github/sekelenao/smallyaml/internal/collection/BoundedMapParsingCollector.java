@@ -23,7 +23,7 @@ public final class BoundedMapParsingCollector implements ParsingCollector {
     public BoundedMapParsingCollector(Map<String, PropertyIdentifier> reversedRegistry, UnknownPropertyConsumer consumer) {
         this.reversedRegistry = Objects.requireNonNull(reversedRegistry);
         this.unknownPropertyConsumer = Objects.requireNonNull(consumer);
-        this.properties =  reversedRegistry.values().stream()
+        this.properties = reversedRegistry.values().stream()
             .collect(HashMap::new, (map, identifier) -> map.put(identifier, EmptyValue.INSTANCE), HashMap::putAll);
     }
 
@@ -65,7 +65,7 @@ public final class BoundedMapParsingCollector implements ParsingCollector {
             throw DuplicatedPropertyException.forFollowing(key);
         }
         switch (actualValue) {
-            case EmptyValue.INSTANCE -> new ValueList(value);
+            case EmptyValue.INSTANCE -> properties.put(identifier, new ValueList(value));
             case ValueList valueList -> valueList.add(value);
             default -> throw new IllegalStateException("Unexpected type: " + actualValue.getClass());
         }
