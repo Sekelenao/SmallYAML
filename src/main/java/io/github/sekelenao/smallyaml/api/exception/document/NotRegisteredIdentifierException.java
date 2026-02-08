@@ -9,7 +9,7 @@ public class NotRegisteredIdentifierException extends RuntimeException {
     }
 
     public static NotRegisteredIdentifierException forFollowing(PropertyIdentifier identifier){
-        return new NotRegisteredIdentifierException("Not registered identifier '" + identifier + "'");
+        return new NotRegisteredIdentifierException("Not registered identifier: '" + identifier + "'");
     }
 
 }
