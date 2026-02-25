@@ -1,18 +1,35 @@
 package io.github.sekelenao.smallyaml.test.api.document;
 
 import io.github.sekelenao.smallyaml.api.document.BoundedDocument;
-import io.github.sekelenao.smallyaml.api.document.property.*;
+import io.github.sekelenao.smallyaml.api.document.property.MultipleMandatoryIdentifier;
+import io.github.sekelenao.smallyaml.api.document.property.MultipleOptionalIdentifier;
+import io.github.sekelenao.smallyaml.api.document.property.SingleMandatoryIdentifier;
+import io.github.sekelenao.smallyaml.api.document.property.SingleOptionalIdentifier;
 import io.github.sekelenao.smallyaml.api.exception.document.NotRegisteredIdentifierException;
 import io.github.sekelenao.smallyaml.test.util.ExceptionsTester;
 import io.github.sekelenao.smallyaml.test.util.Reflections;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Spliterator;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 final class BoundedDocumentTest {
 
@@ -367,12 +384,13 @@ final class BoundedDocumentTest {
     }
 
     @Nested
-    @DisplayName("Iterable and standard methods")
-    final class IterableAndStandard {
+    @DisplayName("Iterable")
+    final class Iterable {
 
         @Test
         @DisplayName("Iterator logic")
         void iterator() throws IOException {
+
             var id1 = SingleMandatoryIdentifier.define("key1");
             var id2 = MultipleMandatoryIdentifier.define("key2");
             var id3 = SingleOptionalIdentifier.define("key3");
@@ -385,22 +403,101 @@ final class BoundedDocumentTest {
                     key2:
                         - a
                     """);
-            var list = doc.stream().toList();
+            var iterator = doc.iterator();
             assertAll(
-                () -> assertEquals(2, list.size()),
-                () -> assertTrue(list.stream().anyMatch(p -> p.key().equals("key1"))),
-                () -> assertTrue(list.stream().anyMatch(p -> p.key().equals("key2"))),
+                () -> assertTrue(iterator.hasNext()),
+                () -> assertTrue(iterator.hasNext()),
                 () -> {
-                    var it = doc.iterator();
-                    assertEquals(id1.key(), it.next().key());
-                    assertEquals(id2.key(), it.next().key());
-                    assertThrows(NoSuchElementException.class, it::next);
-                }
+                    var one = iterator.next();
+                    assertEquals("key1", one.key());
+                    assertEquals("val", one.value());
+                },
+                () -> assertTrue(iterator.hasNext()),
+                () -> assertTrue(iterator.hasNext()),
+                () -> {
+                    var two = iterator.next();
+                    assertEquals("key2", two.key());
+                    assertEquals(Collections.singletonList("a"), two.value());
+                },
+                () -> assertFalse(iterator::hasNext),
+                () -> assertThrows(NoSuchElementException.class, iterator::next),
+                () -> assertFalse(iterator::hasNext)
             );
         }
 
         @Test
-        @DisplayName("Spliterator is working")
+        @DisplayName("Defensive programming in Iterator")
+        void iteratorIllegalState() throws ReflectiveOperationException {
+            var map = Map.of(SingleMandatoryIdentifier.define("key"), new Object());
+            var malformedMap = new Reflections.ConstructorArgument<>(Map.class, map);
+            var doc = Reflections.instantiateByPrivateConstructor(BoundedDocument.class, malformedMap);
+            var it = doc.iterator();
+            assertThrows(IllegalStateException.class, it::next);
+        }
+
+        @ParameterizedTest(name = "{0}")
+        @DisplayName("Random size iterator")
+        @MethodSource("io.github.sekelenao.smallyaml.test.util.Randoms#intStreamWithSize5")
+        void hugeIterator(int size) throws IOException {
+            var factoryBuilder = BoundedDocument.factoryBuilder();
+            var yaml = new StringBuilder();
+            for(int i = 0; i < size; i++) {
+                factoryBuilder.register(SingleOptionalIdentifier.define("key" + i));
+                yaml.append("key").append(i)
+                    .append(": ")
+                    .append(i)
+                    .append("\n");
+            }
+            var doc = factoryBuilder.buildFactory()
+                .createDocument(yaml.toString());
+            var foundKeys = new HashSet<String>(size);
+            var iterator = doc.iterator();
+            iterator.forEachRemaining(entry -> foundKeys.add(entry.key()));
+            assertAll(
+                () -> assertEquals(size, foundKeys.size()),
+                () -> assertFalse(iterator::hasNext),
+                () -> assertThrows(NoSuchElementException.class, iterator::next)
+            );
+        }
+
+        @Test
+        @DisplayName("Simple stream")
+        void simpleStream() throws IOException {
+            var doc = BoundedDocument.factoryBuilder()
+                .register(SingleMandatoryIdentifier.define("key"))
+                .buildFactory()
+                .createDocument("key: val");
+            var stream = doc.stream();
+            assertAll(
+                () -> assertFalse(stream.isParallel()),
+                () -> {
+                    var one = stream.findFirst().orElseThrow();
+                    assertEquals("key", one.key());
+                },
+                () -> assertEquals(1, doc.stream().count())
+            );
+        }
+
+        @ParameterizedTest(name = "{0}")
+        @DisplayName("Random size Stream")
+        @MethodSource("io.github.sekelenao.smallyaml.test.util.Randoms#intStreamWithSize5")
+        void stream(int size) throws IOException {
+            var factoryBuilder = BoundedDocument.factoryBuilder();
+            var yaml = new StringBuilder();
+            for(int i = 0; i < size; i++) {
+                factoryBuilder.register(SingleOptionalIdentifier.define("key" + i));
+                yaml.append("key").append(i)
+                    .append(": ")
+                    .append(i)
+                    .append("\n");
+            }
+            var doc = factoryBuilder.buildFactory()
+                .createDocument(yaml.toString());
+            assertEquals(size, doc.stream().parallel().count());
+        }
+
+        @Test
+        @DisplayName("Simple Spliterator")
         void spliterator() throws IOException {
             var doc = BoundedDocument.factoryBuilder()
                 .register(SingleMandatoryIdentifier.define("key"))
@@ -408,13 +505,48 @@ final class BoundedDocumentTest {
                 .createDocument("key: val");
             var spliterator = doc.spliterator();
             assertAll(
+                () -> assertTrue(spliterator.hasCharacteristics(Spliterator.NONNULL)),
+                () -> assertTrue(spliterator.hasCharacteristics(Spliterator.IMMUTABLE)),
+                () -> assertTrue(spliterator.hasCharacteristics(Spliterator.DISTINCT)),
+                () -> assertFalse(spliterator.hasCharacteristics(Spliterator.ORDERED)),
                 () -> assertTrue(spliterator.tryAdvance(p -> assertEquals("key", p.key())))
             );
         }
 
+    }
+
+    @Nested
+    @DisplayName("Equals, HashCode and toString")
+    final class EqualsHashCodeAndToString {
+
         @Test
-        @DisplayName("Standard overrides")
-        void standard() throws IOException {
+        @DisplayName("Equals")
+        void equals() throws IOException {
+            var id = SingleMandatoryIdentifier.define("key");
+            var factoryBuilder = BoundedDocument.factoryBuilder()
+                .register(id);
+            var factory = factoryBuilder.buildFactory();
+            var doc1 = factory.createDocument("key: val");
+            var doc2 = factory.createDocument("key: val");
+            var doc3 = factory.createDocument("key: other");
+            var factory2 = factoryBuilder.register(SingleMandatoryIdentifier.define("one"))
+                .buildFactory();
+            var doc4 = factory2.createDocument("key: val\none: val");
+            assertAll(
+                () -> assertEquals(doc1, doc2),
+                () -> assertEquals(doc2, doc1),
+                () -> assertNotEquals(doc1, doc3),
+                () -> assertNotEquals(doc3, doc1),
+                () -> assertNotEquals(doc1, doc4),
+                () -> assertNotEquals(null, doc1),
+                () -> assertNotEquals(new Object(), doc1),
+                () -> assertEquals("{key: val}", doc1.toString())
+            );
+        }
+
+        @Test
+        @DisplayName("HashCode")
+        void hashCodeTest() throws IOException {
             var id = SingleMandatoryIdentifier.define("key");
             var factory = BoundedDocument.factoryBuilder()
                 .register(id)
@@ -423,24 +555,30 @@ final class BoundedDocumentTest {
             var doc2 = factory.createDocument("key: val");
             var doc3 = factory.createDocument("key: other");
             assertAll(
-                () -> assertEquals(doc1, doc2),
-                () -> assertNotEquals(doc1, doc3),
-                () -> assertNotEquals(null, doc1),
-                () -> assertNotEquals(new Object(), doc1),
                 () -> assertEquals(doc1.hashCode(), doc2.hashCode()),
-                () -> assertNotEquals(doc1.hashCode(), doc3.hashCode()),
-                () -> assertEquals("{key: val}", doc1.toString())
+                () -> assertNotEquals(doc1.hashCode(), doc3.hashCode())
             );
         }
 
         @Test
-        @DisplayName("Defensive programming (IllegalStateException in Iterator)")
-        void iteratorIllegalState() throws ReflectiveOperationException, IOException {
-            var map = Map.of(SingleMandatoryIdentifier.define("key"), new Object());
-            var malformedMap = new Reflections.ConstructorArgument<>(Map.class, map);
-            var doc = Reflections.instantiateByPrivateConstructor(BoundedDocument.class, malformedMap);
-            var it = doc.iterator();
-            assertThrows(IllegalStateException.class, it::next);
+        @DisplayName("To string")
+        void toStringTest() throws IOException {
+            var id = SingleOptionalIdentifier.define("key");
+            var factoryBuilder = BoundedDocument.factoryBuilder()
+                .register(id);
+            var factory = factoryBuilder.buildFactory();
+            var doc1 = factory.createDocument("key: val");
+            var doc2 = factory.createDocument("unknown: val");
+            var doc3 = factory.createDocument("key: other");
+            var factory2 = factoryBuilder.register(SingleMandatoryIdentifier.define("one"))
+                .buildFactory();
+            var doc5 = factory2.createDocument("one: val");
+            assertAll(
+                () -> assertEquals("{key: val}", doc1.toString()),
+                () -> assertEquals("{}", doc2.toString()),
+                () -> assertEquals("{key: other}", doc3.toString()),
+                () -> assertEquals("{one: val}", doc5.toString())
+            );
         }
 
     }
