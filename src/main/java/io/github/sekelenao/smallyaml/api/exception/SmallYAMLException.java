@@ -26,6 +26,14 @@ public class SmallYAMLException extends RuntimeException {
         super(message);
     }
 
+    /**
+     * Constructs a new {@code SmallYAMLException} with the specified detail message and cause.
+     *
+     * @param message the detail message
+     * @param cause   the cause
+     *
+     * @since 0.2.0
+     */
     public SmallYAMLException(String message, Throwable cause){
         super(message, cause);
     }

@@ -2,8 +2,9 @@
  * Document model of the SmallYAML public API.
  *
  * <p>Provides the {@link io.github.sekelenao.smallyaml.api.document.Document}
- * abstraction and a permissive implementation to iterate over key–value
- * properties parsed from YAML content. Keys are unique, and values may be
+ * abstraction and both permissive ({@link io.github.sekelenao.smallyaml.api.document.PermissiveDocument})
+ * and bounded ({@link io.github.sekelenao.smallyaml.api.document.BoundedDocument}) implementations
+ * to access key–value properties parsed from YAML content. Keys are unique, and values may be
  * single or multiple, depending on the property.</p>
  *
  * <p>SmallYAML intentionally supports a constrained subset of YAML to keep

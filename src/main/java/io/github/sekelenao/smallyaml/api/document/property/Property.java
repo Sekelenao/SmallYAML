@@ -27,6 +27,15 @@ public sealed interface Property<T> permits SingleValueProperty, MultipleValuesP
      */
     enum Type { SINGLE, MULTIPLE }
 
+    /**
+     * Represents the presence requirement of a property.
+     * <p>
+     * Enum constants:
+     * - OPTIONAL: Indicates a property that is not required to be present.
+     * - MANDATORY: Indicates a property that must be present.
+     *
+     * @since 0.2.0
+     */
     enum Presence { OPTIONAL, MANDATORY }
 
     /**
