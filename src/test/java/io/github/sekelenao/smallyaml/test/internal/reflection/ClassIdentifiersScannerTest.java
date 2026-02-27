@@ -8,6 +8,7 @@ import io.github.sekelenao.smallyaml.api.exception.document.DuplicatedIdentifier
 import io.github.sekelenao.smallyaml.api.exception.document.PropertyDiscoveryException;
 import io.github.sekelenao.smallyaml.internal.reflection.ClassIdentifiersScanner;
 import io.github.sekelenao.smallyaml.test.util.ExceptionsTester;
+import io.github.sekelenao.smallyaml.test.util.Reflections;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +34,9 @@ final class ClassIdentifiersScannerTest {
         public static final SingleOptionalIdentifier APP_NAME = SingleOptionalIdentifier.define("appName");
 
         public static final MultipleMandatoryIdentifier USERS = MultipleMandatoryIdentifier.define("users");
+
+        @SuppressWarnings("unused")
+        public static final Object OBJECT = new Object();
 
         @SuppressWarnings("unused")
         public final SingleOptionalIdentifier no = SingleOptionalIdentifier.define("no");
@@ -65,7 +69,8 @@ final class ClassIdentifiersScannerTest {
 
     }
 
-    public static final class EmptyClass {}
+    public static final class EmptyClass {
+    }
 
     static final class IllegalAccess {
 
@@ -75,8 +80,16 @@ final class ClassIdentifiersScannerTest {
     }
 
     @Test
+    @DisplayName("Is utility class")
+    void isUtilityClass() {
+        assertAll(
+            () -> Reflections.ensureIsUtilityClass(ClassIdentifiersScanner.class)
+        );
+    }
+
+    @Test
     @DisplayName("Assertions")
-    void assertions(){
+    void assertions() {
         assertAll(
             () -> assertThrows(NullPointerException.class, () -> ClassIdentifiersScanner.scan(null)),
             () -> assertThrows(NullPointerException.class, () -> ClassIdentifiersScanner.scan(NullIdentifier.class))
@@ -96,7 +109,7 @@ final class ClassIdentifiersScannerTest {
 
     @Test
     @DisplayName("Duplicated identifiers are detected")
-    void duplicatedIdentifiersAreDetected(){
+    void duplicatedIdentifiersAreDetected() {
         ExceptionsTester.assertIsThrownAndContains(
             DuplicatedIdentifierException.class,
             () -> ClassIdentifiersScanner.scan(DuplicatedIdentifier.class),
@@ -106,7 +119,7 @@ final class ClassIdentifiersScannerTest {
 
     @Test
     @DisplayName("Illegal access is detected")
-    void illegalAccessIsDetected(){
+    void illegalAccessIsDetected() {
         ExceptionsTester.assertIsThrownAndContains(
             PropertyDiscoveryException.class,
             () -> ClassIdentifiersScanner.scan(IllegalAccess.class),

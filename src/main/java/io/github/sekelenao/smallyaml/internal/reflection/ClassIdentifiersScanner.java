@@ -13,6 +13,10 @@ import java.util.Set;
 
 public final class ClassIdentifiersScanner {
 
+    private ClassIdentifiersScanner(){
+        throw new AssertionError("You cannot instantiate this class");
+    }
+
     private static boolean fieldIsRelevant(Field field) {
         var modifiers = field.getModifiers();
         return Modifier.isStatic(modifiers)
