@@ -23,4 +23,5 @@ module SmallYAML {
     opens io.github.sekelenao.smallyaml.internal.util to SmallYAML.test;
     opens io.github.sekelenao.smallyaml.internal.parsing to SmallYAML.test;
     opens io.github.sekelenao.smallyaml.internal.collection to SmallYAML.test;
+    opens io.github.sekelenao.smallyaml.internal.reflection to SmallYAML.test;
 }
