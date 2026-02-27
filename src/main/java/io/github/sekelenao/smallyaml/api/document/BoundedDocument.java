@@ -570,6 +570,15 @@ public class BoundedDocument implements Document {
         return Optional.of(((ValueList) value).asArrayOfDoubles());
     }
 
+    /**
+     * Returns an iterator that allows traversal over the properties of this document.
+     * <p>
+     * Only properties that are present in the document (i.e., not empty) are included.
+     *
+     * @return an {@link Iterator} over {@link Property} objects
+     *
+     * @since 0.2.0
+     */
     @Override
     public Iterator<Property<?>> iterator() {
         return new Iterator<>() {
@@ -610,12 +619,30 @@ public class BoundedDocument implements Document {
         };
     }
 
+    /**
+     * Creates and returns a {@link Spliterator} for the properties of this document.
+     * <p>
+     * Only properties that are present in the document (i.e., not empty) are included.
+     *
+     * @return a {@link Spliterator} over the {@link Property} elements
+     *
+     * @since 0.2.0
+     */
     @Override
     public Spliterator<Property<?>> spliterator() {
         int characteristics = Spliterator.NONNULL | Spliterator.IMMUTABLE | Spliterator.DISTINCT;
         return Spliterators.spliteratorUnknownSize(iterator(), characteristics);
     }
 
+    /**
+     * Returns a sequential {@link Stream} of the properties of this document.
+     * <p>
+     * Only properties that are present in the document (i.e., not empty) are included.
+     *
+     * @return a sequential {@link Stream} of {@link Property} objects
+     *
+     * @since 0.2.0
+     */
     @SuppressWarnings("java:S1452")
     public Stream<Property<?>> stream() {
         return StreamSupport.stream(spliterator(), false);
