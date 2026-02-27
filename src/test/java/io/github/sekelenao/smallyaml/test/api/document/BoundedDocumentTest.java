@@ -65,49 +65,119 @@ final class BoundedDocumentTest {
         @DisplayName("Unregistered identifier errors")
         void unregisteredErrors() {
             var doc = BoundedDocument.empty();
-            var id = SingleMandatoryIdentifier.define("unknown");
-            var optId = SingleOptionalIdentifier.define("unknownOpt");
-            var multId = MultipleMandatoryIdentifier.define("unknownMult");
-            var multOptId = MultipleOptionalIdentifier.define("unknownMultOpt");
+            var sm = SingleMandatoryIdentifier.define("unknown");
+            var so = SingleOptionalIdentifier.define("unknown");
+            var mm = MultipleMandatoryIdentifier.define("unknown");
+            var mo = MultipleOptionalIdentifier.define("unknown");
             assertAll(
                 () -> ExceptionsTester.assertIsThrownAndContains(
                     NotRegisteredIdentifierException.class,
-                    () -> doc.get(id),
+                    () -> doc.get(sm),
                     "Not registered identifier"
                 ),
                 () -> ExceptionsTester.assertIsThrownAndContains(
                     NotRegisteredIdentifierException.class,
-                    () -> doc.get(optId),
+                    () -> doc.get(so),
                     "Not registered identifier"
                 ),
                 () -> ExceptionsTester.assertIsThrownAndContains(
                     NotRegisteredIdentifierException.class,
-                    () -> doc.get(multId),
+                    () -> doc.get(mm),
                     "Not registered identifier"
                 ),
                 () -> ExceptionsTester.assertIsThrownAndContains(
                     NotRegisteredIdentifierException.class,
-                    () -> doc.get(multOptId),
+                    () -> doc.get(mo),
                     "Not registered identifier"
                 ),
                 () -> ExceptionsTester.assertIsThrownAndContains(
                     NotRegisteredIdentifierException.class,
-                    () -> doc.get(id, Integer::parseInt),
+                    () -> doc.get(sm, Integer::parseInt),
                     "Not registered identifier"
                 ),
                 () -> ExceptionsTester.assertIsThrownAndContains(
                     NotRegisteredIdentifierException.class,
-                    () -> doc.get(optId, Integer::parseInt),
+                    () -> doc.get(so, Integer::parseInt),
                     "Not registered identifier"
                 ),
                 () -> ExceptionsTester.assertIsThrownAndContains(
                     NotRegisteredIdentifierException.class,
-                    () -> doc.get(multId, Integer::parseInt),
+                    () -> doc.get(mm, Integer::parseInt),
                     "Not registered identifier"
                 ),
                 () -> ExceptionsTester.assertIsThrownAndContains(
                     NotRegisteredIdentifierException.class,
-                    () -> doc.get(multOptId, Integer::parseInt),
+                    () -> doc.get(mo, Integer::parseInt),
+                    "Not registered identifier"
+                ),
+                () -> ExceptionsTester.assertIsThrownAndContains(
+                    NotRegisteredIdentifierException.class,
+                    () -> doc.getBoolean(sm),
+                    "Not registered identifier"
+                ),
+                () -> ExceptionsTester.assertIsThrownAndContains(
+                    NotRegisteredIdentifierException.class,
+                    () -> doc.getBooleanOrDefault(so, false),
+                    "Not registered identifier"
+                ),
+                () -> ExceptionsTester.assertIsThrownAndContains(
+                    NotRegisteredIdentifierException.class,
+                    () -> doc.getInt(sm),
+                    "Not registered identifier"
+                ),
+                () -> ExceptionsTester.assertIsThrownAndContains(
+                    NotRegisteredIdentifierException.class,
+                    () -> doc.getInt(so),
+                    "Not registered identifier"
+                ),
+                () -> ExceptionsTester.assertIsThrownAndContains(
+                    NotRegisteredIdentifierException.class,
+                    () -> doc.getInts(mm),
+                    "Not registered identifier"
+                ),
+                () -> ExceptionsTester.assertIsThrownAndContains(
+                    NotRegisteredIdentifierException.class,
+                    () -> doc.getInts(mo),
+                    "Not registered identifier"
+                ),
+                () -> ExceptionsTester.assertIsThrownAndContains(
+                    NotRegisteredIdentifierException.class,
+                    () -> doc.getLong(sm),
+                    "Not registered identifier"
+                ),
+                () -> ExceptionsTester.assertIsThrownAndContains(
+                    NotRegisteredIdentifierException.class,
+                    () -> doc.getLong(so),
+                    "Not registered identifier"
+                ),
+                () -> ExceptionsTester.assertIsThrownAndContains(
+                    NotRegisteredIdentifierException.class,
+                    () -> doc.getLongs(mm),
+                    "Not registered identifier"
+                ),
+                () -> ExceptionsTester.assertIsThrownAndContains(
+                    NotRegisteredIdentifierException.class,
+                    () -> doc.getLongs(mo),
+                    "Not registered identifier"
+                ),
+                () -> ExceptionsTester.assertIsThrownAndContains(
+                    NotRegisteredIdentifierException.class,
+                    () -> doc.getDouble(sm),
+                    "Not registered identifier"
+                ),
+                () -> ExceptionsTester.assertIsThrownAndContains(
+                    NotRegisteredIdentifierException.class,
+                    () -> doc.getDouble(so),
+                    "Not registered identifier"
+                ),
+                () -> ExceptionsTester.assertIsThrownAndContains(
+                    NotRegisteredIdentifierException.class,
+                    () -> doc.getDoubles(mm),
+                    "Not registered identifier"
+                ),
+                () -> ExceptionsTester.assertIsThrownAndContains(
+                    NotRegisteredIdentifierException.class,
+                    () -> doc.getDoubles(mo),
                     "Not registered identifier"
                 )
             );
@@ -249,13 +319,13 @@ final class BoundedDocumentTest {
         @DisplayName("Boolean or default (empty value)")
         void booleanOrDefault() throws IOException {
             var id = SingleOptionalIdentifier.define("key");
-            var doc = BoundedDocument.factoryBuilder()
-                .register(id)
-                .buildFactory()
-                .createDocument("");
+            var factory = BoundedDocument.factoryBuilder().register(id).buildFactory();
+            var doc = factory.createDocument("");
+            var doc2 = factory.createDocument("key: faLsE");
             assertAll(
                 () -> assertTrue(doc.getBooleanOrDefault(id, true)),
                 () -> assertFalse(doc.getBooleanOrDefault(id, false)),
+                () -> assertFalse(doc2.getBooleanOrDefault(id, true)),
                 () -> assertThrows(NullPointerException.class, () -> doc.getBooleanOrDefault(null, true))
             );
         }
@@ -520,6 +590,7 @@ final class BoundedDocumentTest {
     final class EqualsHashCodeAndToString {
 
         @Test
+        @SuppressWarnings("all")
         @DisplayName("Equals")
         void equals() throws IOException {
             var id = SingleMandatoryIdentifier.define("key");
@@ -538,8 +609,8 @@ final class BoundedDocumentTest {
                 () -> assertNotEquals(doc1, doc3),
                 () -> assertNotEquals(doc3, doc1),
                 () -> assertNotEquals(doc1, doc4),
-                () -> assertNotEquals(null, doc1),
-                () -> assertNotEquals(new Object(), doc1),
+                () -> assertNotEquals(doc1, null),
+                () -> assertNotEquals(doc1, new Object()),
                 () -> assertEquals("{key: val}", doc1.toString())
             );
         }
