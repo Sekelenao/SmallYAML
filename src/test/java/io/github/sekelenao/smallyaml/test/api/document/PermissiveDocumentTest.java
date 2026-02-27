@@ -15,8 +15,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -55,9 +60,20 @@ final class PermissiveDocumentTest {
         @Test
         @DisplayName("From is working")
         void constructionsAreWorking() {
+            var yaml = "key: value";
+            var inputStream = new ByteArrayInputStream(yaml.getBytes());
             assertAll(
-                () -> assertThrows(NullPointerException.class, () -> PermissiveDocument.from(null)),
-                () -> assertDoesNotThrow(() -> PermissiveDocument.from(LineProvider.with("")))
+                () -> assertThrows(NullPointerException.class, () -> PermissiveDocument.from((LineProvider) null)),
+                () -> assertDoesNotThrow(() -> PermissiveDocument.from(LineProvider.with(""))),
+                () -> assertThrows(NullPointerException.class, () -> PermissiveDocument.from((BufferedReader) null)),
+                () -> assertDoesNotThrow(() -> PermissiveDocument.from(new BufferedReader(new StringReader(yaml)))),
+                () -> assertThrows(NullPointerException.class, () -> PermissiveDocument.from((InputStream) null)),
+                () -> assertDoesNotThrow(() -> PermissiveDocument.from(inputStream)),
+                () -> assertThrows(NullPointerException.class, () -> PermissiveDocument.from(null, StandardCharsets.UTF_8)),
+                () -> assertThrows(NullPointerException.class, () -> PermissiveDocument.from(inputStream, null)),
+                () -> assertDoesNotThrow(() -> PermissiveDocument.from(inputStream, StandardCharsets.UTF_8)),
+                () -> assertThrows(NullPointerException.class, () -> PermissiveDocument.from((String) null)),
+                () -> assertDoesNotThrow(() -> PermissiveDocument.from(yaml))
             );
         }
 

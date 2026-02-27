@@ -99,6 +99,8 @@ public final class BoundedDocumentFactory {
      * @return a new {@link BoundedDocument} containing the parsed properties
      * @throws IOException if an I/O error occurs during reading or parsing
      * @throws NullPointerException if either inputStream or charset is null
+     *
+     * @since 0.2.0
      */
     public BoundedDocument createDocument(InputStream inputStream, Charset charset) throws IOException {
         Objects.requireNonNull(inputStream);

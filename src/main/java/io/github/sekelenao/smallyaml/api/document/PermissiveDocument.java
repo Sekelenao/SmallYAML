@@ -9,7 +9,10 @@ import io.github.sekelenao.smallyaml.internal.collection.ValueList;
 import io.github.sekelenao.smallyaml.internal.parsing.SmallYAMLParser;
 import io.github.sekelenao.smallyaml.internal.parsing.StrictBooleanParser;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -64,6 +67,73 @@ public final class PermissiveDocument implements Iterable<Property<?>>, Document
         var parser = new SmallYAMLParser();
         parser.parse(lineProvider, collector);
         return new PermissiveDocument(collector.underlyingMapAsView());
+    }
+
+    /**
+     * Creates a PermissiveDocument from the given BufferedReader.
+     *
+     * @param reader the BufferedReader to read data from, must not be null
+     * @return a PermissiveDocument created from the data provided by the BufferedReader
+     * @throws IOException if an I/O error occurs while reading from the BufferedReader
+     * @throws NullPointerException if the provided reader is null
+     *
+     * @since 0.2.0
+     */
+    public static PermissiveDocument from(BufferedReader reader) throws IOException {
+        Objects.requireNonNull(reader);
+        try (var provider = LineProvider.with(reader)){
+            return from(provider);
+        }
+    }
+
+    /**
+     * Creates a new instance of PermissiveDocument by reading data from the provided InputStream.
+     *
+     * @param inputStream the InputStream from which the document data is read; must not be null
+     * @return a new instance of PermissiveDocument created using the data from the input stream
+     * @throws IOException if an I/O error occurs while reading from the InputStream
+     *
+     * @since 0.2.0
+     */
+    public static PermissiveDocument from(InputStream inputStream) throws IOException {
+        Objects.requireNonNull(inputStream);
+        try (var provider = LineProvider.with(inputStream)){
+            return from(provider);
+        }
+    }
+
+    /**
+     * Creates a PermissiveDocument from the given InputStream and Charset.
+     *
+     * @param inputStream the InputStream to read data from must not be null
+     * @param charset the Charset to use for decoding the InputStream must not be null
+     * @return a PermissiveDocument constructed from the provided InputStream and Charset
+     * @throws IOException if an I/O error occurs while reading from the InputStream
+     *
+     * @since 0.2.0
+     */
+    public static PermissiveDocument from(InputStream inputStream, Charset charset) throws IOException {
+        Objects.requireNonNull(inputStream);
+        Objects.requireNonNull(charset);
+        try (var provider = LineProvider.with(inputStream, charset)){
+            return from(provider);
+        }
+    }
+
+    /**
+     * Creates a PermissiveDocument by parsing the provided YAML string.
+     *
+     * @param yaml the YAML string to be parsed, must not be null
+     * @return a PermissiveDocument created from the provided YAML string
+     * @throws IOException if an I/O error occurs while reading the YAML string
+     *
+     * @since 0.2.0
+     */
+    public static PermissiveDocument from(String yaml) throws IOException {
+        Objects.requireNonNull(yaml);
+        try (var provider = LineProvider.with(yaml)){
+            return from(provider);
+        }
     }
 
     /**
