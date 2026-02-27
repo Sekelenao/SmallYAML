@@ -1,4 +1,4 @@
-package io.github.sekelenao.smallyaml.internal.parsing.booleans;
+package io.github.sekelenao.smallyaml.internal.parsing;
 
 import io.github.sekelenao.smallyaml.api.exception.parsing.BooleanFormatException;
 

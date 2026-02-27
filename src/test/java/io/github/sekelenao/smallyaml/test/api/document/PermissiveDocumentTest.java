@@ -1,9 +1,9 @@
 package io.github.sekelenao.smallyaml.test.api.document;
 
+import io.github.sekelenao.smallyaml.api.document.LineProvider;
 import io.github.sekelenao.smallyaml.api.document.PermissiveDocument;
 import io.github.sekelenao.smallyaml.api.document.property.Property;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
-import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
 import io.github.sekelenao.smallyaml.test.TestingTag;
 import io.github.sekelenao.smallyaml.test.util.ExceptionsTester;
 import io.github.sekelenao.smallyaml.test.util.Reflections;

@@ -1,7 +1,7 @@
 package io.github.sekelenao.smallyaml.test.util.document;
 
 import io.github.sekelenao.smallyaml.api.document.Document;
-import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
+import io.github.sekelenao.smallyaml.api.document.LineProvider;
 
 import java.io.IOException;
 

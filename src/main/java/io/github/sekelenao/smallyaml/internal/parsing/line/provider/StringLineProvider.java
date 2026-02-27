@@ -1,6 +1,6 @@
 package io.github.sekelenao.smallyaml.internal.parsing.line.provider;
 
-import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
+import io.github.sekelenao.smallyaml.api.document.LineProvider;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;

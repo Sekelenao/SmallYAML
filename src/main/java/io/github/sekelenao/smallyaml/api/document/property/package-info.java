@@ -5,6 +5,9 @@
  * associated with a property key. A property holds either a single value or a
  * collection of values, represented by dedicated implementations.</p>
  *
+ * <p>This package also provides {@link io.github.sekelenao.smallyaml.api.document.property.PropertyIdentifier}s
+ * to define property expectations for {@link io.github.sekelenao.smallyaml.api.document.BoundedDocument}s.</p>
+ *
  * <p>SmallYAML favors a predictable subset of YAML. As a result, the property
  * model is intentionally simple: keys are unique, and values are exposed as
  * strings that client code can further map to domain types as needed.</p>

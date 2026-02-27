@@ -1,8 +1,8 @@
 package io.github.sekelenao.smallyaml.test.internal.parsing.collector;
 
 import io.github.sekelenao.smallyaml.api.exception.document.DuplicatedPropertyException;
+import io.github.sekelenao.smallyaml.internal.collection.MapParsingCollector;
 import io.github.sekelenao.smallyaml.internal.collection.ValueList;
-import io.github.sekelenao.smallyaml.internal.parsing.collector.MapParsingCollector;
 import io.github.sekelenao.smallyaml.test.util.Reflections;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

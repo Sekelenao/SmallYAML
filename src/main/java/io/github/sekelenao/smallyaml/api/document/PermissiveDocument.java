@@ -4,12 +4,10 @@ import io.github.sekelenao.smallyaml.api.document.property.MultipleValuesPropert
 import io.github.sekelenao.smallyaml.api.document.property.Property;
 import io.github.sekelenao.smallyaml.api.document.property.SingleValueProperty;
 import io.github.sekelenao.smallyaml.api.exception.document.WrongPropertyTypeException;
-import io.github.sekelenao.smallyaml.api.line.provider.LineProvider;
-import io.github.sekelenao.smallyaml.api.mapping.PropertyValueMapper;
+import io.github.sekelenao.smallyaml.internal.collection.MapParsingCollector;
 import io.github.sekelenao.smallyaml.internal.collection.ValueList;
 import io.github.sekelenao.smallyaml.internal.parsing.SmallYAMLParser;
-import io.github.sekelenao.smallyaml.internal.parsing.booleans.StrictBooleanParser;
-import io.github.sekelenao.smallyaml.internal.parsing.collector.MapParsingCollector;
+import io.github.sekelenao.smallyaml.internal.parsing.StrictBooleanParser;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -26,6 +24,7 @@ import java.util.OptionalLong;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -400,7 +399,7 @@ public final class PermissiveDocument implements Iterable<Property<?>>, Document
      *
      * @since 0.1.0
      */
-    public <T> Optional<T> getSingle(String key, PropertyValueMapper<? super String, T> mapper){
+    public <T> Optional<T> getSingle(String key, Function<? super String, T> mapper){
         Objects.requireNonNull(key);
         Objects.requireNonNull(mapper);
         var value = properties.get(key);
@@ -430,7 +429,7 @@ public final class PermissiveDocument implements Iterable<Property<?>>, Document
      *
      * @since 0.1.0
      */
-    public <T> Optional<List<T>> getMultiple(String key, PropertyValueMapper<? super String, T> mapper){
+    public <T> Optional<List<T>> getMultiple(String key, Function<? super String, T> mapper){
         Objects.requireNonNull(key);
         Objects.requireNonNull(mapper);
         var value = properties.get(key);
@@ -513,7 +512,7 @@ public final class PermissiveDocument implements Iterable<Property<?>>, Document
 
         private final Spliterator<Map.Entry<String, Object>> wrappedSpliterator;
 
-        PropertySpliterator(Spliterator<Map.Entry<String, Object>> wrappedSpliterator) {
+        private PropertySpliterator(Spliterator<Map.Entry<String, Object>> wrappedSpliterator) {
             this.wrappedSpliterator = Objects.requireNonNull(wrappedSpliterator);
         }
 
