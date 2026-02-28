@@ -16,10 +16,6 @@ JVM to perform its optimizations, followed by `cnt` measurement iterations (also
 Results are then reported as the average time taken per operation, expressed in milliseconds, providing clear and 
 actionable performance metrics.
 
-## Results ordered by the most recent version
-
-#### 0.1.0
-
 | Mode | Cnt | Score   | Error   | Units |
 |------|-----|---------|---------|-------|
 | avgt | 20  | 155,109 | ± 3,366 | ms/op |
