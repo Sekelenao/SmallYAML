@@ -8,23 +8,35 @@
 <dependency>
     <groupId>io.github.sekelenao</groupId>
     <artifactId>small-yaml</artifactId>
-    <version>x.x.x</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-implementation("io.github.sekelenao:small-yaml:x.x.x")
+implementation("io.github.sekelenao:small-yaml:0.2.0")
 ```
 
 ## Compatibility matrix
 
 | Java version | SmallYAML version |
 |--------------|-------------------|
-| 21+          | 0.x.x             |
+| 21+          | 0.1.x, 0.2.x      |
 
 ## All Versions
+
+### 0.2.0
+
+#### Added
+
+- `BoundedDocument` for schema-enforced YAML parsing
+- `PropertyIdentifier` system to define cardinality (SINGLE/MULTIPLE) and presence (MANDATORY/OPTIONAL)
+- `BoundedDocumentFactoryBuilder` for fluent schema configuration
+- Automatic registration of `PropertyIdentifier` fields via reflection
+- Custom handling of unknown properties with `UnknownPropertyConsumer`
+- `Document` interface now implements `Iterable<Property<?>>`
+- `Document` interface now provides `stream()` and `spliterator()` support
 
 ### 0.1.0
 
